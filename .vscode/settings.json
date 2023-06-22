@@ -1,0 +1,4 @@
+{
+  "cmake.generator": "MinGW Makefiles",
+  "C_Cpp.errorSquiggles": "disabled"
+}
