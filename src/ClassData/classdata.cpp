@@ -1,4 +1,4 @@
-#include "classdata.h"
+#include "ClassData.h"
 
 ClassData::ClassData(QIODevice* device, QObject* parent)
     : QObject(parent), mDevice(device) {

@@ -72,7 +72,7 @@ class ClassData : public QObject {
         {"英语", "心理", "校本", "数学", "数学", "语文", "校本", "语文"}};
     timeLessonsStart = {QTime(8, 0),   QTime(8, 50),  QTime(9, 40),
                         QTime(10, 40), QTime(11, 35), QTime(14, 10),
-                        QTime(15, 05), QTime(15, 55)};
+                        QTime(15, 5), QTime(15, 55)};
     numOfStudents = 47;
     lastGroup = 7;
     lastWorked = {2023, 6, 14};
