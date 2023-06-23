@@ -17,7 +17,8 @@ ClassSystem::ClassSystem(QWidget *parent)
 
 ClassSystem::~ClassSystem() {}
 void ClassSystem::paintEvent(QPaintEvent *ev) {
-  clockWid->move((desktop->width() - clockWid->width()) / 2, 500);
+  clockWid->move((desktop->width() - clockWid->width()) / 2,
+                 desktop->height() - 400 - clockWid->height());
 }
 
 bool ClassSystem::eventFilter(QObject *obj, QEvent *ev) {
