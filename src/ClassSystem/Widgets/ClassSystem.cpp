@@ -19,10 +19,21 @@ static void setParentToDesktop(HWND hwnd) {
 }
 
 ClassSystem::ClassSystem(QWidget *parent)
-    : QMainWindow{parent}, ui(new Ui::ClassSystem) {
+    : QMainWindow{parent, Qt::FramelessWindowHint}, ui(new Ui::ClassSystem) {
   ui->setupUi(this);
   setParentToDesktop((HWND)winId());
-  show();
+  showFullScreen();
+  setAttribute(Qt::WA_TranslucentBackground);
 }
 
 ClassSystem::~ClassSystem() { delete ui; }
+void ClassSystem::paintEvent(QPaintEvent *ev) {
+  QPainter painter(this);
+
+  // painter.setRenderHint(QPainter::Antialiasing);
+  // painter.setPen(Qt::transparent);
+  // painter.setBrush(Qt::white);
+  // painter.drawRoundedRect(rect(), 15, 15);
+}
+
+void ClassSystem::mouseMoveEvent(QMouseEvent *ev) { qDebug() << ev->pos(); }

@@ -1,16 +1,21 @@
 #pragma once
 
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
+#include <QEvent>
 #include <QFile>
 #include <QHash>
 #include <QObject>
+#include <QPainter>
 #include <QPointer>
+#include <QSettings>
 #include <QString>
 #include <QtGlobal>
 #include <config.h>
 #include <windows.h>
 #include <windowsx.h>
+
 
 inline int daysInWeek(const QString &s) {
   if (0 == s.compare(QString("周一")))

@@ -1,5 +1,8 @@
 #pragma once
 #include <QMainWindow>
+#include <QMouseEvent>
+#include <QPaintEvent>
+#include <QScreen>
 
 namespace Ui {
 class ClassSystem;
@@ -13,4 +16,8 @@ public:
 
 private:
   Ui::ClassSystem *ui;
+
+protected:
+  void paintEvent(QPaintEvent *ev);
+  void mouseMoveEvent(QMouseEvent *ev);
 };

@@ -1,10 +1,15 @@
-
-
 #include <QApplication>
+#include <QMessageBox>
+#include <QSharedMemory>
 
-#include "ClassSystem.h"
-
+#include "Widgets/ClassSystem.h"
 int main(int argc, char *argv[]) {
+  // single application
+  QSharedMemory sm("CLASS-SYSTEM-SINGLE-KEY");
+  if (sm.attach())
+    return 0;
+  sm.create(1);
+
   QApplication a(argc, argv);
   ClassSystem w;
   w.show();
