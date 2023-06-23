@@ -34,6 +34,8 @@ add_executable(ClassSystem
     ${ClassSystemDir}/Widgets/ClassSystem.h
     ${ClassSystemDir}/Widgets/ClockWidget.cpp
     ${ClassSystemDir}/Widgets/ClockWidget.h
+    ${ClassSystemDir}/Widgets/MenuWidget.cpp
+    ${ClassSystemDir}/Widgets/MenuWidget.h
 )
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network) # Qt5 Shared Libraries

@@ -1,5 +1,6 @@
 #pragma once
 #include "Widgets/ClockWidget.h"
+#include "Widgets/MenuWidget.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QMainWindow>
@@ -19,9 +20,11 @@ private:
   QDesktopWidget *desktop = qApp->desktop();
   // other widgets
   QLabel *popMenuLabel = new QLabel(this);
-  QWidget *actionsWid = new QWidget(this);
-  bool actionsFixedVisible = false;
+  MenuWidget *menuWid = new MenuWidget(nullptr);
+  bool menuFixedVisible = false;
   QPoint mStartPoint;
+private slots:
+  void onMenuClicked(size_t menuID);
 
 protected:
   bool eventFilter(QObject *obj, QEvent *ev) override;

@@ -13,8 +13,11 @@
 #include <QString>
 #include <QtGlobal>
 #include <config.h>
+#include <utility>
 #include <windows.h>
 #include <windowsx.h>
+
+using namespace std::string_literals;
 
 static WINBOOL enumWinProc(HWND hwnd, LPARAM lParam) {
   HWND hDefView = FindWindowEx(hwnd, 0, "SHELLDLL_DefView", 0);
