@@ -14,13 +14,16 @@ public:
   ~ClassSystem();
 
 private:
-  // widgets
+  // widgets on desktop
   ClockWidget *clockWid = new ClockWidget;
   QDesktopWidget *desktop = qApp->desktop();
+  // other widgets
+  QLabel *popMenuLabel = new QLabel(this);
+  QWidget *actionsWid = new QWidget(this);
+  bool actionsFixedVisible = false;
   QPoint mStartPoint;
 
 protected:
-  void paintEvent(QPaintEvent *ev);
-  void mousePressEvent(QMouseEvent *ev);
-  void mouseMoveEvent(QMouseEvent *ev);
+  bool eventFilter(QObject *obj, QEvent *ev) override;
+  void paintEvent(QPaintEvent *ev) override;
 };

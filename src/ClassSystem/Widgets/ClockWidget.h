@@ -12,7 +12,7 @@ public:
 
 private:
   QVBoxLayout *layout = new QVBoxLayout(this);
-  QLabel *labelTime = new QLabel("00:00", this);
+  QLabel *timeLabel = new QLabel("00:00", this);
   QTimer timerOneSec;
   static constexpr const char *timeFormat[2] = {"hh:mm", "hh mm"};
   time_t seconds = 0;

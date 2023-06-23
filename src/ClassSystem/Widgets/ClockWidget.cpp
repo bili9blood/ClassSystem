@@ -9,11 +9,11 @@ ClockWidget::ClockWidget(QWidget *parent)
   connect(&timerOneSec, &QTimer::timeout, this, &ClockWidget::onSeconds);
   timerOneSec.start();
   // set label
-  labelTime->setAlignment(Qt::AlignCenter);
-  labelTime->setFont(QFont("Inconsolata", 100, QFont::Medium));
-  labelTime->show();
+  timeLabel->setAlignment(Qt::AlignCenter);
+  timeLabel->setFont(QFont("Inconsolata", 100, QFont::Medium));
+  timeLabel->show();
   // set layout
-  layout->addWidget(labelTime);
+  layout->addWidget(timeLabel);
 }
 
 ClockWidget::~ClockWidget() {}
@@ -21,5 +21,5 @@ ClockWidget::~ClockWidget() {}
 void ClockWidget::onSeconds() {
   ++seconds;
   // update label
-  labelTime->setText(QTime::currentTime().toString(timeFormat[seconds % 2]));
+  timeLabel->setText(QTime::currentTime().toString(timeFormat[seconds % 2]));
 }

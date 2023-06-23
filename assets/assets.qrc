@@ -2,5 +2,6 @@
 <RCC version="1.0">
   <qresource>
     <file>font/Inconsolata-Regular.ttf</file>
+    <file>img/logo.png</file>
   </qresource>
 </RCC>

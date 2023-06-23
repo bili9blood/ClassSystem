@@ -5,9 +5,9 @@
 
 class ClassData : public QObject {
   Q_OBJECT
- public:
-  explicit ClassData(QIODevice* device = new QFile("data.stm"),
-                     QObject* parent = nullptr);
+public:
+  explicit ClassData(QIODevice *device = new QFile("data.stm"),
+                     QObject *parent = nullptr);
   ~ClassData();
   QVector<QVector<QVector<int>>> onDuty;
   QVector<QVector<int>> fan;
@@ -22,13 +22,13 @@ class ClassData : public QObject {
   QVector<QTime> timeLessonsStart = QVector(8, QTime());
   QString eventName;
   QDate eventDate;
-  inline QIODevice* device() { return mDevice; }
-  void setDevice(QIODevice* newDevice) { mDevice = newDevice; }
- public slots:
+  inline QIODevice *device() { return mDevice; }
+  void setDevice(QIODevice *newDevice) { mDevice = newDevice; }
+public slots:
   void load();
   void save();
 
- private:
+private:
   QPointer<QIODevice> mDevice;
   QDataStream dataStream;
   inline void testData() {
@@ -72,7 +72,7 @@ class ClassData : public QObject {
         {"英语", "心理", "校本", "数学", "数学", "语文", "校本", "语文"}};
     timeLessonsStart = {QTime(8, 0),   QTime(8, 50),  QTime(9, 40),
                         QTime(10, 40), QTime(11, 35), QTime(14, 10),
-                        QTime(15, 5), QTime(15, 55)};
+                        QTime(15, 5),  QTime(15, 55)};
     numOfStudents = 47;
     lastGroup = 7;
     lastWorked = {2023, 6, 14};
@@ -82,4 +82,4 @@ class ClassData : public QObject {
   }
 };
 
-#endif  // CLASSDATA_H
+#endif // CLASSDATA_H
