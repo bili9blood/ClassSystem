@@ -1,12 +1,11 @@
 #pragma once
+#include "Widgets/ClockWidget.h"
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QScreen>
-
-namespace Ui {
-class ClassSystem;
-}
 
 class ClassSystem : public QMainWindow {
   Q_OBJECT
@@ -15,9 +14,13 @@ public:
   ~ClassSystem();
 
 private:
-  Ui::ClassSystem *ui;
+  // widgets
+  ClockWidget *clockWid = new ClockWidget;
+  QDesktopWidget *desktop = qApp->desktop();
+  QPoint mStartPoint;
 
 protected:
   void paintEvent(QPaintEvent *ev);
+  void mousePressEvent(QMouseEvent *ev);
   void mouseMoveEvent(QMouseEvent *ev);
 };

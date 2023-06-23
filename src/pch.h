@@ -16,7 +16,23 @@
 #include <windows.h>
 #include <windowsx.h>
 
+static WINBOOL enumWinProc(HWND hwnd, LPARAM lParam) {
+  HWND hDefView = FindWindowEx(hwnd, 0, "SHELLDLL_DefView", 0);
+  if (hDefView != 0) {
+    HWND hWorkerw = FindWindowEx(0, hwnd, "WorkerW", 0);
+    ShowWindow(hWorkerw, SW_HIDE);
+    return FALSE;
+  }
+  return TRUE;
+}
+static void setParentToDesktop(HWND hwnd) {
+  HWND hProgman = FindWindow("Progman", nullptr);
+  SendMessage(hProgman, 0x52c, 0, 0);
+  SetParent(hwnd, hProgman);
+  EnumWindows(enumWinProc, 0);
+}
 
+#define SET_WIDGET_TRANSPARENT setAttribute(Qt::WA_TranslucentBackground)
 inline int daysInWeek(const QString &s) {
   if (0 == s.compare(QString("周一")))
     return 0;

@@ -28,10 +28,12 @@ include_directories(src/ClassData ${CMAKE_BINARY_DIR} thirdparty/qtsingleapplica
 add_executable(ClassSystem
     ${APP_CMD_TYPE}
     ${ClassDataSrc}
+    assets/assets.qrc
     ${ClassSystemDir}/main.cpp
-    ${ClassSystemDir}/Widgets/ClassSystem.ui
     ${ClassSystemDir}/Widgets/ClassSystem.cpp
     ${ClassSystemDir}/Widgets/ClassSystem.h
+    ${ClassSystemDir}/Widgets/ClockWidget.cpp
+    ${ClassSystemDir}/Widgets/ClockWidget.h
 )
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network) # Qt5 Shared Libraries

@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QFontDatabase>
 #include <QMessageBox>
 #include <QSharedMemory>
 
@@ -11,6 +12,11 @@ int main(int argc, char *argv[]) {
   sm.create(1);
 
   QApplication a(argc, argv);
+
+  // add fonts
+  QFontDatabase::addApplicationFont(":/font/Inconsolata-Regular");
+
+  // show window
   ClassSystem w;
   w.show();
   return a.exec();

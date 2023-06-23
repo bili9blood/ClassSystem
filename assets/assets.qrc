@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource>
+    <file>font/Inconsolata-Regular.ttf</file>
+  </qresource>
+</RCC>
