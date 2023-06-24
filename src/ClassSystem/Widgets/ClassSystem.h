@@ -12,7 +12,7 @@ class ClassSystem : public QMainWindow {
   Q_OBJECT
 public:
   explicit ClassSystem(QWidget *parent = nullptr);
-  ~ClassSystem();
+  ~ClassSystem() override;
 
 private:
   // widgets on desktop

@@ -19,11 +19,11 @@
 
 using namespace std::string_literals;
 
-static WINBOOL enumWinProc(HWND hwnd, LPARAM lParam) {
-  HWND hDefView = FindWindowEx(hwnd, 0, "SHELLDLL_DefView", 0);
-  if (hDefView != 0) {
-    HWND hWorkerw = FindWindowEx(0, hwnd, "WorkerW", 0);
-    ShowWindow(hWorkerw, SW_HIDE);
+static WINBOOL enumWinProc(HWND hwnd, LPARAM) {
+  HWND hDefView = FindWindowEx(hwnd, nullptr, "SHELLDLL_DefView", nullptr);
+  if (hDefView != nullptr) {
+    HWND hWorkerW = FindWindowEx(nullptr, hwnd, "WorkerW", nullptr);
+    ShowWindow(hWorkerW, SW_HIDE);
     return FALSE;
   }
   return TRUE;
@@ -56,18 +56,20 @@ inline int daysInWeek(const QString &s) {
 inline QString daysInWeek(const int &i) {
   switch (i) {
   case 0:
-    return QString("周一");
+    return {"周一"};
   case 1:
-    return QString("周二");
+    return {"周二"};
   case 2:
-    return QString("周三");
+    return {"周三"};
   case 3:
-    return QString("周四");
+    return {"周四"};
   case 4:
-    return QString("周五");
+    return {"周五"};
   case 5:
-    return QString("周六");
+    return {"周六"};
   case 6:
-    return QString("周日");
+    return {"周日"};
+  default:
+      return {};
   }
 }

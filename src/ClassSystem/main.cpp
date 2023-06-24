@@ -16,9 +16,9 @@ int main(int argc, char *argv[]) {
   // add fonts
   int id = QFontDatabase::addApplicationFont(":/font/Inconsolata-Regular.ttf");
   if (id != -1)
-    a.setFont(QFontDatabase::applicationFontFamilies(id).first());
+    QApplication::setFont(QFontDatabase::applicationFontFamilies(id).first());
   // show window
   ClassSystem w;
   w.show();
-  return a.exec();
+  return QApplication::exec();
 }
