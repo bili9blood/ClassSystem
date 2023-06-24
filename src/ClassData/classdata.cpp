@@ -11,7 +11,6 @@ ClassData::~ClassData() { save(); }
 void ClassData::load() {
   if (!mDevice->open(QFile::ReadOnly)) {
     qDebug("读取时文件打开失败!");
-    throw QString("读取时文件打开失败");
   }
   dataStream.setDevice(mDevice);
 
@@ -36,7 +35,6 @@ void ClassData::load() {
 void ClassData::save() {
   if (!mDevice->open(QFile::WriteOnly | QFile::Truncate)) {
     qDebug("保存时文件打开失败！");
-    throw QString("保存时文件打开失败！");
   }
   dataStream.setDevice(mDevice);
   dataStream.setVersion(QDataStream::Qt_5_15);

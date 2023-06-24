@@ -38,13 +38,13 @@ static void setParentToDesktop(HWND hwnd) {
 
 #define SET_WIDGET_TRANSPARENT setAttribute(Qt::WA_TranslucentBackground)
 inline int daysInWeek(const QString &s) {
-  if (0 == s.compare(QString("周一"))) return 0;
-  if (0 == s.compare(QString("周二"))) return 1;
-  if (0 == s.compare(QString("周三"))) return 2;
-  if (0 == s.compare(QString("周四"))) return 3;
-  if (0 == s.compare(QString("周五"))) return 4;
-  if (0 == s.compare(QString("周六"))) return 5;
-  if (0 == s.compare(QString("周日"))) return 6;
+  if (s == "周一") return 0;
+  if (s == "周二") return 1;
+  if (s == "周三") return 2;
+  if (s == "周四") return 3;
+  if (s == "周五") return 4;
+  if (s == "周六") return 5;
+  if (s == "周日") return 6;
 }
 
 inline QString daysInWeek(const int &i) {

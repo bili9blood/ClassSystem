@@ -1,21 +1,20 @@
-#ifndef CLASSDATA_H
-#define CLASSDATA_H
+#pragma once
 
 #include <QDataStream>
 
 class ClassData : public QObject {
   Q_OBJECT
-public:
+ public:
   explicit ClassData(QIODevice *device = new QFile("data.stm"),
                      QObject *parent = nullptr);
-  ~ClassData();
+  ~ClassData() override;
   QVector<QVector<QVector<int>>> onDuty;
   QVector<QVector<int>> fan;
   QVector<QString> notices;
   int numOfStudents, lastGroup;
   QDate lastWorked;
   QHash<int, QString> students;
-  inline QString idAndName(int id) {
+  [[nodiscard]] inline QString idAndName(int id) const {
     return QString::number(id) + students.value(id);
   }
   QVector<QVector<QString>> lessons = QVector(5, QVector(8, QString()));
@@ -24,11 +23,11 @@ public:
   QDate eventDate;
   inline QIODevice *device() { return mDevice; }
   void setDevice(QIODevice *newDevice) { mDevice = newDevice; }
-public slots:
+ public slots:
   void load();
   void save();
 
-private:
+ private:
   QPointer<QIODevice> mDevice;
   QDataStream dataStream;
   inline void testData() {
@@ -81,5 +80,3 @@ private:
     save();
   }
 };
-
-#endif // CLASSDATA_H
