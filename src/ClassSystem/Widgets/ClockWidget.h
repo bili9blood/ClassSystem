@@ -7,11 +7,11 @@
 
 class ClockWidget : public QWidget {
   Q_OBJECT
-public:
+ public:
   explicit ClockWidget(QWidget *parent = nullptr);
-  ~ClockWidget();
+  ~ClockWidget() override;
 
-private:
+ private:
   QVBoxLayout *layout = new QVBoxLayout(this);
   QLabel *timeLabel = new QLabel("00:00", this);
   QLabel *dateLabel =
@@ -20,6 +20,6 @@ private:
   static constexpr const char *timeFormat[2] = {"hh:mm", "hh mm"};
   time_t seconds = 0;
 
-private slots:
+ private slots:
   void onSeconds();
 };

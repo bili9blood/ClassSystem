@@ -7,14 +7,14 @@
 
 class MenuWidget : public QWidget {
   Q_OBJECT
-public:
+ public:
   explicit MenuWidget(QWidget *parent = nullptr);
-  ~MenuWidget();
+  ~MenuWidget() override;
   MenuWidget &addToMenu(const QString &text, const QPixmap &icon);
-signals:
+ signals:
   void clicked(size_t id);
 
-private:
+ private:
   QList<QWidget *> mBtns{};
   QList<QVBoxLayout *> mLayouts;
   QList<QPixmap> mPixs;
@@ -22,7 +22,7 @@ private:
   QList<QLabel *> mTextLabels;
   QHBoxLayout *mLayout = new QHBoxLayout(this);
 
-protected:
+ protected:
   bool eventFilter(QObject *obj, QEvent *ev) override;
   void paintEvent(QPaintEvent *ev) override;
 };

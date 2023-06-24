@@ -8,7 +8,7 @@ MenuWidget::MenuWidget(QWidget *parent)
   mLayout->setSpacing(0);
 }
 
-MenuWidget::~MenuWidget() {}
+MenuWidget::~MenuWidget() = default;
 MenuWidget &MenuWidget::addToMenu(const QString &text, const QPixmap &icon) {
   mBtns << new QWidget(this);
   mPixs << icon;
@@ -48,8 +48,7 @@ bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
       break;
     }
   }
-  if (!flag)
-    return false;
+  if (!flag) return false;
   auto btn = qobject_cast<QWidget *>(obj);
   if (ev->type() == QEvent::Enter || ev->type() == QEvent::MouseButtonRelease) {
     btn->setStyleSheet("background-color: grey");
@@ -69,8 +68,7 @@ bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
 }
 
 void MenuWidget::paintEvent(QPaintEvent *ev) {
-  for (auto i = size_t(); i < mIconLabels.size(); ++i) {
+  for (auto i = size_t(); i < mIconLabels.size(); ++i)
     mIconLabels[i]->setPixmap(mPixs[i].scaledToHeight(
         mIconLabels[i]->height(), Qt::SmoothTransformation));
-  }
 }

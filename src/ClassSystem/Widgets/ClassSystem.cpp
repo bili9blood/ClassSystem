@@ -36,8 +36,7 @@ bool ClassSystem::eventFilter(QObject *obj, QEvent *ev) {
     }
     if (ev->type() == QEvent::MouseMove) {
       auto *e = dynamic_cast<QMouseEvent *>(ev);
-      if (e->buttons() & Qt::LeftButton)
-        move(e->globalPos() + mStartPoint);
+      if (e->buttons() & Qt::LeftButton) move(e->globalPos() + mStartPoint);
       moveMenu();
       return true;
     }
@@ -47,8 +46,7 @@ bool ClassSystem::eventFilter(QObject *obj, QEvent *ev) {
       return true;
     }
     if (ev->type() == QEvent::Leave) {
-      if (!menuFixedVisible)
-        menuWid->setVisible(false);
+      if (!menuFixedVisible) menuWid->setVisible(false);
 
       return true;
     }

@@ -1,6 +1,4 @@
 #pragma once
-#include "Widgets/ClockWidget.h"
-#include "Widgets/MenuWidget.h"
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QMainWindow>
@@ -8,13 +6,16 @@
 #include <QPaintEvent>
 #include <QScreen>
 
+#include "Widgets/ClockWidget.h"
+#include "Widgets/MenuWidget.h"
+
 class ClassSystem : public QMainWindow {
   Q_OBJECT
-public:
+ public:
   explicit ClassSystem(QWidget *parent = nullptr);
   ~ClassSystem() override;
 
-private:
+ private:
   // widgets on desktop
   ClockWidget *clockWid = new ClockWidget;
   QDesktopWidget *desktop = qApp->desktop();
@@ -23,10 +24,10 @@ private:
   MenuWidget *menuWid = new MenuWidget(nullptr);
   bool menuFixedVisible = false;
   QPoint mStartPoint;
-private slots:
+ private slots:
   void onMenuClicked(size_t menuID);
 
-protected:
+ protected:
   bool eventFilter(QObject *obj, QEvent *ev) override;
   void paintEvent(QPaintEvent *ev) override;
 };

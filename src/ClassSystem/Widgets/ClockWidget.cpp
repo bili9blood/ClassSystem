@@ -19,7 +19,7 @@ ClockWidget::ClockWidget(QWidget *parent)
   layout->setSpacing(0);
 }
 
-ClockWidget::~ClockWidget() {}
+ClockWidget::~ClockWidget() = default;
 
 void ClockWidget::onSeconds() {
   // set date label
