@@ -27,7 +27,7 @@ bool ClassSystem::eventFilter(QObject *obj, QEvent *ev) {
       menuWid->move(geometry().x() - menuWid->width(), geometry().y() + 10);
     };
     if (ev->type() == QEvent::MouseButtonPress) {
-      QMouseEvent *e = static_cast<QMouseEvent *>(ev);
+      auto *e = dynamic_cast<QMouseEvent *>(ev);
       if (e->button() == Qt::LeftButton)
         mStartPoint = frameGeometry().topLeft() - e->globalPos();
       menuFixedVisible = !menuFixedVisible;
@@ -35,7 +35,7 @@ bool ClassSystem::eventFilter(QObject *obj, QEvent *ev) {
       return true;
     }
     if (ev->type() == QEvent::MouseMove) {
-      QMouseEvent *e = static_cast<QMouseEvent *>(ev);
+      auto *e = dynamic_cast<QMouseEvent *>(ev);
       if (e->buttons() & Qt::LeftButton)
         move(e->globalPos() + mStartPoint);
       moveMenu();
@@ -47,9 +47,9 @@ bool ClassSystem::eventFilter(QObject *obj, QEvent *ev) {
       return true;
     }
     if (ev->type() == QEvent::Leave) {
-      if (!menuFixedVisible) {
+      if (!menuFixedVisible)
         menuWid->setVisible(false);
-      }
+
       return true;
     }
   }
