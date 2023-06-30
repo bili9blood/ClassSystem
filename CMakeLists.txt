@@ -27,7 +27,7 @@ include_directories(src/ClassData ${CMAKE_BINARY_DIR})
 add_executable(ClassSystem
         ${APP_CMD_TYPE}
         ${ClassDataSrc}
-        assets/assets.qrc
+        assets/ClassSystem.qrc
         src/ClassSystem/main.cpp
         src/ClassSystem/Widgets/SuspendedWidget.cpp
         src/ClassSystem/Widgets/SuspendedWidget.h
