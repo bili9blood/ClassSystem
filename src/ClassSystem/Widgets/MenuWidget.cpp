@@ -54,11 +54,11 @@ bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
   }
   if (!flag) return false;
   if (ev->type() == QEvent::Enter || ev->type() == QEvent::MouseButtonRelease) {
-    mTextLabels[i]->setFont(QFont("Inconsolata", 8, 100));
+    mTextLabels[i]->setFont(QFont("MiSans", 8, 100));
     return true;
   }
   if (ev->type() == QEvent::Leave) {
-    mTextLabels[i]->setFont(QFont("Inconsolata", 8));
+    mTextLabels[i]->setFont(QFont("MiSans", 8));
     return true;
   }
   if (ev->type() == QEvent::MouseButtonPress ||

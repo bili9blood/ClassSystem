@@ -5,7 +5,7 @@ set(CMAKE_PREFIX_PATH "c:/Qt/5.15.2/mingw81_64")
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets Core Network REQUIRED)
 
@@ -33,7 +33,7 @@ add_executable(ClassSystem
         src/ClassSystem/Widgets/SuspendedWidget.h
         src/ClassSystem/Widgets/MenuWidget.cpp
         src/ClassSystem/Widgets/MenuWidget.h
-        )
+        src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h)
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)

@@ -3,7 +3,23 @@
 #include <QMessageBox>
 #include <QSharedMemory>
 
+#include "Widgets/MainPanel.h"
 #include "Widgets/SuspendedWidget.h"
+
+void switchToDesktop() {
+  INPUT input[4];
+  memset(input, 0, sizeof(input));
+
+  input[0].type = input[1].type = input[2].type = input[3].type =
+      INPUT_KEYBOARD;
+
+  input[0].ki.wVk = input[3].ki.wVk = VK_LWIN;
+  input[1].ki.wVk = input[2].ki.wVk = 'D';
+
+  input[2].ki.dwFlags = input[3].ki.dwFlags = KEYEVENTF_KEYUP;
+
+  SendInput(4, input, sizeof(INPUT));
+}
 
 int main(int argc, char *argv[]) {
   // single application
@@ -13,12 +29,15 @@ int main(int argc, char *argv[]) {
 
   QApplication a(argc, argv);
   // add fonts
-  int id = QFontDatabase::addApplicationFont(":/font/Inconsolata-Regular.ttf");
+  int id = QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
   if (id != -1)
     QApplication::setFont(QFontDatabase::applicationFontFamilies(id).first());
   // show SuspendedWidget
   SuspendedWidget susWid(nullptr);
   susWid.show();
   // show panel
+  MainPanel panel;
+  panel.show();
+  switchToDesktop();
   return QApplication::exec();
 }

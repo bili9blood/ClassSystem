@@ -1,7 +1,7 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource>
-        <file>font/Inconsolata-Regular.ttf</file>
+        <file>font/MiSans-Regular.ttf</file>
         <file>img/logo.png</file>
         <file>img/exit.png</file>
     </qresource>
