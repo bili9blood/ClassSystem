@@ -3,9 +3,10 @@
 MenuWidget::MenuWidget(QWidget *parent)
     : QWidget{parent,
               Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint} {
-  setStyleSheet("background-color: white");
+  SET_WIDGET_TRANSPARENT;
   mLayout->setMargin(0);
   mLayout->setSpacing(0);
+  mLayout->addSpacerItem(spacer);
 }
 
 MenuWidget::~MenuWidget() = default;
@@ -21,22 +22,25 @@ MenuWidget &MenuWidget::addToMenu(const QString &text, const QPixmap &icon) {
   auto iconLabel = mIconLabels.back();
   iconLabel->setPixmap(
       icon.scaledToHeight(iconLabel->height(), Qt::SmoothTransformation));
-  textLabel->setSizePolicy(
-      QSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding));
+  textLabel->setSizePolicy(QSizePolicy::Preferred,
+                           QSizePolicy::MinimumExpanding);
   iconLabel->setAlignment(Qt::AlignCenter);
-  // iconLabel->setScaledContents(true);
   textLabel->setAlignment(Qt::AlignCenter);
-  textLabel->setSizePolicy(
-      QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
+  textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+  textLabel->setFont(QFont("Inconsolata", 8));
   btn->installEventFilter(this);
   btn->setStyleSheet("background-color: white");
   layout->setMargin(5);
   layout->setSpacing(0);
   layout->addWidget(iconLabel);
   layout->addWidget(textLabel);
-  mLayout->addWidget(btn);
+  // set transparent
+  iconLabel->SET_WIDGET_TRANSPARENT;
+  textLabel->SET_WIDGET_TRANSPARENT;
+  btn->SET_WIDGET_TRANSPARENT;
+  mLayout->insertWidget(0, btn);
+  setFixedSize(80 * mBtns.count() + 40, 80);
   return *this;
-  resize(80 * mBtns.count(), 80);
 }
 
 bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
@@ -49,18 +53,16 @@ bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
     }
   }
   if (!flag) return false;
-  auto btn = qobject_cast<QWidget *>(obj);
   if (ev->type() == QEvent::Enter || ev->type() == QEvent::MouseButtonRelease) {
-    btn->setStyleSheet("background-color: grey");
+    mTextLabels[i]->setFont(QFont("Inconsolata", 8, 100));
     return true;
   }
   if (ev->type() == QEvent::Leave) {
-    btn->setStyleSheet("background-color: white");
+    mTextLabels[i]->setFont(QFont("Inconsolata", 8));
     return true;
   }
   if (ev->type() == QEvent::MouseButtonPress ||
       ev->type() == QEvent::MouseButtonDblClick) {
-    btn->setStyleSheet("background-color: deepskyblue");
     emit clicked(i);
     return true;
   }
@@ -71,4 +73,8 @@ void MenuWidget::paintEvent(QPaintEvent *ev) {
   for (auto i = size_t(); i < mIconLabels.size(); ++i)
     mIconLabels[i]->setPixmap(mPixs[i].scaledToHeight(
         mIconLabels[i]->height(), Qt::SmoothTransformation));
+  QPainter painter(this);
+  painter.setBrush(QColor(39, 174, 227));
+  painter.setPen(Qt::transparent);
+  painter.drawRoundedRect(rect(), 10, 10);
 }

@@ -37,7 +37,19 @@ static void setParentToDesktop(HWND hwnd) {
 }
 
 #define SET_WIDGET_TRANSPARENT setAttribute(Qt::WA_TranslucentBackground)
-inline int daysInWeek(const QString &s) {
+struct SemVer {
+  uint8_t major, minor, patch;
+  inline QString operator()() const {
+    return QString("%1.%2.%3")
+        .arg(uint(major))
+        .arg(uint(minor))
+        .arg(uint(patch));
+  }
+};
+
+constexpr SemVer currentVersion{MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION};
+
+inline int weekday(const QString &s) {
   if (s == "周一") return 0;
   if (s == "周二") return 1;
   if (s == "周三") return 2;
@@ -45,9 +57,11 @@ inline int daysInWeek(const QString &s) {
   if (s == "周五") return 4;
   if (s == "周六") return 5;
   if (s == "周日") return 6;
+  return -1;
 }
 
-inline QString daysInWeek(const int &i) {
+//! override
+inline QString weekday(const int &i) {
   switch (i) {
     case 0:
       return {"周一"};

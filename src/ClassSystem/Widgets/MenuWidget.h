@@ -1,8 +1,10 @@
 #pragma once
 #include <QAction>
+#include <QBitmap>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QList>
+#include <QSpacerItem>
 #include <QWidget>
 
 class MenuWidget : public QWidget {
@@ -21,6 +23,7 @@ class MenuWidget : public QWidget {
   QList<QLabel *> mIconLabels;
   QList<QLabel *> mTextLabels;
   QHBoxLayout *mLayout = new QHBoxLayout(this);
+  QSpacerItem *spacer = new QSpacerItem(20, 40);
 
  protected:
   bool eventFilter(QObject *obj, QEvent *ev) override;

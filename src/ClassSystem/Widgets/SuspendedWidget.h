@@ -1,24 +1,20 @@
 #pragma once
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QMainWindow>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QScreen>
+#include <QWidget>
 
-#include "Widgets/ClockWidget.h"
 #include "Widgets/MenuWidget.h"
 
-class ClassSystem : public QMainWindow {
+class SuspendedWidget : public QWidget {
   Q_OBJECT
  public:
-  explicit ClassSystem(QWidget *parent = nullptr);
-  ~ClassSystem() override;
+  explicit SuspendedWidget(QWidget *parent = nullptr);
+  ~SuspendedWidget() override;
 
  private:
-  // widgets on desktop
-  ClockWidget *clockWid = new ClockWidget;
-  QDesktopWidget *desktop = qApp->desktop();
   // other widgets
   QLabel *popMenuLabel = new QLabel(this);
   MenuWidget *menuWid = new MenuWidget(nullptr);
