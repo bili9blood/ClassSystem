@@ -20,6 +20,7 @@ QVariantList ClassData::readFrom(QIODevice *device) {
       >> data[StudentsCarryMeal]  // QList<QStringList>
       >> data[StudentsOnDuty]     // QList<QStringList>
       ;
+  return data;
 }
 void ClassData::writeTo(const QVariantList &data, QIODevice *device) {
   auto fileErr = [] {
