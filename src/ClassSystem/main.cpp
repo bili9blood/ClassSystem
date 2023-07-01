@@ -8,7 +8,7 @@
 #include "Widgets/SuspendedWidget.h"
 #include "src/ClassData.h"
 
-void switchToDesktop() {
+void switchToDesktop() {  // same as press WIN+D
   INPUT input[4];
   memset(input, 0, sizeof(input));
 
