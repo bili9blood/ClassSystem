@@ -18,6 +18,7 @@
 #include <QSettings>
 #include <QString>
 #include <QtGlobal>
+#include <exception>
 #include <utility>
 
 using namespace std::string_literals;
