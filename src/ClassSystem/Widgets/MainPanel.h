@@ -27,7 +27,7 @@ class MainPanel : public QWidget {
   QLabel *labelDDDD = new QLabel("星期八", this);
   QTimer timerHalfSeconds;
   constexpr static const char *timeFormat[2] = {"hh:mm:ss", "hh mm ss"};
-  bool isEntireSecond = true;
+  uint lastSecond;
  private slots:
   void onHalfSecs();
 

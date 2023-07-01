@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QFontDatabase>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSharedMemory>
 
 #include "Widgets/MainPanel.h"

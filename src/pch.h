@@ -4,12 +4,14 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <QApplication>
 #include <QDateTime>
 #include <QDebug>
 #include <QDir>
 #include <QEvent>
 #include <QFile>
 #include <QHash>
+#include <QMessageBox>
 #include <QObject>
 #include <QPainter>
 #include <QPointer>

@@ -14,6 +14,7 @@ MainPanel::MainPanel(QWidget *parent)
   color:white;
 }
 )");
+  // init datetime
   labelDDDD->setObjectName("labelDDDD");
   labelDate->setObjectName("labelDate");
   labelTime->setObjectName("labelTime");
@@ -25,13 +26,14 @@ MainPanel::MainPanel(QWidget *parent)
   layoutDateTime->addWidget(labelTime, 0, 0, 2, 1, Qt::AlignBottom);
   layoutDateTime->addWidget(labelDate, 0, 1, Qt::AlignBottom);
   layoutDateTime->addWidget(labelDDDD, 1, 1, Qt::AlignBottom);
-  layoutMain->addLayout(layoutDateTime, 0, 0, Qt::AlignLeft);
+  layoutMain->addLayout(layoutDateTime, 0, 0, 1, 2, Qt::AlignLeft);
   // init timer
   timerHalfSeconds.setInterval(500);  // 0.5 secs
   connect(&timerHalfSeconds, &QTimer::timeout, this, &MainPanel::onHalfSecs);
   timerHalfSeconds.start();
   SET_WIDGET_TRANSPARENT;
   setParentToDesktop((HWND)winId());
+  lastSecond = QTime::currentTime().second();
 }
 void MainPanel::paintEvent(QPaintEvent *) {
   QPainter painter(this);
@@ -40,8 +42,9 @@ void MainPanel::paintEvent(QPaintEvent *) {
   painter.drawRoundedRect(rect(), 30, 30);
 }
 void MainPanel::onHalfSecs() {
-  isEntireSecond = !isEntireSecond;
-  labelTime->setText(QTime::currentTime().toString(timeFormat[isEntireSecond]));
+  labelTime->setText(QTime::currentTime().toString(
+      timeFormat[lastSecond == QTime::currentTime().second()]));
+  lastSecond = QTime::currentTime().second();
 }
 
 MainPanel::~MainPanel() = default;

@@ -14,7 +14,6 @@ string(TIMESTAMP COMPILE_TIME "\"%Y-%m-%d %H:%M:%S\"")
 configure_file(src/config.h.in config.h)
 
 set(ClassSystemDir ${CMAKE_SOURCE_DIR}/src/ClassSystem)
-aux_source_directory(src/ClassData ClassDataSrc)
 set(APP_CMD_TYPE WIN32)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -26,14 +25,14 @@ include_directories(src/ClassData ${CMAKE_BINARY_DIR})
 # target ClassSystem BEGIN
 add_executable(ClassSystem
         ${APP_CMD_TYPE}
-        ${ClassDataSrc}
         assets/ClassSystem.qrc
         src/ClassSystem/main.cpp
         src/ClassSystem/Widgets/SuspendedWidget.cpp
         src/ClassSystem/Widgets/SuspendedWidget.h
         src/ClassSystem/Widgets/MenuWidget.cpp
         src/ClassSystem/Widgets/MenuWidget.h
-        src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h)
+        src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
+        src/ClassData/ClassData.cpp src/ClassData/ClassData.h)
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)

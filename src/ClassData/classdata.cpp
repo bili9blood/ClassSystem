@@ -1,46 +1,39 @@
+//
+// Created by 35012 on 2023/7/1.
+//
+
 #include "ClassData.h"
+ClassData::ClassData(QObject *parent) : QObject(parent) {}
+QVariantList ClassData::readFrom(QIODevice *device) {
+  auto fileErr = [] {
+    QMessageBox::critical(nullptr, "错误", "无法加载数据文件，请检查文件！");
+    QApplication::quit();
+  };
 
-ClassData::ClassData(QIODevice* device, QObject* parent)
-    : QObject(parent), mDevice(device) {
-  // testData();
-  load();
-}
-
-ClassData::~ClassData() { save(); }
-
-void ClassData::load() {
-  if (!mDevice->open(QFile::ReadOnly)) {
-    qDebug("读取时文件打开失败!");
-  }
-  dataStream.setDevice(mDevice);
-
+  if (!device->open(QIODevice::ReadOnly)) fileErr();
+  QDataStream dataStream(device);
+  QVariantList data;
   dataStream.setVersion(QDataStream::Qt_5_15);
-  dataStream >> onDuty >> fan >> notices >> students >> lessons >>
-      timeLessonsStart >> numOfStudents >> lastGroup >> lastWorked >>
-      eventName >> eventDate;
-  mDevice->close();
-  qDebug("data file loaded");
-  if (lastWorked < QDate::currentDate()) {
-    lastWorked = QDate::currentDate();
-    lastGroup += 3;
-    lastGroup %= 14;
-  }
-  // delete notices which expired
-  foreach (const QString& str, notices)
-    if (!str.startsWith("NULL") &&
-        QDate::fromString(str.left(str.indexOf("__"))) >= QDate::currentDate())
-      notices.removeOne(str);
+  dataStream >> data[Students]    // QMap<QString>   (k:v)id:name
+      >> data[Lessons]            // QList<QStringList>
+      >> data[TimeLessonsStart]   // QList<QTime>
+      >> data[StudentsCarryMeal]  // QList<QStringList>
+      >> data[StudentsOnDuty]     // QList<QStringList>
+      ;
 }
+void ClassData::writeTo(const QVariantList &data, QIODevice *device) {
+  auto fileErr = [] {
+    QMessageBox::critical(nullptr, "错误", "无法保存数据文件，请检查文件！");
+    QApplication::quit();
+  };
 
-void ClassData::save() {
-  if (!mDevice->open(QFile::WriteOnly | QFile::Truncate)) {
-    qDebug("保存时文件打开失败！");
-  }
-  dataStream.setDevice(mDevice);
+  if (!device->open(QIODevice::WriteOnly)) fileErr();
+  QDataStream dataStream(device);
   dataStream.setVersion(QDataStream::Qt_5_15);
-  dataStream << onDuty << fan << notices << students << lessons
-             << timeLessonsStart << numOfStudents << lastGroup << lastWorked
-             << eventName << eventDate;
-  mDevice->close();
-  qDebug("data file saved");
+  dataStream << data[Students]           // QMap<QString>   (k:v)id:name
+             << data[Lessons]            // QList<QStringList>
+             << data[TimeLessonsStart]   // QList<QTime>
+             << data[StudentsCarryMeal]  // QList<QStringList>
+             << data[StudentsOnDuty]     // QList<QStringList>
+      ;
 }
