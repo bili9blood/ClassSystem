@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   if (id != -1)
     QApplication::setFont(QFontDatabase::applicationFontFamilies(id).first());
   // show SuspendedWidget
-  SuspendedWidget susWid(nullptr);
+  SuspendedWidget susWid;
   susWid.show();
   // show panel
   MainPanel panel;
