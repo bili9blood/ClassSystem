@@ -4,9 +4,9 @@
 #include <QProcess>
 #include <QSharedMemory>
 
-#include "ClassData.h"
 #include "Widgets/MainPanel.h"
 #include "Widgets/SuspendedWidget.h"
+#include "src/ClassData.h"
 
 void switchToDesktop() {
   INPUT input[4];
@@ -40,6 +40,10 @@ int main(int argc, char *argv[]) {
   // show panel
   MainPanel panel;
   panel.show();
+
+  // generate template .stm file
+  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
+
   switchToDesktop();
   return QApplication::exec();
 }

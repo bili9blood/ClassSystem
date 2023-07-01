@@ -56,8 +56,28 @@ static inline ClassData::Data testData() {
       {{20, 0}, {3, 0}, {6, 17}, {32, 9}, {53, 45}, {5, 0}}};
   return d;
 }
-static ClassData::Data readFrom(QIODevice *device);
-static void writeTo(const ClassData::Data &d, QIODevice *device);
+static ClassData::Data readFrom(QIODevice *device) {
+  if (!device->open(QIODevice::ReadOnly))
+    throw std::runtime_error(
+        qPrintable(QString("数据读取错误:%1").arg(device->errorString())));
+  QDataStream ds(device);
+  ClassData::Data d;
+  ds.setVersion(QDataStream::Qt_5_15);
+  ds >> d.mStudents >> d.mLessons >> d.mTimeLessonsStart >>
+      d.mStudentsCarryMeals >> d.mStudentsOnDuty;
+  device->close();
+  return d;
+}
+static void writeTo(const ClassData::Data &d, QIODevice *device) {
+  if (!device->open(QIODevice::WriteOnly | QIODevice::Truncate))
+    throw std::runtime_error(
+        qPrintable(QString("无法写入文件:%1").arg(device->errorString())));
+  QDataStream ds(device);
+  ds.setVersion(QDataStream::Qt_5_15);
+  ds << d.mStudents << d.mLessons << d.mTimeLessonsStart
+     << d.mStudentsCarryMeals << d.mStudentsOnDuty;
+  device->close();
+}
 
 }  // namespace ClassData
 

@@ -32,7 +32,7 @@ add_executable(ClassSystem
         src/ClassSystem/Widgets/MenuWidget.cpp
         src/ClassSystem/Widgets/MenuWidget.h
         src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
-        src/ClassData/ClassData.cpp src/ClassData/ClassData.h)
+        src/ClassData.h)
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
