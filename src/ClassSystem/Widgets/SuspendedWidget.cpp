@@ -29,14 +29,14 @@ bool SuspendedWidget::eventFilter(QObject *obj, QEvent *ev) {
       auto e = dynamic_cast<QMouseEvent *>(ev);
       if (e->button() == Qt::LeftButton)
         mStartPoint = frameGeometry().topLeft() - e->globalPos();
-      menuFixedVisible = !menuFixedVisible;
       moveMenu();
-      menuWid->setVisible(menuFixedVisible);
+      menuWid->setVisible(!menuWid->isVisible());
       return true;
     }
     if (ev->type() == QEvent::MouseMove) {
       auto e = dynamic_cast<QMouseEvent *>(ev);
       if (e->buttons() & Qt::LeftButton) move(e->globalPos() + mStartPoint);
+      menuWid->setVisible(false);
       moveMenu();
       return true;
     }

@@ -4,6 +4,7 @@
 #include <QProcess>
 #include <QSharedMemory>
 
+#include "ClassData.h"
 #include "Widgets/MainPanel.h"
 #include "Widgets/SuspendedWidget.h"
 

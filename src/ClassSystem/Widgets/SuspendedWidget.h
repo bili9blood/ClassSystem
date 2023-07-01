@@ -18,7 +18,6 @@ class SuspendedWidget : public QWidget {
   // other widgets
   QLabel *popMenuLabel = new QLabel(this);
   MenuWidget *menuWid = new MenuWidget(nullptr);
-  bool menuFixedVisible = false;
   QPoint mStartPoint;
  private slots:
   void onMenuClicked(size_t menuID);
