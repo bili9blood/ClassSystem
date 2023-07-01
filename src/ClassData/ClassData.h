@@ -20,6 +20,7 @@ struct Data {
     return QString("%1 %2").arg(id).arg(mStudents[id]);
   }
 };
+
 static inline ClassData::Data testData() {
   ClassData::Data d;
   d.mStudents = QMap<uint, QString>{

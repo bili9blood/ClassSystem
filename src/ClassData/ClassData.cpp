@@ -14,6 +14,7 @@ ClassData::Data ClassData::readFrom(QIODevice *device) {
       d.mStudentsCarryMeals >> d.mStudentsOnDuty;
   return d;
 }
+
 void ClassData::writeTo(const ClassData::Data &d, QIODevice *device) {
   if (!device->open(QIODevice::WriteOnly))
     throw std::runtime_error(
