@@ -1,6 +1,5 @@
 #pragma once
 
-#include <config.h>
 #include <windows.h>
 #include <windowsx.h>
 
@@ -40,17 +39,14 @@ static void setParentToDesktop(HWND hwnd) {
 }
 
 #define SET_WIDGET_TRANSPARENT setAttribute(Qt::WA_TranslucentBackground)
-struct SemVer {
-  uint8_t major, minor, patch;
-  inline QString operator()() const {
-    return QString("%1.%2.%3")
-        .arg(uint(major))
-        .arg(uint(minor))
-        .arg(uint(patch));
-  }
-};
 
-constexpr SemVer currentVersion{MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION};
+struct qFont {
+  const QString &family = "MiSans";
+  int pointSize = -1;
+  int weight = -1;
+  bool italic = false;
+  inline QFont operator()() { return {family, pointSize, weight, italic}; }
+};
 
 inline int weekday(const QString &s) {
   if (s == "周一") return 0;

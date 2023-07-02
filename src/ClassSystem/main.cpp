@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
   // generate template .stm file
   // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
-
+  
   switchToDesktop();
   return QApplication::exec();
 }

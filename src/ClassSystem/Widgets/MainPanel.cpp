@@ -20,9 +20,9 @@ MainPanel::MainPanel(QWidget *parent)
   labelTime->setObjectName("labelTime");
   labelDDDD->setText(QDate::currentDate().toString("dddd"));
   labelDate->setText(QDate::currentDate().toString("MM-dd"));
-  labelTime->setFont(QFont("华文中宋", 36, QFont::Bold));
-  labelDate->setFont(QFont("MiSans", 14));
-  labelDDDD->setFont(QFont("MiSans", 14));
+  labelTime->setFont(qFont{"华文中宋", 36, QFont::Bold}());
+  labelDate->setFont(qFont{.pointSize = 14}());
+  labelDDDD->setFont(qFont{.pointSize = 14}());
   layoutDateTime->addWidget(labelTime, 0, 0, 2, 1, Qt::AlignBottom);
   layoutDateTime->addWidget(labelDate, 0, 1, Qt::AlignBottom);
   layoutDateTime->addWidget(labelDDDD, 1, 1, Qt::AlignBottom);

@@ -27,7 +27,7 @@ MenuWidget &MenuWidget::addToMenu(const QString &text, const QPixmap &icon) {
   iconLabel->setAlignment(Qt::AlignCenter);
   textLabel->setAlignment(Qt::AlignCenter);
   textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
-  textLabel->setFont(QFont("Inconsolata", 8));
+  textLabel->setFont(qFont{.pointSize = 8}());
   btn->installEventFilter(this);
   btn->setStyleSheet("background-color: white");
   layout->setMargin(5);
@@ -54,11 +54,11 @@ bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
   }
   if (!flag) return false;
   if (ev->type() == QEvent::Enter || ev->type() == QEvent::MouseButtonRelease) {
-    mTextLabels[i]->setFont(QFont("MiSans", 8, 100));
+    mTextLabels[i]->setFont(qFont{.pointSize = 8, .weight = QFont::Bold}());
     return true;
   }
   if (ev->type() == QEvent::Leave) {
-    mTextLabels[i]->setFont(QFont("MiSans", 8));
+    mTextLabels[i]->setFont(qFont{.pointSize = 8}());
     return true;
   }
   if (ev->type() == QEvent::MouseButtonPress ||
