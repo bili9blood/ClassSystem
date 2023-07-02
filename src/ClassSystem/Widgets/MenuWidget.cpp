@@ -45,7 +45,7 @@ MenuWidget &MenuWidget::addToMenu(const QString &text, const QPixmap &icon) {
 
 bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
   bool flag = false;
-  auto i = size_t();
+  auto i = int();
   for (; i < mBtns.size(); ++i) {
     if (mBtns[i] == obj) {
       flag = true;
@@ -70,7 +70,7 @@ bool MenuWidget::eventFilter(QObject *obj, QEvent *ev) {
 }
 
 void MenuWidget::paintEvent(QPaintEvent *ev) {
-  for (auto i = size_t(); i < mIconLabels.size(); ++i)
+  for (auto i = int(); i < mIconLabels.size(); ++i)
     mIconLabels[i]->setPixmap(mPixs[i].scaledToHeight(
         mIconLabels[i]->height(), Qt::SmoothTransformation));
   QPainter painter(this);
