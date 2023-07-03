@@ -1,6 +1,4 @@
 // clang-format off
 
-#define MAJOR_VERSION @PROJECT_VERSION_MAJOR@
-#define MINOR_VERSION @PROJECT_VERSION_MINOR@
-#define PATCH_VERSION @PROJECT_VERSION_PATCH@
-#define COMPILE_TIME @COMPILE_TIME@
+constexpr const char* projectVersion="@PROJECT_VERSION@";
+constexpr const char* compileTime="@COMPOILE_TIME@";

@@ -1,9 +1,10 @@
 #include <QApplication>
+#include <QEventLoop>
 #include <QFontDatabase>
 #include <QMessageBox>
-#include <QProcess>
 #include <QSharedMemory>
 
+#include "Core/Updater.h"
 #include "Widgets/MainPanel.h"
 #include "Widgets/SuspendedWidget.h"
 #include "src/ClassData.h"
@@ -35,6 +36,12 @@ int main(int argc, char *argv[]) {
   if (id != -1)
     QApplication::setFont(QFontDatabase::applicationFontFamilies(id).first());
   // show SuspendedWidget
+  Updater u;
+  QEventLoop loop;
+  QMetaObject::invokeMethod(&u, &Updater::check, Qt::QueuedConnection);
+  QObject::connect(&u, &Updater::checked, &loop, &QEventLoop::quit);
+  loop.exec();
+
   SuspendedWidget susWid;
   susWid.show();
   // show panel
@@ -43,7 +50,7 @@ int main(int argc, char *argv[]) {
 
   // generate template .stm file
   // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
-  
+
   switchToDesktop();
   return QApplication::exec();
 }

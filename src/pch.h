@@ -1,5 +1,6 @@
 #pragma once
 
+#include <config.h>
 #include <windows.h>
 #include <windowsx.h>
 
@@ -17,6 +18,7 @@
 #include <QSettings>
 #include <QString>
 #include <QtGlobal>
+#include <algorithm>
 #include <exception>
 #include <utility>
 
@@ -48,7 +50,20 @@ struct qFont {
   inline QFont operator()() { return {family, pointSize, weight, italic}; }
 };
 
-inline int weekday(const QString &s) {
+static QStringList matchedList(const QString &str, const QString &cap) {
+  QStringList list;
+  QRegExp rx(cap);
+
+  int pos = 0;
+  while ((pos = rx.indexIn(str, pos)) != -1) {
+    int n = rx.matchedLength();
+    list.append(str.mid(pos, n));
+    pos += n;
+  }
+  return list;
+}
+
+static inline int weekday(const QString &s) {
   if (s == "周一") return 0;
   if (s == "周二") return 1;
   if (s == "周三") return 2;
@@ -60,7 +75,7 @@ inline int weekday(const QString &s) {
 }
 
 //! override
-inline QString weekday(const int &i) {
+static inline QString weekday(const int &i) {
   switch (i) {
     case 0:
       return {"周一"};
