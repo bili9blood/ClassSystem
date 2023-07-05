@@ -16,7 +16,6 @@
 #include <QThread>
 #include <QThreadPool>
 
-#include "../../token.h"
 #include "Core/DownloadWorker.h"
 #include "Widgets/UpdateDialog.h"
 class Updater : public QObject {
@@ -33,20 +32,7 @@ class Updater : public QObject {
   QNetworkAccessManager *mNam;
   QNetworkRequest mRequest;
   QProcess mProcess;
-  const QUrl giteeGetLatestReleaseApiUrl{
-      QString("https://gitee.com/api/v5/repos/bili9Blood/class-system-binaries/"
-              "releases/latest?access_token=") +
-      token};
   int mCount = 0;
-  struct FileMovePlan {
-    FileMovePlan(const QString &filePath, const QDir &dst)
-        : file(filePath), dest(dst) {}
-    QFile file;
-    QDir dest;
-    bool exec() {
-      return file.copy(dest.absolutePath() + file.fileName()) && file.remove();
-    }
-  };
 };
 
 #endif  // CLASSSYSTEM_UPDATER_H

@@ -48,6 +48,7 @@ void UpdateDialog::updateProgress(const int &id, const int &progress) {
   mProgressBarTot->setValue(sum);
 }
 void UpdateDialog::removeFile(const int &id) {
+  mProgressBars[id]->setValue(100);
   mLabels[id]->setDisabled(true);
   mProgressBars[id]->setDisabled(true);
 }

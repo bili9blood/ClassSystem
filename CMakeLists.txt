@@ -31,7 +31,7 @@ add_executable(ClassSystem
         src/ClassSystem/Widgets/MenuWidget.cpp
         src/ClassSystem/Widgets/MenuWidget.h
         src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
-        src/ClassData.h src/ClassSystem/Core/Updater.cpp src/ClassSystem/Core/Updater.h src/token.h src/token.h src/ClassSystem/Widgets/UpdateDialog.cpp src/ClassSystem/Widgets/UpdateDialog.h src/ClassSystem/Core/DownloadWorker.cpp src/ClassSystem/Core/DownloadWorker.h)
+        src/ClassData.h src/ClassSystem/Core/Updater.cpp src/ClassSystem/Core/Updater.h src/ClassSystem/Widgets/UpdateDialog.cpp src/ClassSystem/Widgets/UpdateDialog.h src/ClassSystem/Core/DownloadWorker.cpp src/ClassSystem/Core/DownloadWorker.h)
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network Qt5::WinExtras)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)

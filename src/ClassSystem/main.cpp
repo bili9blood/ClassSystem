@@ -35,7 +35,9 @@ int main(int argc, char *argv[]) {
   int id = QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
   if (id != -1)
     QApplication::setFont(QFontDatabase::applicationFontFamilies(id).first());
-  // show SuspendedWidget
+  if (QFile::exists("a.txt")) {
+    return 0;
+  }
   Updater u;
   QEventLoop loop;
   QMetaObject::invokeMethod(&u, &Updater::check, Qt::QueuedConnection);

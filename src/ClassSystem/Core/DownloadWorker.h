@@ -22,6 +22,8 @@ class DownloadWorker : public QObject, public QRunnable {
   const QString mName;
   const QString mUrl;
   const int mId;
+
+  QEventLoop mLoop;
 };
 
 #endif  // CLASSSYSTEM_DOWNLOADWORKER_H

@@ -21,7 +21,7 @@ void DownloadWorker::run() {
   auto process = new QProcess;
   process->setProgram("wget.exe");
   process->setProcessChannelMode(QProcess::MergedChannels);
-  process->setArguments({"-P", "tmp", "-N", mUrl});
+  process->setArguments({"-P", "tmp", mUrl});
   connect(process, &QProcess::readyRead, [process, this] {
     QString out = process->readAll();
     if (out.contains('%')) {
@@ -32,7 +32,11 @@ void DownloadWorker::run() {
       emit getProgress(mId, progress.toInt());
     }
   });
+  connect(process,
+          QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          [this] { emit finishDownloading(mId); });
   process->start(QProcess::ReadOnly);
-  process->waitForFinished();
-  emit finishDownloading(mId);
+  QEventLoop loop;
+  connect(this, &DownloadWorker::finishDownloading, &loop, &QEventLoop::quit);
+  loop.exec();
 }

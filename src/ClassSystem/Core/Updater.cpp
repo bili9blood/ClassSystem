@@ -14,7 +14,9 @@ Updater::Updater(QObject* parent) : QObject(parent) {
   QThreadPool::globalInstance()->setMaxThreadCount(QThread::idealThreadCount());
 }
 void Updater::check() {
-  mRequest.setUrl(giteeGetLatestReleaseApiUrl);
+  mRequest.setUrl(
+      {"https://ghproxy.com/raw.githubusercontent.com/bili9blood/"
+       "class-system-bin/main/latest"});
   auto reply = mNam->get(mRequest);
   QEventLoop loop;
   connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
@@ -33,18 +35,8 @@ void Updater::check() {
     emit checked();
     return;
   }
-  auto jsonErr = QJsonParseError();
-  auto replyJson = QJsonDocument::fromJson(reply->readAll(), &jsonErr);
-  if (jsonErr.error != QJsonParseError::NoError) {
-    QMessageBox::warning(nullptr, "自动更新",
-                         "班级系统自动更新程序无法解析远程版本信息，自动更新中"
-                         "止。\n\n错误原因：" +
-                             jsonErr.errorString(),
-                         QMessageBox::Ok);
-    emit checked();
-    return;
-  }
-  auto remoteVersion = replyJson.object().value("tag_name").toString();
+  QTextStream ts(reply);
+  auto remoteVersion = ts.readLine();
   if (remoteVersion <= projectVersion) {
     // everything up-to-date
     emit checked();
@@ -58,33 +50,31 @@ void Updater::check() {
     return;
   }
   QDir::current().mkdir("tmp");
-  auto assets = replyJson.object().value("assets").toArray();
   UpdateDialog dlg;
   QList<DownloadWorker*> workers;
   qDebug() << "main:"
            << "thread:" << QThread::currentThread();
-  for (const auto val : assets) {
-    if (val.toObject().keys().contains("name")) {
-      ++mCount;
-      auto url = val.toObject().value("browser_download_url").toString();
-      auto name = val.toObject().value("name").toString();
-      int id;
-      dlg.appendFile(name, &id);
-      qDebug() << "id:" << id;
-      auto w = new DownloadWorker(url, name, id);
-      connect(w, &DownloadWorker::getProgress, &dlg,
-              &UpdateDialog::updateProgress);
-      connect(w, &DownloadWorker::finishDownloading, &dlg,
-              &UpdateDialog::removeFile);
-      connect(w, &DownloadWorker::finishDownloading, [this] { --mCount; });
-      QThreadPool::globalInstance()->start(w);
-      workers << w;
-    }
+  while (!ts.atEnd()) {
+    ++mCount;
+    auto name = ts.readLine();
+    auto url = QString(
+                   "https://ghproxy.com/github.com/bili9blood/class-system-bin/"
+                   "releases/"
+                   "download/%1/%2")
+                   .arg(remoteVersion, name);
+    int id;
+    dlg.appendFile(name, &id);
+    auto w = new DownloadWorker(url, name, id);
+    connect(w, &DownloadWorker::getProgress, &dlg,
+            &UpdateDialog::updateProgress);
+    connect(w, &DownloadWorker::finishDownloading, &dlg,
+            &UpdateDialog::removeFile);
+    connect(w, &DownloadWorker::finishDownloading, [this] { --mCount; });
+    QThreadPool::globalInstance()->start(w);
+    workers << w;
   }
-  while (true) {
-    if (mCount == 0) break;
-    QApplication::processEvents();
-  }
+  while (mCount) QApplication::processEvents();
+
   dlg.close();
   // decode file name and move
   auto tmpDir = QDir("tmp");
@@ -100,7 +90,8 @@ void Updater::check() {
     auto file = QFile("tmp/" + i);
     file.copy(dest.absolutePath() + "/" + n) && file.remove();
   }
-  QApplication::quit();
-  system(
-      R"(powershell Copy-Item -Path "tmp/*" -Destination "./" -Recurse -force;Remove-Item "tmp" -Recurse -Force)");
+  qApp->quit();
+  QProcess::startDetached(
+      "powershell",
+      {R"(if($null -ne (Get-Process -Name "ClassSystem" -ErrorAction SilentlyContinue)){Stop-Process -Name "ClassSystem"};Start-Sleep -Seconds 0.5;Copy-Item -Path "tmp/*" -Destination "./" -Recurse -force;Remove-Item "tmp" -Recurse -Force;./ClassSystem.exe)"});
 }
