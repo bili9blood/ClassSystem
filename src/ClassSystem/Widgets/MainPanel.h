@@ -8,18 +8,17 @@ class MainPanel : public QWidget {
 
  public:
   explicit MainPanel(QWidget *parent = nullptr);
-  ~MainPanel() override;
 
  private:
-  QGridLayout *layoutMain = new QGridLayout(this);
-  QGridLayout *layoutDateTime = new QGridLayout;
-  QVBoxLayout *layoutStudentsCarryMeals = new QVBoxLayout;
-  QLabel *labelDate = new QLabel("00-00", this);
-  QLabel *labelTime = new QLabel("00:00:00", this);
-  QLabel *labelDDDD = new QLabel("星期八", this);
-  QTimer timerHalfSeconds;
-  constexpr static const char *timeFormat[2] = {"hh:mm:ss", "hh mm ss"};
-  uint lastSecond;
+  QGridLayout *m_layoutMain = new QGridLayout(this);
+  QGridLayout *m_layoutDateTime = new QGridLayout;
+  QVBoxLayout *m_layoutStudentsCarryMeals = new QVBoxLayout;
+  QLabel *m_labelDate = new QLabel("00-00", this);
+  QLabel *m_labelTime = new QLabel("00:00:00", this);
+  QLabel *m_labelDDDD = new QLabel("星期八", this);
+  QTimer m_timerHalfSeconds;
+  constexpr static const char *m_timeFormat[2] = {"hh:mm:ss", "hh mm ss"};
+  uint m_lastSecond;
  private slots:
   void onHalfSecs();
 

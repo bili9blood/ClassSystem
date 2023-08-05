@@ -1,9 +1,11 @@
 #pragma once
 
 #include <config.h>
+#include <qdebug.h>
 #include <qwidget.h>
 #include <windows.h>
 #include <windowsx.h>
+
 
 static WINBOOL enumWinProc(HWND hwnd, LPARAM) {
   HWND hDefView = FindWindowEx(hwnd, nullptr, "SHELLDLL_DefView", nullptr);

@@ -2,9 +2,9 @@
 #include <qfontdatabase.h>
 #include <qsharedmemory.h>
 
-#include "ClassData.h"
 #include "Widgets/MainPanel.h"
 #include "Widgets/SuspendedWidget.h"
+
 
 /**
  * @brief do the same thing as press `<Win> + D`
