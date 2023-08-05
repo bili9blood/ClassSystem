@@ -49,6 +49,6 @@ void MainPanel::paintEvent(QPaintEvent *) {
 }
 void MainPanel::onHalfSecs() {
   m_labelTime->setText(QTime::currentTime().toString(
-      m_timeFormat[m_lastSecond == QTime::currentTime().second()]));
+      m_kTimeFormat[m_lastSecond == QTime::currentTime().second()]));
   m_lastSecond = QTime::currentTime().second();
 }
