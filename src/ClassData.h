@@ -1,13 +1,10 @@
-//
-// Created by 35012 on 2023/7/1.
-//
+#pragma once
 
-#ifndef CLASSSYSTEM_CLASSDATA_H
-#define CLASSSYSTEM_CLASSDATA_H
-#include <QDataStream>
-#include <QIODevice>
-#include <QObject>
-#include <QVariant>
+#include <qdatetime.h>
+#include <qlist.h>
+#include <qmap.h>
+
+
 namespace ClassData {
 
 struct Data {
@@ -80,5 +77,3 @@ static void writeTo(const ClassData::Data &d, QIODevice *device) {
 }
 
 }  // namespace ClassData
-
-#endif  // CLASSSYSTEM_CLASSDATA_H

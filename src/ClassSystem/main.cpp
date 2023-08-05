@@ -1,15 +1,16 @@
-#include <QApplication>
-#include <QEventLoop>
-#include <QFontDatabase>
-#include <QMessageBox>
-#include <QSharedMemory>
+#include <qapplication.h>
+#include <qfontdatabase.h>
+#include <qsharedmemory.h>
 
-#include "Core/Updater.h"
+#include "ClassData.h"
 #include "Widgets/MainPanel.h"
 #include "Widgets/SuspendedWidget.h"
-#include "src/ClassData.h"
 
-void switchToDesktop() {  // same as press WIN+D
+/**
+ * @brief do the same thing as press `<Win> + D`
+ *
+ */
+void switchToDesktop() {
   INPUT input[4];
   memset(input, 0, sizeof(input));
 
@@ -32,17 +33,10 @@ int main(int argc, char *argv[]) {
 
   QApplication a(argc, argv);
   // add fonts
-  int id = QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
-  if (id != -1)
-    QApplication::setFont(QFontDatabase::applicationFontFamilies(id).first());
-  if (QFile::exists("a.txt")) {
-    return 0;
-  }
-  Updater u;
-  QEventLoop loop;
-  QMetaObject::invokeMethod(&u, &Updater::check, Qt::QueuedConnection);
-  QObject::connect(&u, &Updater::checked, &loop, &QEventLoop::quit);
-  loop.exec();
+  int fontId = QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
+  if (fontId != -1)
+    QApplication::setFont(
+        QFontDatabase::applicationFontFamilies(fontId).first());
 
   SuspendedWidget susWid;
   susWid.show();

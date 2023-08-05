@@ -1,28 +1,9 @@
 #pragma once
 
 #include <config.h>
+#include <qwidget.h>
 #include <windows.h>
 #include <windowsx.h>
-
-#include <QApplication>
-#include <QDateTime>
-#include <QDebug>
-#include <QDir>
-#include <QEvent>
-#include <QFile>
-#include <QHash>
-#include <QMessageBox>
-#include <QObject>
-#include <QPainter>
-#include <QPointer>
-#include <QSettings>
-#include <QString>
-#include <QtGlobal>
-#include <algorithm>
-#include <exception>
-#include <utility>
-
-using namespace std::string_literals;
 
 static WINBOOL enumWinProc(HWND hwnd, LPARAM) {
   HWND hDefView = FindWindowEx(hwnd, nullptr, "SHELLDLL_DefView", nullptr);
@@ -40,7 +21,9 @@ static void setParentToDesktop(HWND hwnd) {
   EnumWindows(enumWinProc, 0);
 }
 
-#define SET_WIDGET_TRANSPARENT setAttribute(Qt::WA_TranslucentBackground)
+constexpr void setWidgetTransparent(QWidget *widget) {
+  widget->setAttribute(Qt::WA_TranslucentBackground);
+}
 
 struct qFont {
   const QString &family = "MiSans";

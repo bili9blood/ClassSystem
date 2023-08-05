@@ -1,12 +1,6 @@
 #pragma once
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QMouseEvent>
-#include <QPaintEvent>
-#include <QScreen>
-#include <QWidget>
-
-#include "Widgets/MenuWidget.h"
+#include <qapplication.h>
+#include <qlabel.h>
 
 class SuspendedWidget : public QWidget {
   Q_OBJECT
@@ -17,7 +11,6 @@ class SuspendedWidget : public QWidget {
  private:
   // other widgets
   QLabel *popMenuLabel = new QLabel(this);
-  MenuWidget *menuWid = new MenuWidget(nullptr);
   QPoint mStartPoint;
  private slots:
   void onMenuClicked(size_t menuID);

@@ -1,17 +1,8 @@
-//
-// Created by 35012 on 2023/6/30.
-//
+#pragma once
 
-#ifndef CLASSSYSTEM_MAINPANEL_H
-#define CLASSSYSTEM_MAINPANEL_H
-
-#include <QDateTime>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QTimer>
-#include <QWidget>
-
+#include <qboxlayout.h>
+#include <qlabel.h>
+#include <qtimer.h>
 class MainPanel : public QWidget {
   Q_OBJECT
 
@@ -22,6 +13,7 @@ class MainPanel : public QWidget {
  private:
   QGridLayout *layoutMain = new QGridLayout(this);
   QGridLayout *layoutDateTime = new QGridLayout;
+  QVBoxLayout *layoutStudentsCarryMeals = new QVBoxLayout;
   QLabel *labelDate = new QLabel("00-00", this);
   QLabel *labelTime = new QLabel("00:00:00", this);
   QLabel *labelDDDD = new QLabel("星期八", this);
@@ -34,5 +26,3 @@ class MainPanel : public QWidget {
  protected:
   void paintEvent(QPaintEvent *) override;
 };
-
-#endif  // CLASSSYSTEM_MAINPANEL_H
