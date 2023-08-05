@@ -3,8 +3,7 @@
 #include <qsharedmemory.h>
 
 #include "Widgets/MainPanel.h"
-#include "Widgets/SuspendedWidget.h"
-
+#include "Widgets/PopupMenu.h"
 
 /**
  * @brief do the same thing as press `<Win> + D`
@@ -38,8 +37,8 @@ int main(int argc, char *argv[]) {
     QApplication::setFont(
         QFontDatabase::applicationFontFamilies(fontId).first());
 
-  SuspendedWidget susWid;
-  susWid.show();
+  PopupMenu menu;
+  menu.show();
   // show panel
   MainPanel panel;
   panel.show();

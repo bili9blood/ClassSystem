@@ -4,5 +4,6 @@
         <file>font/MiSans-Regular.ttf</file>
         <file>img/logo.png</file>
         <file>img/exit.png</file>
+        <file>img/menu.png</file>
     </qresource>
 </RCC>
