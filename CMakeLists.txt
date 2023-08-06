@@ -19,14 +19,6 @@ endif()
 
 include_directories(src ${CMAKE_BINARY_DIR})
 
-# Configure CCache if available
-find_program(CCACHE_FOUND ccache)
-
-if(CCACHE_FOUND)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
-    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
-endif(CCACHE_FOUND)
-
 # target ClassSystem BEGIN
 add_executable(ClassSystem
 
@@ -37,6 +29,7 @@ add_executable(ClassSystem
 
     src/ClassSystem/Widgets/PopupMenu.cpp src/ClassSystem/Widgets/PopupMenu.h
     src/ClassSystem/Widgets/MenuButton.cpp src/ClassSystem/Widgets/MenuButton.h
+    src/ClassSystem/Widgets/ScreenCapturer.cpp src/ClassSystem/Widgets/ScreenCapturer.h
 
     src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
     src/ClassData.h

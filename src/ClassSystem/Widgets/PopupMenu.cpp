@@ -8,7 +8,7 @@ PopupMenu::PopupMenu(QWidget *parent)
   setWidgetTransparent(this);
 
   // append buttons
-  m_btnsList << new MenuButton({":/img/exit.png"}, "test", m_btnsWidget);
+  m_btnsList << new MenuButton({":/img/capture.png"}, "截图", m_btnsWidget);
   setWidgetTransparent(m_btnsWidget);
   m_btnsLayout->setMargin(0);
   m_btnsLayout->setSpacing(0);
@@ -48,9 +48,11 @@ void PopupMenu::onBtnClicked() {
   for (int i = 0; i < m_btnsList.size(); ++i) {
     if (btn == m_btnsList.at(i)) {
       switch (i) {
-        case 0:  // test
-          qDebug() << "Test Button Clicked";
+        case 0:  // capture screen
+          m_capturer.capture();
+          break;
       }
+      break;
     }
   }
 }

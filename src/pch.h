@@ -1,26 +1,33 @@
 #pragma once
 
 #include <config.h>
+#include <qapplication.h>
 #include <qdebug.h>
 #include <qwidget.h>
 #include <windows.h>
 #include <windowsx.h>
 
-
-static WINBOOL enumWinProc(HWND hwnd, LPARAM) {
-  HWND hDefView = FindWindowEx(hwnd, nullptr, "SHELLDLL_DefView", nullptr);
-  if (hDefView != nullptr) {
-    HWND hWorkerW = FindWindowEx(nullptr, hwnd, "WorkerW", nullptr);
-    ShowWindow(hWorkerW, SW_HIDE);
-    return FALSE;
-  }
-  return TRUE;
+inline QColor invertColor(const QColor &color) {
+  return {255 - color.red(), 255 - color.green(), 255 - color.blue()};
 }
-static void setParentToDesktop(HWND hwnd) {
+
+inline void setParentToDesktop(HWND hwnd) {
   HWND hProgman = FindWindow("Progman", nullptr);
   SendMessage(hProgman, 0x52c, 0, 0);
   SetParent(hwnd, hProgman);
-  EnumWindows(enumWinProc, 0);
+  EnumWindows(
+      (int (*)(HWND, LPARAM))  // cast
+          [](HWND hwnd, LPARAM) {
+            HWND hDefView =
+                FindWindowEx(hwnd, nullptr, "SHELLDLL_DefView", nullptr);
+            if (hDefView != nullptr) {
+              HWND hWorkerW = FindWindowEx(nullptr, hwnd, "WorkerW", nullptr);
+              ShowWindow(hWorkerW, SW_HIDE);
+              return FALSE;
+            }
+            return TRUE;
+          },
+      0);
 }
 
 constexpr void setWidgetTransparent(QWidget *widget) {
@@ -35,7 +42,7 @@ struct qFont {
   inline QFont operator()() { return {family, pointSize, weight, italic}; }
 };
 
-static QStringList matchedList(const QString &str, const QString &cap) {
+inline QStringList matchedList(const QString &str, const QString &cap) {
   QStringList list;
   QRegExp rx(cap);
 
@@ -48,7 +55,7 @@ static QStringList matchedList(const QString &str, const QString &cap) {
   return list;
 }
 
-static inline int weekday(const QString &s) {
+inline int weekday(const QString &s) {
   if (s == "周一") return 0;
   if (s == "周二") return 1;
   if (s == "周三") return 2;
@@ -60,7 +67,7 @@ static inline int weekday(const QString &s) {
 }
 
 //! override
-static inline QString weekday(const int &i) {
+inline QString weekday(const int &i) {
   switch (i) {
     case 0:
       return {"周一"};

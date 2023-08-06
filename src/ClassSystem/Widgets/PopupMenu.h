@@ -1,7 +1,6 @@
 #pragma once
 
 #include <qabstractnativeeventfilter.h>
-#include <qapplication.h>
 #include <qboxlayout.h>
 #include <qevent.h>
 #include <qlabel.h>
@@ -9,6 +8,7 @@
 #include <qtimer.h>
 
 #include "MenuButton.h"
+#include "ScreenCapturer.h"
 
 class PopupMenu : public QWidget {
   Q_OBJECT
@@ -42,6 +42,8 @@ class PopupMenu : public QWidget {
   QColor m_bgColor = {31, 33, 34, 185};
 
   QTimer m_timerClose;
+
+  ScreenCapturer m_capturer;
 
   // functions
   void updateBtnsPosition();

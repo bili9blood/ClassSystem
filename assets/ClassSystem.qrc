@@ -6,5 +6,6 @@
         <file>img/exit.png</file>
         <file>img/menu.png</file>
         <file>img/menu-opened.png</file>
+        <file>img/capture.png</file>
     </qresource>
 </RCC>
