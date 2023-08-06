@@ -34,7 +34,10 @@ add_executable(ClassSystem
 
     assets/ClassSystem.qrc
     src/ClassSystem/main.cpp
+
     src/ClassSystem/Widgets/PopupMenu.cpp src/ClassSystem/Widgets/PopupMenu.h
+    src/ClassSystem/Widgets/MenuButton.cpp src/ClassSystem/Widgets/MenuButton.h
+
     src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
     src/ClassData.h
 )
