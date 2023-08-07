@@ -19,16 +19,14 @@ class ScreenCapturer : public QWidget {
 
  private:
   QRect m_captureRect;
-  QLabel *m_imgLabel = new QLabel(this);
-  QLabel *m_tipLabel = new QLabel("正在截图", this);
   QDialogButtonBox *m_btnBox = new QDialogButtonBox();
   QPixmap m_capturedImg;
-  QWidget *m_drawRectWidget = new QWidget(
-      this, Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint);
 
   const QSize kScreenSize = QApplication::primaryScreen()->size();
 
   QList<ImgPaster *> m_pasterPool;
+
+  enum class Status { Preparing, Selecting, Finish } m_status;
 
   // functions
   QRect absRect(const QRect &r);
@@ -37,7 +35,11 @@ class ScreenCapturer : public QWidget {
   void cropImg();
 
  protected:
-  bool eventFilter(QObject *obj, QEvent *ev) override;
+  void paintEvent(QPaintEvent *) override;
   void closeEvent(QCloseEvent *) override;
   void keyPressEvent(QKeyEvent *) override;
+  void mouseDoubleClickEvent(QMouseEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
+  void mouseReleaseEvent(QMouseEvent *) override;
 };
