@@ -38,7 +38,7 @@ MainPanel::MainPanel(QWidget *parent)
   connect(&m_timerHalfSeconds, &QTimer::timeout, this, &MainPanel::onHalfSecs);
   m_timerHalfSeconds.start();
   setWidgetTransparent(this);
-  setParentToDesktop((HWND)winId());
+  setParentToDesktop(this);
   m_lastSecond = QTime::currentTime().second();
 }
 void MainPanel::paintEvent(QPaintEvent *) {
@@ -51,4 +51,12 @@ void MainPanel::onHalfSecs() {
   m_labelTime->setText(QTime::currentTime().toString(
       m_kTimeFormat[m_lastSecond == QTime::currentTime().second()]));
   m_lastSecond = QTime::currentTime().second();
+}
+
+void MainPanel::mousePressEvent(QMouseEvent *ev) {
+  m_mouseStartPoint = pos() - ev->globalPos();
+}
+
+void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
+  move(ev->globalPos() + m_mouseStartPoint);
 }

@@ -29,7 +29,9 @@ add_executable(ClassSystem
 
     src/ClassSystem/Widgets/PopupMenu.cpp src/ClassSystem/Widgets/PopupMenu.h
     src/ClassSystem/Widgets/MenuButton.cpp src/ClassSystem/Widgets/MenuButton.h
+
     src/ClassSystem/Widgets/ScreenCapturer.cpp src/ClassSystem/Widgets/ScreenCapturer.h
+    src/ClassSystem/Widgets/ImgPaster.cpp src/ClassSystem/Widgets/ImgPaster.h
 
     src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
     src/ClassData.h

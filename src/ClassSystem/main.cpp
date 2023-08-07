@@ -1,8 +1,16 @@
 #include <qfontdatabase.h>
 #include <qsharedmemory.h>
+#include <qtranslator.h>
 
 #include "Widgets/MainPanel.h"
 #include "Widgets/PopupMenu.h"
+
+void checkDirs() {
+  const QStringList dirs = {"screenshots"};
+  auto c = QDir::current();
+  foreach (const QString &dirName, dirs)
+    if (!c.exists(dirName)) c.mkdir(dirName);
+}
 
 int main(int argc, char *argv[]) {
   // single application
@@ -16,6 +24,8 @@ int main(int argc, char *argv[]) {
   if (fontId != -1)
     QApplication::setFont(
         QFontDatabase::applicationFontFamilies(fontId).first());
+
+  checkDirs();
 
   PopupMenu menu;
   menu.show();

@@ -3,31 +3,48 @@
 #include <config.h>
 #include <qapplication.h>
 #include <qdebug.h>
+#include <qdir.h>
 #include <qwidget.h>
 #include <windows.h>
 #include <windowsx.h>
+
 
 inline QColor invertColor(const QColor &color) {
   return {255 - color.red(), 255 - color.green(), 255 - color.blue()};
 }
 
-inline void setParentToDesktop(HWND hwnd) {
-  HWND hProgman = FindWindow("Progman", nullptr);
-  SendMessage(hProgman, 0x52c, 0, 0);
-  SetParent(hwnd, hProgman);
+inline void setParentToDesktop(QWidget *pWidget) {
+  HWND resultHwnd = nullptr;
   EnumWindows(
-      (int (*)(HWND, LPARAM))  // cast
-          [](HWND hwnd, LPARAM) {
-            HWND hDefView =
-                FindWindowEx(hwnd, nullptr, "SHELLDLL_DefView", nullptr);
-            if (hDefView != nullptr) {
-              HWND hWorkerW = FindWindowEx(nullptr, hwnd, "WorkerW", nullptr);
-              ShowWindow(hWorkerW, SW_HIDE);
-              return FALSE;
+      static_cast<WNDENUMPROC>(
+          // lambda: 通过枚举找到桌面图标窗口
+          [](HWND hwnd, LPARAM lParam) {
+            long wflags = GetWindowLong(hwnd, GWL_STYLE);
+            if (!(wflags & WS_VISIBLE)) {
+              return TRUE;
+            };
+
+            HWND sndWnd;
+            if (!(sndWnd = FindWindowExW(hwnd, nullptr, L"SHELLDLL_DefView",
+                                         nullptr))) {
+              return TRUE;
             }
-            return TRUE;
-          },
-      0);
+            HWND targetWnd;
+            if (!(targetWnd = FindWindowExW(sndWnd, nullptr, L"SysListView32",
+                                            L"FolderView"))) {
+              return TRUE;
+            }
+
+            HWND *resultHwnd = (HWND *)lParam;
+            *resultHwnd = targetWnd;
+            return FALSE;
+          }),
+      (LPARAM)&resultHwnd);
+
+  // 设置桌面为父窗口
+  if (resultHwnd) {
+    SetParent((HWND)pWidget->winId(), resultHwnd);
+  }
 }
 
 constexpr void setWidgetTransparent(QWidget *widget) {

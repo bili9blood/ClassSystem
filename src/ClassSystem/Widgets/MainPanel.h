@@ -1,6 +1,7 @@
 #pragma once
 
 #include <qboxlayout.h>
+#include <qevent.h>
 #include <qlabel.h>
 #include <qtimer.h>
 class MainPanel : public QWidget {
@@ -19,9 +20,13 @@ class MainPanel : public QWidget {
   QTimer m_timerHalfSeconds;
   constexpr static const char *m_kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
   uint m_lastSecond;
+
+  QPoint m_mouseStartPoint;
  private slots:
   void onHalfSecs();
 
  protected:
   void paintEvent(QPaintEvent *) override;
+  void mousePressEvent(QMouseEvent *) override;
+  void mouseMoveEvent(QMouseEvent *) override;
 };

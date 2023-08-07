@@ -9,28 +9,35 @@ ScreenCapturer::ScreenCapturer(QWidget *parent)
               Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint) {
   setWidgetTransparent(this);
   setWidgetTransparent(m_drawRectWidget);
-  setCursor(Qt::CrossCursor);
+  setWidgetTransparent(m_btnBox);
+  m_drawRectWidget->setCursor(Qt::CrossCursor);
   m_imgLabel->setFixedSize(QApplication::primaryScreen()->size());
   m_drawRectWidget->setFixedSize(QApplication::primaryScreen()->size());
   m_tipLabel->setFont(qFont{.pointSize = 18, .weight = 300}());
   m_tipLabel->move(QApplication::primaryScreen()->size().width() / 2 -
                        m_tipLabel->width() / 2,
                    0);
+
+  m_btnBox->setWindowFlags(windowFlags());
+  m_btnBox->addButton("确认", QDialogButtonBox::AcceptRole);
+  m_btnBox->addButton("取消", QDialogButtonBox::RejectRole);
+
+  connect(m_btnBox, &QDialogButtonBox::accepted, this,
+          &ScreenCapturer::cropImg);
+  connect(m_btnBox, &QDialogButtonBox::rejected, this, &ScreenCapturer::close);
 }
 
 ScreenCapturer::~ScreenCapturer() {
   delete m_drawRectWidget;
   delete m_imgLabel;
   delete m_tipLabel;
+  delete m_btnBox;
 }
 
 void ScreenCapturer::capture() {
   m_captureRect = {};
   m_capturedImg = QApplication::primaryScreen()->grabWindow(
       QApplication::desktop()->winId());
-  auto fileName = "screenshots/" +
-                  QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss") +
-                  ".png";
 
   // show tip
   m_tipLabel->setStyleSheet(
@@ -63,9 +70,27 @@ QRect ScreenCapturer::absRect(const QRect &r) {
   return QRect(left, top, std::abs(r.width()), std::abs(r.height()));
 }
 
+void ScreenCapturer::cropImg() {
+  auto fileName = "screenshots/" +
+                  QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss") +
+                  ".png";
+  auto img = m_capturedImg.copy(absRect(m_captureRect));
+  img.save(fileName);
+
+  auto newPaster = new ImgPaster(nullptr, img);
+  m_pasterPool << newPaster;
+  newPaster->show();
+  newPaster->move(cursor().pos());
+  connect(newPaster, &ImgPaster::closed, [this] {
+    m_pasterPool.removeOne(qobject_cast<ImgPaster *>(sender()));
+  });
+  close();
+}
+
 bool ScreenCapturer::eventFilter(QObject *obj, QEvent *ev) {
   if (obj == m_drawRectWidget) {
     if (ev->type() == QEvent::MouseButtonPress) {
+      m_btnBox->close();
       auto e = static_cast<QMouseEvent *>(ev);
       m_captureRect.setTopLeft(e->pos());
       m_captureRect.setBottomRight(e->pos());
@@ -75,8 +100,14 @@ bool ScreenCapturer::eventFilter(QObject *obj, QEvent *ev) {
       auto e = static_cast<QMouseEvent *>(ev);
       m_captureRect.setBottomRight(e->pos());
       m_drawRectWidget->update();
+      auto r = absRect(m_captureRect);
+      m_btnBox->show();
+      m_btnBox->move(
+          std::max(r.right() - m_btnBox->width(), 0),
+          std::min(r.bottom() + 5, kScreenSize.height() - m_btnBox->height()));
       return true;
     }
+
     if (ev->type() == QEvent::MouseButtonRelease) {
       auto e = static_cast<QMouseEvent *>(ev);
       m_captureRect.setBottomRight(e->pos());
@@ -84,6 +115,10 @@ bool ScreenCapturer::eventFilter(QObject *obj, QEvent *ev) {
         close();
         return true;
       }
+      return true;
+    }
+    if (ev->type() == QEvent::MouseButtonDblClick) {
+      close();
       return true;
     }
     if (ev->type() == QEvent::KeyPress) {
@@ -110,7 +145,10 @@ bool ScreenCapturer::eventFilter(QObject *obj, QEvent *ev) {
       painter.drawPoint(r.bottomRight());
       painter.setCompositionMode(QPainter::CompositionMode_Clear);
       painter.eraseRect(m_captureRect);
-      // qDebug() << m_captureRect;
+
+      // 画一层不透明度为1的矩形，不让鼠标穿透到下方
+      painter.setCompositionMode(QPainter::CompositionMode());
+      painter.fillRect(m_captureRect, QColor(0, 0, 0, 1));
     }
   }
   return false;
@@ -118,5 +156,10 @@ bool ScreenCapturer::eventFilter(QObject *obj, QEvent *ev) {
 
 void ScreenCapturer::closeEvent(QCloseEvent *) {
   m_drawRectWidget->close();
+  m_btnBox->close();
   m_imgLabel->clear();
+}
+
+void ScreenCapturer::keyPressEvent(QKeyEvent *ev) {
+  if (ev->key() == Qt::Key_Escape) close();
 }
