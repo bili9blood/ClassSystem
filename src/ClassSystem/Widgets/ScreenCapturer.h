@@ -13,7 +13,6 @@ class ScreenCapturer : public QWidget {
   Q_OBJECT
  public:
   explicit ScreenCapturer(QWidget *parent = nullptr);
-  ~ScreenCapturer();
 
   void capture();
 

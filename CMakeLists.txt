@@ -22,7 +22,7 @@ include_directories(src ${CMAKE_BINARY_DIR})
 # target ClassSystem BEGIN
 add_executable(ClassSystem
 
-    ${APP_CMD_TYPE} # WIN32
+    ${APP_CMD_TYPE} # `WIN32` or None
 
     assets/ClassSystem.qrc
     src/ClassSystem/main.cpp
@@ -37,7 +37,7 @@ add_executable(ClassSystem
     src/ClassData.h
 )
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
-target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network Qt5::WinExtras)
+target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 
 # target ClassSystem END

@@ -23,11 +23,6 @@ ScreenCapturer::ScreenCapturer(QWidget *parent)
   connect(m_btnBox, &QDialogButtonBox::rejected, this, &ScreenCapturer::close);
 }
 
-ScreenCapturer::~ScreenCapturer() {
-  delete m_btnBox;
-  foreach (ImgPaster *p, m_pasterPool) delete p;
-}
-
 void ScreenCapturer::capture() {
   m_status = Status::Preparing;
   m_capturedImg = QApplication::primaryScreen()->grabWindow(

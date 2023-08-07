@@ -1,28 +1,53 @@
 #pragma once
 
+#include <qaction.h>
 #include <qboxlayout.h>
 #include <qevent.h>
+#include <qframe.h>
 #include <qlabel.h>
+#include <qlistwidget.h>
+#include <qmenu.h>
+#include <qsystemtrayicon.h>
 #include <qtimer.h>
+
+#include "ClassData.h"
 class MainPanel : public QWidget {
   Q_OBJECT
 
  public:
   explicit MainPanel(QWidget *parent = nullptr);
-  ~MainPanel();
 
  private:
-  QGridLayout *m_layoutMain = new QGridLayout(this);
-  QGridLayout *m_layoutDateTime = new QGridLayout;
-  QVBoxLayout *m_layoutStudentsCarryMeals = new QVBoxLayout;
+  // layouts
+  QGridLayout *m_mainLayout = new QGridLayout(this);
+  QGridLayout *m_dateTimeLayout = new QGridLayout();
+  QVBoxLayout *m_mealStuLayout = new QVBoxLayout();
+  QVBoxLayout *m_stuOnDutyLayout = new QVBoxLayout();
+
+  QFrame *m_stuLine = new QFrame(this);
+
+  // datetime
   QLabel *m_labelDate = new QLabel("00-00", this);
   QLabel *m_labelTime = new QLabel("00:00:00", this);
   QLabel *m_labelDDDD = new QLabel("星期八", this);
-  QTimer m_timerHalfSeconds;
-  constexpr static const char *m_kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
-  uint m_lastSecond;
+
+  ClassData::Data m_data = ClassData::readFrom(new QFile("data.stm"));
+
+  // students carry meals
+  QLabel *m_mealStuTitle = new QLabel("抬饭生", this);
+  QLabel *m_mealStuLabel = new QLabel(this);
+
+  // students on duty
+  QLabel *m_stuOnDutyTitle = new QLabel("值日生", this);
+  QLabel *m_stuOnDutyLabel = new QLabel(this);
+
+  // timers
+  QTimer m_timer;
+  constexpr static const char *kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
+  bool m_formatWithColons = true;
 
   QPoint m_mouseStartPoint;
+
  private slots:
   void onHalfSecs();
 

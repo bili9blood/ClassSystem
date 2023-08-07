@@ -2,12 +2,12 @@
 
 #include <config.h>
 #include <qapplication.h>
+#include <qdatetime.h>
 #include <qdebug.h>
 #include <qdir.h>
 #include <qwidget.h>
 #include <windows.h>
 #include <windowsx.h>
-
 
 inline QColor invertColor(const QColor &color) {
   return {255 - color.red(), 255 - color.green(), 255 - color.blue()};
@@ -72,19 +72,21 @@ inline QStringList matchedList(const QString &str, const QString &cap) {
   return list;
 }
 
-inline int weekday(const QString &s) {
+inline int oneDayOfWeek(const QString &s) {
   if (s == "周一") return 0;
   if (s == "周二") return 1;
   if (s == "周三") return 2;
   if (s == "周四") return 3;
   if (s == "周五") return 4;
-  if (s == "周六") return 5;
-  if (s == "周日") return 6;
+
+  // 数据里只有工作日的信息，按正常来会越界访问
+  if (s == "周六") return 0;
+  if (s == "周日") return 1;
   return -1;
 }
 
 //! override
-inline QString weekday(const int &i) {
+inline QString oneDayOfWeek(const int &i) {
   switch (i) {
     case 0:
       return {"周一"};
@@ -103,4 +105,8 @@ inline QString weekday(const int &i) {
     default:
       return {};
   }
+}
+
+inline int dayToday() {
+  return oneDayOfWeek(QDate::currentDate().toString("ddd"));
 }
