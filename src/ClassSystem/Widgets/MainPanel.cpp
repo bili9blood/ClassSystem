@@ -41,6 +41,16 @@ MainPanel::MainPanel(QWidget *parent)
   setParentToDesktop(this);
   m_lastSecond = QTime::currentTime().second();
 }
+
+MainPanel::~MainPanel() {
+  delete m_layoutMain;
+  delete m_layoutDateTime;
+  delete m_layoutStudentsCarryMeals;
+  delete m_labelDate;
+  delete m_labelTime;
+  delete m_labelDDDD;
+}
+
 void MainPanel::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.setBrush(QColor(31, 33, 34, 235));

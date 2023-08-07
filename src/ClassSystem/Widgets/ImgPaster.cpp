@@ -25,11 +25,11 @@ ImgPaster::ImgPaster(QWidget *parent, QPixmap pixmap)
   m_initalSize = size();
 }
 
-// ImgPaster::~ImgPaster() {
-//   // m_mainLayout->deleteLater();
-//   // m_labelPixmap->deleteLater();
-//   // m_labelSize->deleteLater();
-// }
+ImgPaster::~ImgPaster() {
+  m_mainLayout->deleteLater();
+  m_labelPixmap->deleteLater();
+  m_labelSize->deleteLater();
+}
 
 void ImgPaster::hideSizeLabel() {
   m_labelSize->setVisible(false);

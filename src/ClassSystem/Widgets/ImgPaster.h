@@ -10,7 +10,7 @@ class ImgPaster : public QWidget {
 
  public:
   ImgPaster(QWidget *parent, QPixmap pixmap);
-  // ~ImgPaster();
+  ~ImgPaster();
 
  private:
   QLabel *m_labelPixmap = new QLabel(this);

@@ -9,6 +9,7 @@ class MainPanel : public QWidget {
 
  public:
   explicit MainPanel(QWidget *parent = nullptr);
+  ~MainPanel();
 
  private:
   QGridLayout *m_layoutMain = new QGridLayout(this);
