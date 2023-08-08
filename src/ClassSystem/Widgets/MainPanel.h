@@ -20,16 +20,19 @@ class MainPanel : public QWidget {
  private:
   // layouts
   QGridLayout *m_mainLayout = new QGridLayout(this);
-  QGridLayout *m_dateTimeLayout = new QGridLayout();
+  QGridLayout *m_headerLayout = new QGridLayout();
   QVBoxLayout *m_mealStuLayout = new QVBoxLayout();
   QVBoxLayout *m_stuOnDutyLayout = new QVBoxLayout();
 
+  // lines
+  QFrame *m_sentenceLine = new QFrame(this);
   QFrame *m_stuLine = new QFrame(this);
 
-  // datetime
+  // header
   QLabel *m_labelDate = new QLabel("00-00", this);
   QLabel *m_labelTime = new QLabel("00:00:00", this);
   QLabel *m_labelDDDD = new QLabel("星期八", this);
+  QLabel *m_sentenceLabel = new QLabel(this);
 
   ClassData::Data m_data = ClassData::readFrom(new QFile("data.stm"));
 

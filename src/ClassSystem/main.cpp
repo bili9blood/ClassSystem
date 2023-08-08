@@ -26,6 +26,8 @@ int main(int argc, char *argv[]) {
         QFontDatabase::applicationFontFamilies(fontId).first());
 
   checkDirs();
+  // generate template .stm file
+  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
 
   PopupMenu menu;
   menu.show();
@@ -42,8 +44,6 @@ int main(int argc, char *argv[]) {
   m_trayMenu->addAction(m_quitAction);
   m_trayIcon->setContextMenu(m_trayMenu);
   m_trayIcon->show();
-  // generate template .stm file
-  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
 
   return QApplication::exec();
 }

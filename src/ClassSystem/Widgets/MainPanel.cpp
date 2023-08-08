@@ -3,6 +3,7 @@
 #include <qbrush.h>
 #include <qdatetime.h>
 #include <qpainter.h>
+#include <qrandom.h>
 #include <qsizepolicy.h>
 
 MainPanel::MainPanel(QWidget *parent)
@@ -12,7 +13,7 @@ MainPanel::MainPanel(QWidget *parent)
 
   setStyleSheet(R"(
 
-#labelDDDD, #labelDate,#mealStuListWid, #stuOnDutyListWid, #stuLine {
+#labelDDDD, #labelDate, #mealStuListWid, #stuOnDutyListWid, #sentenceLine, #stuLine {
   color: #d2d0ce;
 }
 #mealStuTitle, #stuOnDutyTitle{
@@ -26,79 +27,96 @@ MainPanel::MainPanel(QWidget *parent)
 }
 )");
 
-  // show datetime
+  // init header
   m_labelDDDD->setObjectName("labelDDDD");
   m_labelDate->setObjectName("labelDate");
   m_labelTime->setObjectName("labelTime");
   m_labelDDDD->setText(QDate::currentDate().toString("dddd"));
   m_labelDate->setText(QDate::currentDate().toString("MM-dd"));
+  m_labelDate->setFont(qFont{.pointSize = 16}());
+  m_labelDDDD->setFont(qFont{.pointSize = 16}());
   m_labelTime->setFont(qFont{"华文中宋", 36, QFont::Bold}());
   m_labelDate->setFont(qFont{.pointSize = 16}());
   m_labelDDDD->setFont(qFont{.pointSize = 16}());
 
-  // show students carry meals
-  m_mealStuLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+  m_sentenceLabel->setStyleSheet("color: #e5c07b;");
+  QFile sentenceFile(":/other/sentences.txt");
+  if (sentenceFile.open(QFile::ReadOnly | QFile::Text)) {
+    QStringList lines =
+        QString::fromUtf8(sentenceFile.readAll()).remove('\r').split('\n');
+    m_sentenceLabel->setText(
+        lines.at(QRandomGenerator::global()->bounded(0, lines.size())));
+  }
+  m_sentenceLabel->setWordWrap(true);
+  m_sentenceLabel->setFont(qFont{.family = "仿宋", .pointSize = 17}());
+
+  // init students carry meals
   m_mealStuLabel->setFrameShape(QFrame::NoFrame);
   m_mealStuLabel->setObjectName("mealStuListWid");
   m_mealStuLabel->setFont(
-      qFont{.family = "'Consolas', 'MiSans'", .pointSize = 18}());
-  m_mealStuLabel->setFocusPolicy(Qt::NoFocus);
+      qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
   auto mealStuToday = m_data.mealStu[dayToday()];
   for (const uint &id : mealStuToday) {
     m_mealStuLabel->setText(m_mealStuLabel->text() + "\n" +
                             m_data.idAndName(id));
   }
-  m_mealStuTitle->setAlignment(Qt::AlignTop);
-  m_mealStuLabel->setAlignment(Qt::AlignTop);
   m_mealStuLabel->setText(m_mealStuLabel->text().mid(1));
 
   m_mealStuTitle->setObjectName("mealStuTitle");
-  m_mealStuTitle->setFont(qFont{.pointSize = 21, .weight = QFont::Bold}());
+  m_mealStuTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
 
-  // show students on duty
+  // init students on duty
   m_stuOnDutyLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
                                   QSizePolicy::MinimumExpanding);
   m_stuOnDutyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_stuOnDutyLabel->setFrameShape(QFrame::NoFrame);
   m_stuOnDutyLabel->setObjectName("stuOnDutyListWid");
   m_stuOnDutyLabel->setFont(
-      qFont{.family = "'Consolas', 'MiSans'", .pointSize = 18}());
-  m_stuOnDutyLabel->setFocusPolicy(Qt::NoFocus);
-  m_stuOnDutyLabel->setAlignment(Qt::AlignTop);
+      qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
   auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
-  for (const QList<uint> &l : stuOnDutyToday) {
+  for (int i = 0; i < stuOnDutyToday.size(); ++i) {
+    QList<uint> l = stuOnDutyToday[i];
     if (l.empty()) continue;
-    QString displayStr;
+    QString displayStr =
+        QString(
+            R"(<font style="font-weight: 1000; font-size: 25pt; display: inline;">%1:</font>)")
+            .arg(m_data.dutyJobs[i]);
     for (const uint &id : l) displayStr += " " + m_data.idAndName(id);
-    m_stuOnDutyLabel->setText(m_stuOnDutyLabel->text() + "\n" +
-                              displayStr.mid(1));
+    m_stuOnDutyLabel->setText(m_stuOnDutyLabel->text() + "<br></br>" +
+                              displayStr);
   }
-  m_stuOnDutyLabel->setText(m_stuOnDutyLabel->text().mid(1));
+  m_stuOnDutyLabel->setText(
+      m_stuOnDutyLabel->text().mid(9));  // 移除第一个 `<br></br>`
 
   m_stuOnDutyTitle->setObjectName("stuOnDutyTitle");
-  m_stuOnDutyTitle->setFont(qFont{.pointSize = 21, .weight = QFont::Bold}());
+  m_stuOnDutyTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
 
   // init lines
+  m_sentenceLine->setFrameShape(QFrame::VLine);
+  m_sentenceLine->setObjectName("sentenceLine");
+
   m_stuLine->setFrameShape(QFrame::VLine);
   m_stuLine->setObjectName("stuLine");
-  // init layouts
 
+  // init layouts
   m_mainLayout->setMargin(10);
   m_mainLayout->setSpacing(10);
-  m_mainLayout->addLayout(m_dateTimeLayout, 0, 0, 1, 3, Qt::AlignLeft);
+  m_mainLayout->addLayout(m_headerLayout, 0, 0, 1, 3, Qt::AlignLeft);
   m_mainLayout->addLayout(m_mealStuLayout, 1, 0);
   m_mainLayout->addWidget(m_stuLine, 1, 1);
   m_mainLayout->addLayout(m_stuOnDutyLayout, 1, 2);
 
-  m_dateTimeLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignBottom);
-  m_dateTimeLayout->addWidget(m_labelDate, 0, 1, Qt::AlignBottom);
-  m_dateTimeLayout->addWidget(m_labelDDDD, 1, 1, Qt::AlignBottom);
-  m_mealStuLayout->setAlignment(Qt::AlignTop);
-  m_stuOnDutyLayout->setAlignment(Qt::AlignTop);
+  m_headerLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignBottom);
+  m_headerLayout->addWidget(m_labelDate, 0, 1, Qt::AlignBottom);
+  m_headerLayout->addWidget(m_labelDDDD, 1, 1, Qt::AlignBottom);
+  m_headerLayout->addWidget(m_sentenceLine, 0, 2, 2, 1);
+  m_headerLayout->addWidget(m_sentenceLabel, 0, 3, 2, 1, Qt::AlignBottom);
 
+  m_mealStuLayout->setAlignment(Qt::AlignTop);
   m_mealStuLayout->addWidget(m_mealStuTitle);
   m_mealStuLayout->addWidget(m_mealStuLabel);
 
+  m_stuOnDutyLayout->setAlignment(Qt::AlignTop);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyLabel);
 

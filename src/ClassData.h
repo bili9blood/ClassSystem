@@ -14,6 +14,7 @@ struct Data {
   QList<QTime> LessonsTm;
   QList<QList<uint>> mealStu;
   QList<QList<QList<uint>>> stuOnDuty;
+  QList<QString> dutyJobs;
   inline QString idAndName(const uint &id) {
     if (!id) return {};
     return QString::fromStdString(
@@ -21,7 +22,7 @@ struct Data {
   }
 };
 
-static inline ClassData::Data testData() {
+inline ClassData::Data testData() {
   ClassData::Data d;
   d.students = QMap<uint, QString>{
       {1, "陈皓林"},  {2, "陈梓畅"},  {3, "冯梓墨"},  {4, "高任"},
@@ -54,26 +55,27 @@ static inline ClassData::Data testData() {
       {{23, 0}, {41, 0}, {1, 51}, {35, 38}, {47, 46}, {16, 0}},
       {{39, 0}, {43, 0}, {18, 48}, {44, 50}, {34, 14}, {4, 54}},
       {{20, 0}, {3, 0}, {6, 17}, {32, 9}, {53, 45}, {5, 0}}};
+  d.dutyJobs = {"擦黑板", "倒垃圾", "扫地", "拖地", "环境区", "查漏补缺"};
   return d;
 }
-static ClassData::Data readFrom(QIODevice *device) {
+inline ClassData::Data readFrom(QIODevice *device) {
   if (!device->open(QIODevice::ReadOnly))
-    throw std::runtime_error(
-        qPrintable(QString("数据读取错误:%1").arg(device->errorString())));
+    throw std::runtime_error(device->errorString().toStdString());
   QDataStream ds(device);
   ClassData::Data d;
   ds.setVersion(QDataStream::Qt_5_15);
-  ds >> d.students >> d.lessons >> d.LessonsTm >> d.mealStu >> d.stuOnDuty;
+  ds >> d.students >> d.lessons >> d.LessonsTm >> d.mealStu >> d.stuOnDuty >>
+      d.dutyJobs;
   device->close();
   return d;
 }
-static void writeTo(const ClassData::Data &d, QIODevice *device) {
+inline void writeTo(const ClassData::Data &d, QIODevice *device) {
   if (!device->open(QIODevice::WriteOnly | QIODevice::Truncate))
-    throw std::runtime_error(
-        qPrintable(QString("无法写入文件:%1").arg(device->errorString())));
+    throw std::runtime_error(device->errorString().toStdString());
   QDataStream ds(device);
   ds.setVersion(QDataStream::Qt_5_15);
-  ds << d.students << d.lessons << d.LessonsTm << d.mealStu << d.stuOnDuty;
+  ds << d.students << d.lessons << d.LessonsTm << d.mealStu << d.stuOnDuty
+     << d.dutyJobs;
   device->close();
 }
 

@@ -13,7 +13,7 @@ MenuButton::MenuButton(QPixmap icon, QString text, QWidget *parent)
       icon.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
   m_textLabel->setStyleSheet("color: white");
   m_textLabel->setText(text);
-  m_textLabel->setFont(qFont{.pointSize = 10}());
+  m_textLabel->setFont(qFont{.pointSize = 14}());
   m_textLabel->setAlignment(Qt::AlignCenter);
 
   // install event filter
