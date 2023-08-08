@@ -78,6 +78,7 @@ QFrame {
   }
   m_lessons->setSizePolicy(QSizePolicy::MinimumExpanding,
                            QSizePolicy::MinimumExpanding);
+  m_lessons->setFixedWidth(370);
 
   // init notices
   m_noticesWid->setAttribute(Qt::WA_TransparentForMouseEvents);
