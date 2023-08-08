@@ -62,17 +62,17 @@ MainPanel::MainPanel(QWidget *parent)
   m_noticesWid->setAnimationDuration(500);
   for (const QVariant &v : m_data.notices) {
     const auto &[date, str] = v.value<Notice>();
-    QTextBrowser *l = new QTextBrowser(this);
-    l->setText(str);
-    l->setStyleSheet("color: #d2d0ce;background-color: transparent");
-    l->setFont(qFont{.pointSize = 20}());
-    l->setAttribute(Qt::WA_TransparentForMouseEvents);
-    l->setFocusPolicy(Qt::NoFocus);
-    l->setFrameShape(QFrame::NoFrame);
-    l->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    l->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_noticesLabels << l;
-    m_noticesWid->addWidget(l);
+    QTextBrowser *b = new QTextBrowser(this);
+    b->setText(str);
+    b->setStyleSheet("color: #d2d0ce;background-color: transparent");
+    b->setFont(qFont{.pointSize = 20}());
+    b->setAttribute(Qt::WA_TransparentForMouseEvents);
+    b->setFocusPolicy(Qt::NoFocus);
+    b->setFrameShape(QFrame::NoFrame);
+    b->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    b->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_noticesLabels << b;
+    m_noticesWid->addWidget(b);
   }
   m_noticesTitle->setObjectName("noticesTitle");
   m_noticesTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
