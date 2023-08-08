@@ -7,6 +7,7 @@
 #include <qlabel.h>
 #include <qlistwidget.h>
 #include <qmenu.h>
+#include <qsettings.h>
 #include <qsystemtrayicon.h>
 #include <qtimer.h>
 
@@ -49,13 +50,21 @@ class MainPanel : public QWidget {
   constexpr static const char *kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
   bool m_formatWithColons = true;
 
+  bool m_init = true;
+
   QPoint m_mouseStartPoint;
+  constexpr static int kPadding = 8;
+
+  QSettings m_settings = QSettings("settings.ini", QSettings::IniFormat, this);
 
  private slots:
   void onHalfSecs();
 
  protected:
+  bool nativeEvent(const QByteArray &, void *message, long *result) override;
   void paintEvent(QPaintEvent *) override;
   void mousePressEvent(QMouseEvent *) override;
   void mouseMoveEvent(QMouseEvent *) override;
+  void resizeEvent(QResizeEvent *ev) override;
+  void moveEvent(QMoveEvent *ev) override;
 };

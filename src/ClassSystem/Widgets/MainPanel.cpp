@@ -127,6 +127,12 @@ MainPanel::MainPanel(QWidget *parent)
 }
 
 void MainPanel::paintEvent(QPaintEvent *) {
+  if (m_init) {
+    // init geometry
+    qDebug() << m_settings.value("geometry").toRect();
+    setGeometry(m_settings.value("geometry").toRect());
+    m_init = false;
+  }
   QPainter painter(this);
   QLinearGradient ling(rect().topLeft(), rect().bottomRight());
 
@@ -147,4 +153,42 @@ void MainPanel::mousePressEvent(QMouseEvent *ev) {
 
 void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
   move(ev->globalPos() + m_mouseStartPoint);
+}
+
+bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
+  MSG *msg = (MSG *)message;
+  if (msg->message == WM_NCHITTEST && m_settings.value("resizable").toBool()) {
+    int xPos = GET_X_LPARAM(msg->lParam) - frameGeometry().x();
+    int yPos = GET_Y_LPARAM(msg->lParam) - frameGeometry().y();
+    if (xPos < kPadding && yPos < kPadding)  // 左上角
+      *result = HTTOPLEFT;
+    else if (xPos >= width() - kPadding && yPos < kPadding)  // 右上角
+      *result = HTTOPRIGHT;
+    else if (xPos < kPadding && yPos >= height() - kPadding)  // 左下角
+      *result = HTBOTTOMLEFT;
+    else if (xPos >= width() - kPadding &&
+             yPos >= height() - kPadding)  // 右下角
+      *result = HTBOTTOMRIGHT;
+    else if (xPos < kPadding)  // 左边
+      *result = HTLEFT;
+    else if (xPos >= width() - kPadding)  // 右边
+      *result = HTRIGHT;
+    else if (yPos < kPadding)  // 上边
+      *result = HTTOP;
+    else if (yPos >= height() - kPadding)  // 下边
+      *result = HTBOTTOM;
+    else  // 其他部分不做处理，返回false，留给其他事件处理器处理
+      return false;
+    repaint();
+    return true;
+  }
+  return false;
+}
+
+void MainPanel::resizeEvent(QResizeEvent *) {
+  if (!m_init) m_settings.setValue("geometry", geometry());
+}
+
+void MainPanel::moveEvent(QMoveEvent *) {
+  if (!m_init) m_settings.setValue("geometry", geometry());
 }
