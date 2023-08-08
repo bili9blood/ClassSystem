@@ -41,7 +41,7 @@ class PopupMenu : public QWidget {
 
   QColor m_bgColor = {31, 33, 34, 185};
 
-  QTimer m_timerClose;
+  QTimer m_clockTimerClose;
 
   ScreenCapturer m_capturer;
 

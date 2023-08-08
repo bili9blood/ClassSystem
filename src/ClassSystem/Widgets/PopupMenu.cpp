@@ -25,8 +25,9 @@ PopupMenu::PopupMenu(QWidget *parent)
   m_mainLayout->setMargin(5);
   setBtnsVisible(true);
 
-  connect(&m_timerClose, &QTimer::timeout, [this] { setBtnsVisible(false); });
-  m_timerClose.setSingleShot(true);
+  connect(&m_clockTimerClose, &QTimer::timeout,
+          [this] { setBtnsVisible(false); });
+  m_clockTimerClose.setSingleShot(true);
 }
 
 void PopupMenu::updateBtnsPosition() {
@@ -67,11 +68,11 @@ bool PopupMenu::eventFilter(QObject *obj, QEvent *ev) {
       return true;
     }
     if (ev->type() == QEvent::Enter) {
-      m_timerClose.stop();
+      m_clockTimerClose.stop();
       return true;
     }
     if (ev->type() == QEvent::Leave) {
-      m_timerClose.start(3000);
+      m_clockTimerClose.start(3000);
       return true;
     }
   }
@@ -101,7 +102,7 @@ void PopupMenu::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void PopupMenu::mouseReleaseEvent(QMouseEvent *ev) {
-  m_timerClose.start(10000);
+  m_clockTimerClose.start(10000);
   if (m_shouldUpdateBtnsVisible) setBtnsVisible(!m_btnsWidget->isVisible());
 }
 

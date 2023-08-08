@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QAnimationStackedWidget/QAnimationStackedWidget.h>
 #include <qaction.h>
 #include <qboxlayout.h>
 #include <qevent.h>
@@ -7,11 +8,16 @@
 #include <qlabel.h>
 #include <qlistwidget.h>
 #include <qmenu.h>
+#include <qpropertyanimation.h>
 #include <qsettings.h>
+#include <qstackedwidget.h>
 #include <qsystemtrayicon.h>
+#include <qtextbrowser.h>
 #include <qtimer.h>
 
 #include "ClassData.h"
+
+
 class MainPanel : public QWidget {
   Q_OBJECT
 
@@ -28,6 +34,8 @@ class MainPanel : public QWidget {
   // lines
   QFrame *m_sentenceLine = new QFrame(this);
   QFrame *m_stuLine = new QFrame(this);
+  QFrame *m_topNoticeLine = new QFrame(this);
+  QFrame *m_bottomNoticeLine = new QFrame(this);
 
   // header
   QLabel *m_labelDate = new QLabel("00-00", this);
@@ -36,6 +44,11 @@ class MainPanel : public QWidget {
   QLabel *m_sentenceLabel = new QLabel(this);
 
   ClassData::Data m_data = ClassData::readFrom(new QFile("data.stm"));
+
+  // notices
+  QAnimationStackedWidget *m_noticesWid = new QAnimationStackedWidget(this);
+  QList<QTextBrowser *> m_noticesLabels;
+  QLabel *m_noticesTitle = new QLabel("公告", this);
 
   // students carry meals
   QLabel *m_mealStuTitle = new QLabel("抬饭生", this);
@@ -51,7 +64,8 @@ class MainPanel : public QWidget {
   void loadFromIni();
 
   // timers
-  QTimer m_timer;
+  int m_clockTimerId;
+  int m_noticeTimerId;
   constexpr static const char *kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
   bool m_formatWithColons = true;
 
@@ -61,7 +75,6 @@ class MainPanel : public QWidget {
   constexpr static int kPadding = 8;
 
  private slots:
-  void onHalfSecs();
 
  protected:
   bool nativeEvent(const QByteArray &, void *message, long *result) override;
@@ -70,4 +83,5 @@ class MainPanel : public QWidget {
   void mouseMoveEvent(QMouseEvent *) override;
   void resizeEvent(QResizeEvent *ev) override;
   void moveEvent(QMoveEvent *ev) override;
+  void timerEvent(QTimerEvent *ev) override;
 };

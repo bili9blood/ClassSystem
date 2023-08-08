@@ -28,10 +28,10 @@ class ImgPaster : public QWidget {
   void hideSizeLabel();
 
  protected:
-  void mousePressEvent(QMouseEvent *ev);
-  void mouseDoubleClickEvent(QMouseEvent *ev);
-  void mouseMoveEvent(QMouseEvent *ev);
-  void wheelEvent(QWheelEvent *ev);
-  void keyPressEvent(QKeyEvent *ev);
-  void closeEvent(QCloseEvent *ev);
+  void mousePressEvent(QMouseEvent *ev) override;
+  void mouseDoubleClickEvent(QMouseEvent *ev) override;
+  void mouseMoveEvent(QMouseEvent *ev) override;
+  void wheelEvent(QWheelEvent *ev) override;
+  void keyPressEvent(QKeyEvent *ev) override;
+  void closeEvent(QCloseEvent *ev) override;
 };

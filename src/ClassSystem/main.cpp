@@ -5,6 +5,8 @@
 #include "Widgets/MainPanel.h"
 #include "Widgets/PopupMenu.h"
 
+#define QT_NO_OPENGL
+
 void checkDirs() {
   const QStringList dirs = {"screenshots"};
   auto c = QDir::current();
@@ -19,6 +21,7 @@ int main(int argc, char *argv[]) {
   sm.create(1);
 
   QApplication a(argc, argv);
+  qRegisterMetaTypeStreamOperators<Notice>("Notice");
   // add fonts
   int fontId = QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
   if (fontId != -1)
@@ -27,7 +30,7 @@ int main(int argc, char *argv[]) {
 
   checkDirs();
   // generate template .stm file
-  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
+  ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
 
   PopupMenu menu;
   menu.show();

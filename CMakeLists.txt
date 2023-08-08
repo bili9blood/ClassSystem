@@ -17,7 +17,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(APP_CMD_TYPE)
 endif()
 
-include_directories(src ${CMAKE_BINARY_DIR})
+include_directories(src ${CMAKE_BINARY_DIR} thirdparty)
 
 # target ClassSystem BEGIN
 add_executable(ClassSystem
@@ -34,6 +34,9 @@ add_executable(ClassSystem
     src/ClassSystem/Widgets/ImgPaster.cpp src/ClassSystem/Widgets/ImgPaster.h
 
     src/ClassSystem/Widgets/MainPanel.cpp src/ClassSystem/Widgets/MainPanel.h
+
+    thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.cpp thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.h
+
     src/ClassData.h
 )
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)

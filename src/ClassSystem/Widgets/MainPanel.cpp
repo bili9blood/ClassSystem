@@ -13,13 +13,16 @@ MainPanel::MainPanel(QWidget *parent)
 
   setStyleSheet(R"(
 
-#labelDDDD, #labelDate, #mealStuListWid, #stuOnDutyListWid, #sentenceLine, #stuLine {
+#labelDDDD, #labelDate, #mealStuListWid, #stuOnDutyListWid {
   color: #d2d0ce;
 }
-#mealStuTitle, #stuOnDutyTitle{
+#sentenceLine, #stuLine, #topNoticeLine, #bottomNoticeLine {
+  color: rgba(102, 113, 134 ,180);
+}
+#mealStuTitle, #stuOnDutyTitle, #noticesTitle {
   color: #edebe9;
 }
-#mealStuListWid, #stuOnDutyListWid {
+#mealStuListWid, #stuOnDutyListWid, #noticesWid {
   background-color: transparent;
 }
 #labelTime {
@@ -50,8 +53,32 @@ MainPanel::MainPanel(QWidget *parent)
   m_sentenceLabel->setWordWrap(true);
   m_sentenceLabel->setFont(qFont{.family = "仿宋", .pointSize = 17}());
 
+  // init notices
+  m_noticesWid->setAttribute(Qt::WA_TransparentForMouseEvents);
+  m_noticesWid->setFocusPolicy(Qt::NoFocus);
+  m_noticesWid->setSizePolicy(QSizePolicy::MinimumExpanding,
+                              QSizePolicy::Preferred);
+  m_noticesWid->setAnimationMode(QAnimationStackedWidget::R2L);
+  m_noticesWid->setAnimationDuration(500);
+  for (const QVariant &v : m_data.notices) {
+    const auto &[date, str] = v.value<Notice>();
+    QTextBrowser *l = new QTextBrowser(this);
+    l->setText(str);
+    l->setStyleSheet("color: #d2d0ce;background-color: transparent");
+    l->setFont(qFont{.pointSize = 20}());
+    l->setAttribute(Qt::WA_TransparentForMouseEvents);
+    l->setFocusPolicy(Qt::NoFocus);
+    l->setFrameShape(QFrame::NoFrame);
+    l->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    l->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_noticesLabels << l;
+    m_noticesWid->addWidget(l);
+  }
+  m_noticesTitle->setObjectName("noticesTitle");
+  m_noticesTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
+  m_noticesTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+
   // init students carry meals
-  m_mealStuLabel->setFrameShape(QFrame::NoFrame);
   m_mealStuLabel->setObjectName("mealStuListWid");
   m_mealStuLabel->setFont(
       qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
@@ -69,7 +96,6 @@ MainPanel::MainPanel(QWidget *parent)
   m_stuOnDutyLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
                                   QSizePolicy::MinimumExpanding);
   m_stuOnDutyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-  m_stuOnDutyLabel->setFrameShape(QFrame::NoFrame);
   m_stuOnDutyLabel->setObjectName("stuOnDutyListWid");
   m_stuOnDutyLabel->setFont(
       qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
@@ -98,13 +124,23 @@ MainPanel::MainPanel(QWidget *parent)
   m_stuLine->setFrameShape(QFrame::VLine);
   m_stuLine->setObjectName("stuLine");
 
+  m_topNoticeLine->setFrameShape(QFrame::HLine);
+  m_topNoticeLine->setObjectName("topNoticeLine");
+
+  m_bottomNoticeLine->setFrameShape(QFrame::HLine);
+  m_bottomNoticeLine->setObjectName("bottomNoticeLine");
+
   // init layouts
   m_mainLayout->setMargin(10);
   m_mainLayout->setSpacing(10);
   m_mainLayout->addLayout(m_headerLayout, 0, 0, 1, 3, Qt::AlignLeft);
-  m_mainLayout->addLayout(m_mealStuLayout, 1, 0);
-  m_mainLayout->addWidget(m_stuLine, 1, 1);
-  m_mainLayout->addLayout(m_stuOnDutyLayout, 1, 2);
+  m_mainLayout->addWidget(m_topNoticeLine, 1, 0, 1, 3);
+  m_mainLayout->addWidget(m_noticesTitle, 2, 0, Qt::AlignVCenter);
+  m_mainLayout->addWidget(m_noticesWid, 3, 0, 1, 3, Qt::AlignVCenter);
+  m_mainLayout->addWidget(m_bottomNoticeLine, 4, 0, 1, 3);
+  m_mainLayout->addLayout(m_mealStuLayout, 5, 0);
+  m_mainLayout->addWidget(m_stuLine, 5, 1);
+  m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2);
 
   m_headerLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignBottom);
   m_headerLayout->addWidget(m_labelDate, 0, 1, Qt::AlignBottom);
@@ -114,16 +150,17 @@ MainPanel::MainPanel(QWidget *parent)
 
   m_mealStuLayout->setAlignment(Qt::AlignTop);
   m_mealStuLayout->addWidget(m_mealStuTitle);
-  m_mealStuLayout->addWidget(m_mealStuLabel);
+  m_mealStuLayout->addWidget(m_mealStuLabel, 0, Qt::AlignTop);
 
   m_stuOnDutyLayout->setAlignment(Qt::AlignTop);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
-  m_stuOnDutyLayout->addWidget(m_stuOnDutyLabel);
+  m_stuOnDutyLayout->addWidget(m_stuOnDutyLabel, 0, Qt::AlignTop);
 
-  //  init timer
-  m_timer.setInterval(500);  // 0.5 secs
-  connect(&m_timer, &QTimer::timeout, this, &MainPanel::onHalfSecs);
-  m_timer.start();
+  //  init timers
+  m_clockTimerId = startTimer(500);
+  m_noticeTimerId = startTimer(5000);
+
+  loadFromIni();
 }
 
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
@@ -149,7 +186,7 @@ bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
       *result = HTTOP;
     else if (yPos >= height() - kPadding)  // 下边
       *result = HTBOTTOM;
-    else  // 其他部分不做处理，返回false，留给其他事件处理器处理
+    else
       return false;
     return true;
   }
@@ -162,11 +199,14 @@ void MainPanel::paintEvent(QPaintEvent *) {
     setGeometry(m_settings.value("geometry").toRect());
     m_init = false;
   }
+  if (geometry() != m_settings.value("geometry").toRect()) {
+    m_settings.setValue("geometry", geometry());
+  }
   QPainter painter(this);
   QLinearGradient ling(rect().topLeft(), rect().bottomRight());
 
-  ling.setColorAt(0, {0, 12, 64, 225});
-  ling.setColorAt(1, {96, 125, 139, 225});
+  ling.setColorAt(0, {0, 12, 64, 205});
+  ling.setColorAt(1, {96, 125, 139, 205});
   painter.setBrush(ling);
   painter.setPen(Qt::transparent);
   painter.drawRoundedRect(rect(), 20, 20);
@@ -174,11 +214,6 @@ void MainPanel::paintEvent(QPaintEvent *) {
 
 void MainPanel::loadFromIni() {
   m_resizable = m_settings.value("resizable").toBool();
-}
-
-void MainPanel::onHalfSecs() {
-  m_labelTime->setText(QTime::currentTime().toString(
-      kTimeFormat[m_formatWithColons = !m_formatWithColons]));
 }
 
 void MainPanel::mousePressEvent(QMouseEvent *ev) {
@@ -190,9 +225,25 @@ void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MainPanel::resizeEvent(QResizeEvent *) {
-  if (!m_init) m_settings.setValue("geometry", geometry());
+  if (geometry() != m_settings.value("geometry").toRect()) {
+    m_settings.setValue("geometry", geometry());
+  }
 }
 
 void MainPanel::moveEvent(QMoveEvent *) {
-  if (!m_init) m_settings.setValue("geometry", geometry());
+  if (geometry() != m_settings.value("geometry").toRect()) {
+    m_settings.setValue("geometry", geometry());
+  }
+}
+
+void MainPanel::timerEvent(QTimerEvent *ev) {
+  if (ev->timerId() == m_clockTimerId) {
+    m_labelTime->setText(QTime::currentTime().toString(
+        kTimeFormat[m_formatWithColons = !m_formatWithColons]));
+  }
+  if (ev->timerId() == m_noticeTimerId) {
+    m_noticesWid->StartStackedWidgetAnimation(
+        m_noticesWid->currentIndex(),
+        (m_noticesWid->currentIndex() + 1) % m_noticesWid->count());
+  }
 }
