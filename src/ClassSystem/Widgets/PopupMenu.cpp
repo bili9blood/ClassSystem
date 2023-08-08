@@ -24,10 +24,6 @@ PopupMenu::PopupMenu(QWidget *parent)
 
   m_mainLayout->setMargin(5);
   setBtnsVisible(true);
-
-  connect(&m_clockTimerClose, &QTimer::timeout,
-          [this] { setBtnsVisible(false); });
-  m_clockTimerClose.setSingleShot(true);
 }
 
 void PopupMenu::updateBtnsPosition() {
@@ -36,6 +32,7 @@ void PopupMenu::updateBtnsPosition() {
 }
 void PopupMenu::setBtnsVisible(bool visible) {
   if (visible) {
+    QApplication::setActiveWindow(m_btnsWidget);
     m_btnsWidget->show();
     m_popMenuLabel->setPixmap(m_iconOpened);
   } else {
@@ -60,19 +57,15 @@ void PopupMenu::onBtnClicked() {
 
 bool PopupMenu::eventFilter(QObject *obj, QEvent *ev) {
   if (obj == m_btnsWidget) {
+    if (ev->type() == QEvent::ActivationChange &&
+        QApplication::activeWindow() != m_btnsWidget) {
+      setBtnsVisible(false);
+    }
     if (ev->type() == QEvent::Paint) {
       QPainter painter(m_btnsWidget);
       painter.setBrush(QColor(31, 33, 34, 185));
       painter.setPen(Qt::transparent);
       painter.drawRoundedRect(m_btnsWidget->rect(), 10, 10);
-      return true;
-    }
-    if (ev->type() == QEvent::Enter) {
-      m_clockTimerClose.stop();
-      return true;
-    }
-    if (ev->type() == QEvent::Leave) {
-      m_clockTimerClose.start(3000);
       return true;
     }
   }
@@ -102,7 +95,6 @@ void PopupMenu::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void PopupMenu::mouseReleaseEvent(QMouseEvent *ev) {
-  m_clockTimerClose.start(10000);
   if (m_shouldUpdateBtnsVisible) setBtnsVisible(!m_btnsWidget->isVisible());
 }
 
