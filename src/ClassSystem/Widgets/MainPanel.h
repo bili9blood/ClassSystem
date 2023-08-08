@@ -5,18 +5,18 @@
 #include <qboxlayout.h>
 #include <qevent.h>
 #include <qframe.h>
+#include <qheaderview.h>
 #include <qlabel.h>
-#include <qlistwidget.h>
 #include <qmenu.h>
 #include <qpropertyanimation.h>
 #include <qsettings.h>
 #include <qstackedwidget.h>
 #include <qsystemtrayicon.h>
+#include <qtablewidget.h>
 #include <qtextbrowser.h>
 #include <qtimer.h>
 
 #include "ClassData.h"
-
 
 class MainPanel : public QWidget {
   Q_OBJECT
@@ -36,6 +36,7 @@ class MainPanel : public QWidget {
   QFrame *m_stuLine = new QFrame(this);
   QFrame *m_topNoticeLine = new QFrame(this);
   QFrame *m_bottomNoticeLine = new QFrame(this);
+  QFrame *m_lessonsLine = new QFrame(this);
 
   // header
   QLabel *m_labelDate = new QLabel("00-00", this);
@@ -44,6 +45,9 @@ class MainPanel : public QWidget {
   QLabel *m_sentenceLabel = new QLabel(this);
 
   ClassData::Data m_data = ClassData::readFrom(new QFile("data.stm"));
+
+  // lessons
+  QTableWidget *m_lessons = new QTableWidget(9, 1, this);
 
   // notices
   QAnimationStackedWidget *m_noticesWid = new QAnimationStackedWidget(this);

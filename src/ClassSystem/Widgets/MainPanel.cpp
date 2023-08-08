@@ -13,16 +13,16 @@ MainPanel::MainPanel(QWidget *parent)
 
   setStyleSheet(R"(
 
-#labelDDDD, #labelDate, #mealStuListWid, #stuOnDutyListWid {
+#labelDDDD, #labelDate, #mealStuLabel, #stuOnDutyLabel, QTableWidget::Item {
   color: #d2d0ce;
 }
-#sentenceLine, #stuLine, #topNoticeLine, #bottomNoticeLine {
+QFrame {
   color: rgba(102, 113, 134 ,180);
 }
 #mealStuTitle, #stuOnDutyTitle, #noticesTitle {
   color: #edebe9;
 }
-#mealStuListWid, #stuOnDutyListWid, #noticesWid {
+#mealStuLabel, #stuOnDutyLabel, #noticesWid, #lessons {
   background-color: transparent;
 }
 #labelTime {
@@ -53,6 +53,32 @@ MainPanel::MainPanel(QWidget *parent)
   m_sentenceLabel->setWordWrap(true);
   m_sentenceLabel->setFont(qFont{.family = "仿宋", .pointSize = 17}());
 
+  // init lessons
+  m_lessons->setObjectName("lessons");
+  m_lessons->setAttribute(Qt::WA_TransparentForMouseEvents);
+  m_lessons->setFocusPolicy(Qt::NoFocus);
+  m_lessons->horizontalHeader()->setVisible(false);
+  m_lessons->verticalHeader()->setVisible(false);
+  m_lessons->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  m_lessons->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  m_lessons->setFrameShape(QFrame::NoFrame);
+  m_lessons->setShowGrid(false);
+  auto lessonsToday = m_data.lessons[dayToday()];
+  m_lessons->setFont(qFont{.family = "华文中宋", .pointSize = 20}());
+  m_lessons->setTextElideMode(Qt::ElideNone);
+
+  m_lessons->setItem(5, 0, new QTableWidgetItem("午休(13:00-13:50)"));
+  for (int i = 0; i < 8; ++i) {
+    m_lessons->setItem(
+        i < 5 ? i : i + 1, 0,
+        new QTableWidgetItem(
+            QString("%1(%2-%3)")
+                .arg(lessonsToday[i], m_data.LessonsTm[i].toString("hh:mm"),
+                     m_data.LessonsTm[i].addSecs(2400).toString("hh:mm"))));
+  }
+  m_lessons->setSizePolicy(QSizePolicy::MinimumExpanding,
+                           QSizePolicy::MinimumExpanding);
+
   // init notices
   m_noticesWid->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_noticesWid->setFocusPolicy(Qt::NoFocus);
@@ -79,7 +105,7 @@ MainPanel::MainPanel(QWidget *parent)
   m_noticesTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   // init students carry meals
-  m_mealStuLabel->setObjectName("mealStuListWid");
+  m_mealStuLabel->setObjectName("mealStuLabel");
   m_mealStuLabel->setFont(
       qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
   auto mealStuToday = m_data.mealStu[dayToday()];
@@ -96,7 +122,7 @@ MainPanel::MainPanel(QWidget *parent)
   m_stuOnDutyLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
                                   QSizePolicy::MinimumExpanding);
   m_stuOnDutyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-  m_stuOnDutyLabel->setObjectName("stuOnDutyListWid");
+  m_stuOnDutyLabel->setObjectName("stuOnDutyLabel");
   m_stuOnDutyLabel->setFont(
       qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
   auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
@@ -119,28 +145,26 @@ MainPanel::MainPanel(QWidget *parent)
 
   // init lines
   m_sentenceLine->setFrameShape(QFrame::VLine);
-  m_sentenceLine->setObjectName("sentenceLine");
-
   m_stuLine->setFrameShape(QFrame::VLine);
-  m_stuLine->setObjectName("stuLine");
-
   m_topNoticeLine->setFrameShape(QFrame::HLine);
-  m_topNoticeLine->setObjectName("topNoticeLine");
-
   m_bottomNoticeLine->setFrameShape(QFrame::HLine);
-  m_bottomNoticeLine->setObjectName("bottomNoticeLine");
+  m_lessonsLine->setFrameShape(QFrame::VLine);
 
   // init layouts
   m_mainLayout->setMargin(10);
   m_mainLayout->setSpacing(10);
-  m_mainLayout->addLayout(m_headerLayout, 0, 0, 1, 3, Qt::AlignLeft);
-  m_mainLayout->addWidget(m_topNoticeLine, 1, 0, 1, 3);
+  m_mainLayout->addLayout(m_headerLayout, 0, 0, 1, 5, Qt::AlignLeft);
+  m_mainLayout->addWidget(m_topNoticeLine, 1, 0, 1, 5);
   m_mainLayout->addWidget(m_noticesTitle, 2, 0, Qt::AlignVCenter);
   m_mainLayout->addWidget(m_noticesWid, 3, 0, 1, 3, Qt::AlignVCenter);
+  m_mainLayout->addWidget(m_lessonsLine, 2, 3, 4, 1);
+  m_mainLayout->addWidget(m_lessons, 2, 4, 4, 1);
   m_mainLayout->addWidget(m_bottomNoticeLine, 4, 0, 1, 3);
   m_mainLayout->addLayout(m_mealStuLayout, 5, 0);
   m_mainLayout->addWidget(m_stuLine, 5, 1);
-  m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2);
+  m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2, 1, 1);
+
+  // qDebug()<<m_mainLayout->itemAtPosition(2,3).;
 
   m_headerLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignBottom);
   m_headerLayout->addWidget(m_labelDate, 0, 1, Qt::AlignBottom);
@@ -199,9 +223,6 @@ void MainPanel::paintEvent(QPaintEvent *) {
     setGeometry(m_settings.value("geometry").toRect());
     m_init = false;
   }
-  if (geometry() != m_settings.value("geometry").toRect()) {
-    m_settings.setValue("geometry", geometry());
-  }
   QPainter painter(this);
   QLinearGradient ling(rect().topLeft(), rect().bottomRight());
 
@@ -225,15 +246,11 @@ void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MainPanel::resizeEvent(QResizeEvent *) {
-  if (geometry() != m_settings.value("geometry").toRect()) {
-    m_settings.setValue("geometry", geometry());
-  }
+  if (!m_init) m_settings.setValue("geometry", geometry());
 }
 
 void MainPanel::moveEvent(QMoveEvent *) {
-  if (geometry() != m_settings.value("geometry").toRect()) {
-    m_settings.setValue("geometry", geometry());
-  }
+  if (!m_init) m_settings.setValue("geometry", geometry());
 }
 
 void MainPanel::timerEvent(QTimerEvent *ev) {
