@@ -9,7 +9,8 @@ PopupMenu::PopupMenu(QWidget *parent)
 
   // append buttons
   m_btnsList << new MenuButton({":/img/capture.png"}, "截图", &m_btnsWidget)
-             << new MenuButton({":img/table.png"}, "表格", &m_btnsWidget);
+             << new MenuButton({":img/table.png"}, "表格", &m_btnsWidget)
+             << new MenuButton({":/img/about.png"}, "关于", &m_btnsWidget);
   setWidgetTransparent(&m_btnsWidget);
   m_btnsLayout.setMargin(0);
   m_btnsLayout.setSpacing(0);
@@ -53,6 +54,13 @@ void PopupMenu::onBtnClicked() {
         case 1:  // show tables
           m_tableWindow.show();
           QApplication::setActiveWindow(&m_tableWindow);
+          break;
+        case 2:  // show about
+          QFile file(":/other/about.md");
+          if (!file.open(QFile::ReadOnly | QFile::Text)) break;
+          QMessageBox msgBox(QMessageBox::Information, "关于", file.readAll());
+          msgBox.setTextFormat(Qt::MarkdownText);
+          msgBox.exec();
           break;
       }
       break;

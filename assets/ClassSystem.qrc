@@ -8,7 +8,9 @@
         <file>img/menu-opened.png</file>
         <file>img/capture.png</file>
         <file>img/table.png</file>
+        <file>img/about.png</file>
 
         <file>other/sentences.txt</file>
+        <file>other/about.md</file>
     </qresource>
 </RCC>

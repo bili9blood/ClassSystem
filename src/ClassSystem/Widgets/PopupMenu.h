@@ -4,12 +4,14 @@
 #include <qboxlayout.h>
 #include <qevent.h>
 #include <qlabel.h>
+#include <qmessagebox.h>
 #include <qscreen.h>
 #include <qtimer.h>
 
 #include "MenuButton.h"
 #include "ScreenCapturer.h"
 #include "TableWindow.h"
+
 
 class PopupMenu : public QWidget {
   Q_OBJECT
