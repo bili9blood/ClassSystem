@@ -7,6 +7,8 @@
 #include <qframe.h>
 #include <qheaderview.h>
 #include <qlabel.h>
+#include <qlayoutitem.h>
+#include <qlcdnumber.h>
 #include <qmenu.h>
 #include <qpropertyanimation.h>
 #include <qsettings.h>
@@ -29,6 +31,7 @@ class MainPanel : public QWidget {
   // layouts
   QGridLayout *m_mainLayout = new QGridLayout(this);
   QGridLayout *m_headerLayout = new QGridLayout();
+  QGridLayout *m_noticesLayout = new QGridLayout();
   QVBoxLayout *m_mealStuLayout = new QVBoxLayout();
   QVBoxLayout *m_stuOnDutyLayout = new QVBoxLayout();
 
@@ -37,6 +40,7 @@ class MainPanel : public QWidget {
   QFrame *m_titleLine = new QFrame(this);
   QFrame *m_topNoticeLine = new QFrame(this);
   QFrame *m_bottomNoticeLine = new QFrame(this);
+  QFrame *m_daysLeftLine = new QFrame(this);
   QFrame *m_lessonsLine = new QFrame(this);
   QFrame *m_stuLine = new QFrame(this);
 
@@ -54,8 +58,13 @@ class MainPanel : public QWidget {
 
   // notices
   QAnimationStackedWidget *m_noticesWid = new QAnimationStackedWidget(this);
-  QList<QTextBrowser *> m_noticesLabels;
+  QList<QTextBrowser *> m_noticesTextBrowsers;
   QLabel *m_noticesTitle = new QLabel("公告", this);
+
+  // days left
+  QLabel *m_eventNameLabel = new QLabel(this);
+  QLCDNumber *m_daysLeftDisplay = new QLCDNumber(this);
+  QSpacerItem *m_daysLeftSpacer = new QSpacerItem(20, 20, QSizePolicy::Minimum);
 
   // students carry meals
   QLabel *m_mealStuTitle = new QLabel("抬饭生", this);
@@ -81,6 +90,8 @@ class MainPanel : public QWidget {
 
   QPoint m_mouseStartPoint;
   constexpr static int kPadding = 8;
+
+  void loadUi();
 
  private slots:
 

@@ -21,7 +21,7 @@ QFrame {
   color: rgba(102, 113, 134 ,180);
 }
 
-.titleText, #mealStuTitle, #stuOnDutyTitle, #noticesTitle {
+.titleText, #mealStuTitle, #stuOnDutyTitle, #noticesTitle, #eventNameLabel, QLCDNumber {
   color: #edebe9;
 }
 
@@ -69,22 +69,11 @@ QFrame {
   m_lessons->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   m_lessons->setFrameShape(QFrame::NoFrame);
   m_lessons->setShowGrid(false);
-  auto lessonsToday = m_data.lessons[dayToday()];
-  m_lessons->setFont(qFont{.family = "华文中宋", .pointSize = 20}());
-  m_lessons->setTextElideMode(Qt::ElideNone);
-
-  m_lessons->setItem(5, 0, new QTableWidgetItem("午休(13:00-13:50)"));
-  for (int i = 0; i < 8; ++i) {
-    m_lessons->setItem(
-        i < 5 ? i : i + 1, 0,
-        new QTableWidgetItem(
-            QString("%1(%2-%3)")
-                .arg(lessonsToday[i], m_data.LessonsTm[i].toString("hh:mm"),
-                     m_data.LessonsTm[i].addSecs(2400).toString("hh:mm"))));
-  }
   m_lessons->setSizePolicy(QSizePolicy::MinimumExpanding,
                            QSizePolicy::MinimumExpanding);
   m_lessons->setFixedWidth(370);
+  m_lessons->setFont(qFont{.family = "华文中宋", .pointSize = 20}());
+  m_lessons->setTextElideMode(Qt::ElideNone);
 
   // init notices
   m_noticesWid->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -93,34 +82,21 @@ QFrame {
                               QSizePolicy::Preferred);
   m_noticesWid->setAnimationMode(QAnimationStackedWidget::R2L);
   m_noticesWid->setAnimationDuration(500);
-  for (const QVariant &v : m_data.notices) {
-    const auto &[date, str] = v.value<Notice>();
-    QTextBrowser *b = new QTextBrowser(this);
-    b->setText(str);
-    b->setStyleSheet("color: #d2d0ce;background-color: transparent");
-    b->setFont(qFont{.pointSize = 20}());
-    b->setAttribute(Qt::WA_TransparentForMouseEvents);
-    b->setFocusPolicy(Qt::NoFocus);
-    b->setFrameShape(QFrame::NoFrame);
-    b->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    b->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_noticesLabels << b;
-    m_noticesWid->addWidget(b);
-  }
+
   m_noticesTitle->setObjectName("noticesTitle");
   m_noticesTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
   m_noticesTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+
+  // init days left
+  m_eventNameLabel->setObjectName("eventNameLabel");
+  m_eventNameLabel->setFont(qFont{.pointSize = 20}());
+  m_daysLeftDisplay->setFrameShape(QFrame::NoFrame);
+  m_daysLeftDisplay->setSegmentStyle(QLCDNumber::Flat);
 
   // init students carry meals
   m_mealStuLabel->setObjectName("mealStuLabel");
   m_mealStuLabel->setFont(
       qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
-  auto mealStuToday = m_data.mealStu[dayToday()];
-  for (const uint &id : mealStuToday) {
-    m_mealStuLabel->setText(m_mealStuLabel->text() + "\n" +
-                            m_data.idAndName(id));
-  }
-  m_mealStuLabel->setText(m_mealStuLabel->text().mid(1));
 
   m_mealStuTitle->setObjectName("mealStuTitle");
   m_mealStuTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
@@ -132,20 +108,6 @@ QFrame {
   m_stuOnDutyLabel->setObjectName("stuOnDutyLabel");
   m_stuOnDutyLabel->setFont(
       qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
-  auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
-  for (int i = 0; i < stuOnDutyToday.size(); ++i) {
-    QList<uint> l = stuOnDutyToday[i];
-    if (l.empty()) continue;
-    QString displayStr =
-        QString(
-            R"(<font style="font-weight: 1000; font-size: 25pt; display: inline;">%1:</font>)")
-            .arg(m_data.dutyJobs[i]);
-    for (const uint &id : l) displayStr += " " + m_data.idAndName(id);
-    m_stuOnDutyLabel->setText(m_stuOnDutyLabel->text() + "<br></br>" +
-                              displayStr);
-  }
-  m_stuOnDutyLabel->setText(
-      m_stuOnDutyLabel->text().mid(9));  // 移除第一个 `<br></br>`
 
   m_stuOnDutyTitle->setObjectName("stuOnDutyTitle");
   m_stuOnDutyTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
@@ -155,19 +117,20 @@ QFrame {
   m_titleLine->setFrameShape(QFrame::VLine);
   m_topNoticeLine->setFrameShape(QFrame::HLine);
   m_bottomNoticeLine->setFrameShape(QFrame::HLine);
+  m_daysLeftLine->setFrameShape(QFrame::VLine);
   m_lessonsLine->setFrameShape(QFrame::VLine);
   m_stuLine->setFrameShape(QFrame::VLine);
 
   // init layouts
   m_mainLayout->setMargin(10);
   m_mainLayout->setSpacing(10);
-  m_mainLayout->addLayout(m_headerLayout, 0, 0, 1, 5, Qt::AlignLeft);
-  m_mainLayout->addWidget(m_topNoticeLine, 1, 0, 1, 5);
-  m_mainLayout->addWidget(m_noticesTitle, 2, 0, Qt::AlignVCenter);
-  m_mainLayout->addWidget(m_noticesWid, 3, 0, 1, 3, Qt::AlignVCenter);
-  m_mainLayout->addWidget(m_lessonsLine, 2, 3, 4, 1);
-  m_mainLayout->addWidget(m_lessons, 2, 4, 4, 1);
-  m_mainLayout->addWidget(m_bottomNoticeLine, 4, 0, 1, 3);
+  m_mainLayout->addLayout(m_headerLayout, 0, 0, 1, 6, Qt::AlignLeft);
+  m_mainLayout->addWidget(m_topNoticeLine, 1, 0, 1, 6);
+
+  m_mainLayout->addWidget(m_lessonsLine, 2, 4, 6, 1);
+  m_mainLayout->addWidget(m_lessons, 2, 5, 6, 1);
+  m_mainLayout->addLayout(m_noticesLayout, 3, 0, 1, 4, Qt::AlignTop);
+  m_mainLayout->addWidget(m_bottomNoticeLine, 4, 0, 1, 4);
   m_mainLayout->addLayout(m_mealStuLayout, 5, 0);
   m_mainLayout->addWidget(m_stuLine, 5, 1);
   m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2);
@@ -179,6 +142,14 @@ QFrame {
   m_headerLayout->addWidget(m_sentenceLabel, 0, 3, 2, 1, Qt::AlignTop);
   m_headerLayout->addWidget(m_titleLine, 0, 4, 2, 1);
   m_headerLayout->addWidget(m_title, 0, 5, 2, 1, Qt::AlignRight);
+
+  m_noticesLayout->setMargin(0);
+  m_noticesLayout->setSpacing(2);
+  m_noticesLayout->addWidget(m_noticesTitle, 0, 0, Qt::AlignVCenter);
+  m_noticesLayout->addWidget(m_daysLeftLine, 0, 1, 3, 1);
+  m_noticesLayout->addWidget(m_eventNameLabel, 0, 2);
+  m_noticesLayout->addWidget(m_daysLeftDisplay, 1, 2, 2, 1);
+  m_noticesLayout->addWidget(m_noticesWid, 1, 0, 2, 1);
 
   m_mealStuLayout->setAlignment(Qt::AlignTop);
   m_mealStuLayout->addWidget(m_mealStuTitle);
@@ -193,13 +164,75 @@ QFrame {
   m_noticeTimerId = startTimer(5000);
   m_curLessonUpdateTimerId = startTimer(1000);
 
+  loadUi();
   loadFromIni();
 }
 
+void MainPanel::loadUi() {
+  // lessons
+  auto lessonsToday = m_data.lessons[dayToday()];
+
+  m_lessons->setItem(5, 0, new QTableWidgetItem("午休(13:00-13:50)"));
+  for (int i = 0; i < 8; ++i) {
+    m_lessons->setItem(
+        i < 5 ? i : i + 1, 0,
+        new QTableWidgetItem(
+            QString("%1(%2-%3)")
+                .arg(lessonsToday[i], m_data.LessonsTm[i].toString("hh:mm"),
+                     m_data.LessonsTm[i].addSecs(2400).toString("hh:mm"))));
+  }
+
+  // notices
+  for (const auto &[date, str] : m_data.notices) {
+    auto b = new QTextBrowser(this);
+    b->setText(str);
+    b->setStyleSheet("color: #d2d0ce;background-color: transparent");
+    b->setFont(qFont{.pointSize = 20}());
+    b->setAttribute(Qt::WA_TransparentForMouseEvents);
+    b->setFocusPolicy(Qt::NoFocus);
+    b->setFrameShape(QFrame::NoFrame);
+    b->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    b->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_noticesTextBrowsers << b;
+    m_noticesWid->addWidget(b);
+  }
+
+  // days left
+  m_eventNameLabel->setText(
+      QString("离%1剩余天数:").arg(m_data.events.top().name));
+  m_daysLeftDisplay->display(
+      (int)QDate::currentDate().daysTo(m_data.events.top().date));
+
+  // students carry meals
+  auto mealStuToday = m_data.mealStu[dayToday()];
+  for (const uint &id : mealStuToday) {
+    m_mealStuLabel->setText(m_mealStuLabel->text() + "\n" +
+                            m_data.idAndName(id));
+  }
+  m_mealStuLabel->setText(m_mealStuLabel->text().mid(1));
+
+  // students on duty
+  auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
+  for (int i = 0; i < stuOnDutyToday.size(); ++i) {
+    QList<uint> l = stuOnDutyToday[i];
+    if (l.empty()) continue;
+    QString displayStr =
+        QString(
+            R"(<font style="font-weight: 1000; font-size: 25pt; display: inline;">%1:</font>)")
+            .arg(m_data.dutyJobs[i]);
+    for (const uint &id : l) displayStr += " " + m_data.idAndName(id);
+    m_stuOnDutyLabel->setText(m_stuOnDutyLabel->text() + "<br></br>" +
+                              displayStr);
+  }
+  m_stuOnDutyLabel->setText(
+      m_stuOnDutyLabel->text().mid(9));  // 移除第一个 `<br></br>`
+}
+
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
-  if (!m_resizable) return false;
-  MSG *msg = (MSG *)message;
-  if (msg->message == WM_NCHITTEST) {
+  auto msg = static_cast<MSG *>(message);
+  if (msg->message == WM_NCHITTEST) {  // resize
+    if (!m_resizable) return false;
+
     int xPos = GET_X_LPARAM(msg->lParam) - frameGeometry().x();
     int yPos = GET_Y_LPARAM(msg->lParam) - frameGeometry().y();
     if (xPos < kPadding && yPos < kPadding)  // 左上角
