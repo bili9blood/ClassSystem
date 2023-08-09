@@ -164,11 +164,12 @@ QFrame {
   m_noticeTimerId = startTimer(5000);
   m_curLessonUpdateTimerId = startTimer(1000);
 
-  loadUi();
+  reloadUi();
   loadFromIni();
 }
 
-void MainPanel::loadUi() {
+void MainPanel::reloadUi() {
+  m_data = ClassData::readFrom(new QFile("data.stm"));
   // lessons
   auto lessonsToday = m_data.lessons[dayToday()];
 

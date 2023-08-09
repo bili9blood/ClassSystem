@@ -27,6 +27,8 @@ class MainPanel : public QWidget {
  public:
   explicit MainPanel(QWidget *parent = nullptr);
 
+  void reloadUi();
+
  private:
   // layouts
   QGridLayout *m_mainLayout = new QGridLayout(this);
@@ -51,7 +53,7 @@ class MainPanel : public QWidget {
   QLabel *m_sentenceLabel = new QLabel(this);
   TitleWidget *m_title = new TitleWidget("ClassSystem", this);
 
-  ClassData::Data m_data = ClassData::readFrom(new QFile("data.stm"));
+  ClassData::Data m_data;
 
   // lessons
   QTableWidget *m_lessons = new QTableWidget(9, 1, this);
@@ -90,8 +92,6 @@ class MainPanel : public QWidget {
 
   QPoint m_mouseStartPoint;
   constexpr static int kPadding = 8;
-
-  void loadUi();
 
  private slots:
 
