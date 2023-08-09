@@ -9,6 +9,7 @@
 
 #include "MenuButton.h"
 #include "ScreenCapturer.h"
+#include "TableWindow.h"
 
 class PopupMenu : public QWidget {
   Q_OBJECT
@@ -20,9 +21,9 @@ class PopupMenu : public QWidget {
 
  private:
   // buttons
-  QWidget *m_btnsWidget = new QWidget(
+  QWidget m_btnsWidget = QWidget(
       nullptr, Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint);
-  QVBoxLayout *m_btnsLayout = new QVBoxLayout(m_btnsWidget);
+  QVBoxLayout m_btnsLayout = QVBoxLayout(&m_btnsWidget);
   QList<MenuButton *> m_btnsList;
 
   // pop menu
@@ -42,6 +43,7 @@ class PopupMenu : public QWidget {
   QColor m_bgColor = {31, 33, 34, 185};
 
   ScreenCapturer m_capturer;
+  TableWindow m_tableWindow;
 
   // functions
   void updateBtnsPosition();

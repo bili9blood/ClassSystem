@@ -37,6 +37,8 @@ add_executable(ClassSystem
 
     src/ClassSystem/Widgets/TitleWidget.cpp src/ClassSystem/Widgets/TitleWidget.h
 
+    src/ClassSystem/Widgets/TableWindow.cpp src/ClassSystem/Widgets/TableWindow.h
+
     thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.cpp thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.h
 
     src/ClassData.h

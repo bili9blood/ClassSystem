@@ -8,16 +8,17 @@ PopupMenu::PopupMenu(QWidget *parent)
   setWidgetTransparent(this);
 
   // append buttons
-  m_btnsList << new MenuButton({":/img/capture.png"}, "截图", m_btnsWidget);
-  setWidgetTransparent(m_btnsWidget);
-  m_btnsLayout->setMargin(0);
-  m_btnsLayout->setSpacing(0);
+  m_btnsList << new MenuButton({":/img/capture.png"}, "截图", &m_btnsWidget)
+             << new MenuButton({":img/table.png"}, "表格", &m_btnsWidget);
+  setWidgetTransparent(&m_btnsWidget);
+  m_btnsLayout.setMargin(0);
+  m_btnsLayout.setSpacing(0);
   foreach (MenuButton *btn, m_btnsList) {
-    m_btnsLayout->addWidget(btn);
+    m_btnsLayout.addWidget(btn);
     connect(btn, &MenuButton::clicked, this, &PopupMenu::onBtnClicked);
   }
 
-  m_btnsWidget->installEventFilter(this);
+  m_btnsWidget.installEventFilter(this);
 
   // init layouts
   m_mainLayout->addWidget(m_popMenuLabel);
@@ -27,16 +28,16 @@ PopupMenu::PopupMenu(QWidget *parent)
 }
 
 void PopupMenu::updateBtnsPosition() {
-  m_btnsWidget->move(x() - 10 - m_btnsWidget->width(),
-                     y() - m_btnsWidget->height() / 2 + height() / 2);
+  m_btnsWidget.move(x() - 10 - m_btnsWidget.width(),
+                    y() - m_btnsWidget.height() / 2 + height() / 2);
 }
 void PopupMenu::setBtnsVisible(bool visible) {
   if (visible) {
-    QApplication::setActiveWindow(m_btnsWidget);
-    m_btnsWidget->show();
+    QApplication::setActiveWindow(&m_btnsWidget);
+    m_btnsWidget.show();
     m_popMenuLabel->setPixmap(m_iconOpened);
   } else {
-    m_btnsWidget->hide();
+    m_btnsWidget.hide();
     m_popMenuLabel->setPixmap(m_iconClosed);
   }
 }
@@ -49,6 +50,10 @@ void PopupMenu::onBtnClicked() {
         case 0:  // capture screen
           m_capturer.capture();
           break;
+        case 1:  // show tables
+          m_tableWindow.show();
+          QApplication::setActiveWindow(&m_tableWindow);
+          break;
       }
       break;
     }
@@ -56,16 +61,16 @@ void PopupMenu::onBtnClicked() {
 }
 
 bool PopupMenu::eventFilter(QObject *obj, QEvent *ev) {
-  if (obj == m_btnsWidget) {
+  if (obj == &m_btnsWidget) {
     if (ev->type() == QEvent::ActivationChange &&
-        QApplication::activeWindow() != m_btnsWidget) {
+        QApplication::activeWindow() != &m_btnsWidget) {
       setBtnsVisible(false);
     }
     if (ev->type() == QEvent::Paint) {
-      QPainter painter(m_btnsWidget);
+      QPainter painter(&m_btnsWidget);
       painter.setBrush(QColor(31, 33, 34, 185));
       painter.setPen(Qt::transparent);
-      painter.drawRoundedRect(m_btnsWidget->rect(), 10, 10);
+      painter.drawRoundedRect(m_btnsWidget.rect(), 10, 10);
       return true;
     }
   }
@@ -95,7 +100,7 @@ void PopupMenu::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void PopupMenu::mouseReleaseEvent(QMouseEvent *ev) {
-  if (m_shouldUpdateBtnsVisible) setBtnsVisible(!m_btnsWidget->isVisible());
+  if (m_shouldUpdateBtnsVisible) setBtnsVisible(!m_btnsWidget.isVisible());
 }
 
 void PopupMenu::enterEvent(QEvent *ev) {
