@@ -13,18 +13,22 @@ MainPanel::MainPanel(QWidget *parent)
 
   setStyleSheet(R"(
 
-#labelDDDD, #labelDate, #mealStuLabel, #stuOnDutyLabel, QTableWidget::Item {
+#labelDDDD, #labelDate, #mealStuLabel, #stuOnDutyLabel {
   color: #d2d0ce;
 }
+
 QFrame {
   color: rgba(102, 113, 134 ,180);
 }
-#mealStuTitle, #stuOnDutyTitle, #noticesTitle {
+
+.titleText, #mealStuTitle, #stuOnDutyTitle, #noticesTitle {
   color: #edebe9;
 }
+
 #mealStuLabel, #stuOnDutyLabel, #noticesWid, #lessons {
   background-color: transparent;
 }
+
 #labelTime {
   color:#d9d9d9;
 }
@@ -43,6 +47,8 @@ QFrame {
   m_labelDDDD->setFont(qFont{.pointSize = 16}());
 
   m_sentenceLabel->setStyleSheet("color: #e5c07b;");
+  m_sentenceLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
+                                 QSizePolicy::Preferred);
   QFile sentenceFile(":/other/sentences.txt");
   if (sentenceFile.open(QFile::ReadOnly | QFile::Text)) {
     QStringList lines =
@@ -51,7 +57,7 @@ QFrame {
         lines.at(QRandomGenerator::global()->bounded(0, lines.size())));
   }
   m_sentenceLabel->setWordWrap(true);
-  m_sentenceLabel->setFont(qFont{.family = "仿宋", .pointSize = 17}());
+  m_sentenceLabel->setFont(qFont{.family = "仿宋", .pointSize = 19}());
 
   // init lessons
   m_lessons->setObjectName("lessons");
@@ -146,10 +152,11 @@ QFrame {
 
   // init lines
   m_sentenceLine->setFrameShape(QFrame::VLine);
-  m_stuLine->setFrameShape(QFrame::VLine);
+  m_titleLine->setFrameShape(QFrame::VLine);
   m_topNoticeLine->setFrameShape(QFrame::HLine);
   m_bottomNoticeLine->setFrameShape(QFrame::HLine);
   m_lessonsLine->setFrameShape(QFrame::VLine);
+  m_stuLine->setFrameShape(QFrame::VLine);
 
   // init layouts
   m_mainLayout->setMargin(10);
@@ -163,15 +170,15 @@ QFrame {
   m_mainLayout->addWidget(m_bottomNoticeLine, 4, 0, 1, 3);
   m_mainLayout->addLayout(m_mealStuLayout, 5, 0);
   m_mainLayout->addWidget(m_stuLine, 5, 1);
-  m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2, 1, 1);
+  m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2);
 
-  // qDebug()<<m_mainLayout->itemAtPosition(2,3).;
-
-  m_headerLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignBottom);
+  m_headerLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignVCenter);
   m_headerLayout->addWidget(m_labelDate, 0, 1, Qt::AlignBottom);
   m_headerLayout->addWidget(m_labelDDDD, 1, 1, Qt::AlignBottom);
   m_headerLayout->addWidget(m_sentenceLine, 0, 2, 2, 1);
-  m_headerLayout->addWidget(m_sentenceLabel, 0, 3, 2, 1, Qt::AlignBottom);
+  m_headerLayout->addWidget(m_sentenceLabel, 0, 3, 2, 1, Qt::AlignTop);
+  m_headerLayout->addWidget(m_titleLine, 0, 4, 2, 1);
+  m_headerLayout->addWidget(m_title, 0, 5, 2, 1, Qt::AlignRight);
 
   m_mealStuLayout->setAlignment(Qt::AlignTop);
   m_mealStuLayout->addWidget(m_mealStuTitle);
@@ -184,6 +191,7 @@ QFrame {
   //  init timers
   m_clockTimerId = startTimer(500);
   m_noticeTimerId = startTimer(5000);
+  m_curLessonUpdateTimerId = startTimer(1000);
 
   loadFromIni();
 }
@@ -263,5 +271,23 @@ void MainPanel::timerEvent(QTimerEvent *ev) {
     m_noticesWid->StartStackedWidgetAnimation(
         m_noticesWid->currentIndex(),
         (m_noticesWid->currentIndex() + 1) % m_noticesWid->count());
+  }
+  if (ev->timerId() == m_curLessonUpdateTimerId) {
+    const QTime kCur = QTime::currentTime();
+    auto color = [](bool b) {
+      return b ? QColor(229, 192, 123) : QColor(206, 210, 206);
+    };
+    if (kCur >= QTime(12, 50) && kCur <= QTime(13, 50)) {
+      for (int i = 0; i < 9; ++i)
+        m_lessons->item(i, 0)->setForeground(color(i == 5));
+      return;
+    }
+    m_lessons->item(5, 0)->setForeground(color(false));
+    for (int i = 0; i < 8; ++i) {
+      auto tm = m_data.LessonsTm[i];
+      m_lessons->item(i < 5 ? i : i + 1, 0)
+          ->setForeground(
+              color(kCur >= tm.addSecs(-600) && kCur <= tm.addSecs(2400)));
+    }
   }
 }

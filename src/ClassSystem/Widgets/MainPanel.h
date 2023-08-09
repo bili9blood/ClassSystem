@@ -17,6 +17,7 @@
 #include <qtimer.h>
 
 #include "ClassData.h"
+#include "TitleWidget.h"
 
 class MainPanel : public QWidget {
   Q_OBJECT
@@ -33,16 +34,18 @@ class MainPanel : public QWidget {
 
   // lines
   QFrame *m_sentenceLine = new QFrame(this);
-  QFrame *m_stuLine = new QFrame(this);
+  QFrame *m_titleLine = new QFrame(this);
   QFrame *m_topNoticeLine = new QFrame(this);
   QFrame *m_bottomNoticeLine = new QFrame(this);
   QFrame *m_lessonsLine = new QFrame(this);
+  QFrame *m_stuLine = new QFrame(this);
 
   // header
   QLabel *m_labelDate = new QLabel("00-00", this);
   QLabel *m_labelTime = new QLabel("00:00:00", this);
   QLabel *m_labelDDDD = new QLabel("星期八", this);
   QLabel *m_sentenceLabel = new QLabel(this);
+  TitleWidget *m_title = new TitleWidget("ClassSystem", this);
 
   ClassData::Data m_data = ClassData::readFrom(new QFile("data.stm"));
 
@@ -70,6 +73,7 @@ class MainPanel : public QWidget {
   // timers
   int m_clockTimerId;
   int m_noticeTimerId;
+  int m_curLessonUpdateTimerId;
   constexpr static const char *kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
   bool m_formatWithColons = true;
 
