@@ -8,6 +8,7 @@
 #include <qwidget.h>
 
 #include "ImgPaster.h"
+#include "TitleWidget.h"
 
 class ScreenCapturer : public QWidget {
   Q_OBJECT
@@ -18,7 +19,8 @@ class ScreenCapturer : public QWidget {
 
  private:
   QRect m_captureRect;
-  QDialogButtonBox *m_btnBox = new QDialogButtonBox();
+  QDialogButtonBox *m_btnBox = new QDialogButtonBox(this);
+  TitleWidget *m_title = new TitleWidget("截图", this);
   QPixmap m_capturedImg;
 
   const QSize kScreenSize = QApplication::primaryScreen()->size();

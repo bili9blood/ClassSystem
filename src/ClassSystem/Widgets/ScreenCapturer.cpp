@@ -10,6 +10,7 @@ ScreenCapturer::ScreenCapturer(QWidget *parent)
   move(0, 0);
   setWidgetTransparent(this);
   setWidgetTransparent(m_btnBox);
+  setStyleSheet(".titleText{color: white;}");
   setCursor(Qt::CrossCursor);
 
   setFixedSize(QApplication::primaryScreen()->size());
@@ -93,7 +94,7 @@ void ScreenCapturer::paintEvent(QPaintEvent *) {
 
   // 画一层不透明度为1的矩形，不让鼠标穿透到下方
   painter.setCompositionMode(QPainter::CompositionMode());
-  painter.fillRect(m_captureRect, QColor(0, 0, 0, 1));
+  painter.drawPixmap(r.topLeft(), m_capturedImg.copy(r));
 }
 
 void ScreenCapturer::closeEvent(QCloseEvent *) {
@@ -124,6 +125,8 @@ void ScreenCapturer::mouseMoveEvent(QMouseEvent *ev) {
   m_btnBox->move(
       std::max(r.right() - m_btnBox->width(), 0),
       std::min(r.bottom() + 5, kScreenSize.height() - m_btnBox->height()));
+
+  m_title->move(r.left(), std::max(0, r.top() - m_title->height()));
 }
 void ScreenCapturer::mouseReleaseEvent(QMouseEvent *) {
   repaint();
