@@ -1,6 +1,7 @@
 #include "PopupMenu.h"
 
 #include <qpainter.h>
+#include <qtextbrowser.h>
 
 PopupMenu::PopupMenu(QWidget *parent)
     : QWidget{parent,
@@ -20,6 +21,8 @@ PopupMenu::PopupMenu(QWidget *parent)
   }
 
   m_btnsWidget.installEventFilter(this);
+
+  m_browser.setWindowTitle("关于");
 
   // init layouts
   m_mainLayout->addWidget(m_popMenuLabel);
@@ -58,9 +61,9 @@ void PopupMenu::onBtnClicked() {
         case 2:  // show about
           QFile file(":/other/about.md");
           if (!file.open(QFile::ReadOnly | QFile::Text)) break;
-          QMessageBox msgBox(QMessageBox::Information, "关于", file.readAll());
-          msgBox.setTextFormat(Qt::MarkdownText);
-          msgBox.exec();
+          m_browser.setMarkdown(file.readAll());
+          m_browser.show();
+          QApplication::setActiveWindow(&m_browser);
           break;
       }
       break;

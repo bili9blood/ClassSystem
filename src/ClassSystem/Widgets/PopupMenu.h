@@ -6,12 +6,12 @@
 #include <qlabel.h>
 #include <qmessagebox.h>
 #include <qscreen.h>
+#include <qtextbrowser.h>
 #include <qtimer.h>
 
 #include "MenuButton.h"
 #include "ScreenCapturer.h"
 #include "TableWindow.h"
-
 
 class PopupMenu : public QWidget {
   Q_OBJECT
@@ -46,6 +46,7 @@ class PopupMenu : public QWidget {
 
   ScreenCapturer m_capturer;
   TableWindow m_tableWindow;
+  QTextBrowser m_browser;
 
   // functions
   void updateBtnsPosition();
