@@ -1,7 +1,9 @@
 #include "TableWindow.h"
 
 #include <qheaderview.h>
+#include <qmessagebox.h>
 #include <qpainter.h>
+
 
 TableWindow::TableWindow(QWidget *parent) : QWidget(parent) {
   setWindowTitle("表格");
@@ -62,7 +64,11 @@ QTabBar::tab:selected {
 }
 
 void TableWindow::reloadUi() {
-  m_data = ClassData::readFrom(new QFile("data.stm"));
+  if (!ClassData::readFrom(new QFile("data.stm"), m_data)) {
+    QMessageBox::critical(this, "ClassSystem",
+                          "无法读取数据！<br/>程序将关闭。");
+    QApplication::quit();
+  }
 
   // lessons
   for (int i = 0; i < 5; ++i) {

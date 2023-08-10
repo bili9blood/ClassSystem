@@ -1,7 +1,9 @@
 #include "MainPanel.h"
 
+#include <SharedMemoryUtils.h>
 #include <qbrush.h>
 #include <qdatetime.h>
+#include <qmessagebox.h>
 #include <qpainter.h>
 #include <qrandom.h>
 #include <qsizepolicy.h>
@@ -169,7 +171,11 @@ QFrame {
 }
 
 void MainPanel::reloadUi() {
-  m_data = ClassData::readFrom(new QFile("data.stm"));
+  if (!ClassData::readFrom(new QFile("data.stm"), m_data)) {
+    QMessageBox::critical(this, "ClassSystem",
+                          "无法读取数据！<br/>程序将关闭。");
+    QApplication::quit();
+  }
   // lessons
   auto lessonsToday = m_data.lessons[dayToday()];
 

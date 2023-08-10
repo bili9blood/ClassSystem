@@ -119,9 +119,8 @@ inline Data testData() {
   return d;
 }
 
-inline void writeTo(const ClassData::Data &d, QIODevice *device) {
-  if (!device->open(QIODevice::WriteOnly | QIODevice::Truncate))
-    throw std::runtime_error(device->errorString().toStdString());
+inline bool writeTo(const ClassData::Data &d, QIODevice *device) {
+  if (!device->open(QIODevice::WriteOnly | QIODevice::Truncate)) return false;
   QDataStream ds(device);
   ds.setVersion(QDataStream::Qt_5_15);
   ds << d.students << d.lessons << d.LessonsTm << d.mealStu << d.stuOnDuty
@@ -142,11 +141,11 @@ inline void writeTo(const ClassData::Data &d, QIODevice *device) {
     q.pop();
   }
   device->close();
+  return true;
 }
 
-inline ClassData::Data readFrom(QIODevice *device) {
-  if (!device->open(QIODevice::ReadWrite))
-    throw std::runtime_error(device->errorString().toStdString());
+inline bool readFrom(QIODevice *device, ClassData::Data &data) {
+  if (!device->open(QIODevice::ReadWrite)) return false;
   QDataStream ds(device);
   ClassData::Data d;
   ds.setVersion(QDataStream::Qt_5_15);
@@ -168,6 +167,7 @@ inline ClassData::Data readFrom(QIODevice *device) {
   }
   device->close();
   ClassData::writeTo(d, device);
-  return d;
+  data = d;
+  return true;
 }
 }  // namespace ClassData

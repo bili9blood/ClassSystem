@@ -19,6 +19,8 @@ endif()
 
 include_directories(src ${CMAKE_BINARY_DIR} thirdparty)
 
+set(UTILS_SOURCES src/ClassData.h src/SharedMemoryUtils.h)
+
 # target ClassSystem BEGIN
 add_executable(ClassSystem
 
@@ -41,10 +43,10 @@ add_executable(ClassSystem
 
     thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.cpp thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.h
 
-    src/ClassData.h
+    ${UTILS_SOURCES}
 )
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
-target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
+target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 
 # target ClassSystem END
