@@ -1,6 +1,5 @@
 #include "MainPanel.h"
 
-#include <SharedMemoryUtils.h>
 #include <qbrush.h>
 #include <qdatetime.h>
 #include <qmessagebox.h>
@@ -168,6 +167,7 @@ QFrame {
 
   reloadUi();
   loadFromIni();
+  initLocalSocket();
 }
 
 void MainPanel::reloadUi() {
@@ -190,11 +190,11 @@ void MainPanel::reloadUi() {
   }
 
   // notices
-  for (const auto &[date, str] : m_data.notices) {
+  for (const auto &[date, str, fontPtSize] : m_data.notices) {
     auto b = new QTextBrowser(this);
     b->setText(str);
     b->setStyleSheet("color: #d2d0ce;background-color: transparent");
-    b->setFont(qFont{.pointSize = 20}());
+    b->setFont(qFont{.pointSize = fontPtSize}());
     b->setAttribute(Qt::WA_TransparentForMouseEvents);
     b->setFocusPolicy(Qt::NoFocus);
     b->setFrameShape(QFrame::NoFrame);
@@ -233,6 +233,24 @@ void MainPanel::reloadUi() {
   }
   m_stuOnDutyLabel->setText(
       m_stuOnDutyLabel->text().mid(9));  // 移除第一个 `<br></br>`
+}
+
+void MainPanel::initLocalSocket() {
+  m_socket->setServerName(kServerName);
+  connect(m_socket, &QLocalSocket::readyRead, this, &MainPanel::onReadyRead);
+  connect(m_socket, &QLocalSocket::errorOccurred,
+          [this](const QLocalSocket::LocalSocketError &err) {
+            if (err != QLocalSocket::ServerNotFoundError) {
+              qDebug() << m_socket->errorString();
+            }
+            QTimer::singleShot(1000, [this] { m_socket->connectToServer(); });
+          });
+  m_socket->connectToServer();
+}
+
+void MainPanel::onReadyRead() {
+  qDebug() << m_socket->readAll();
+  qDebug("--------");
 }
 
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {

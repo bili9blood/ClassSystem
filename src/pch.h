@@ -17,23 +17,23 @@ inline QColor invertColor(const QColor &color) {
 
 inline void setParentToDesktop(QWidget *pWidget) {
   HWND resultHwnd = nullptr;
-  EnumWindows(
+  ::EnumWindows(
       static_cast<WNDENUMPROC>(
           // lambda: 通过枚举找到桌面图标窗口
           [](HWND hwnd, LPARAM lParam) {
-            long wflags = GetWindowLong(hwnd, GWL_STYLE);
+            long wflags = ::GetWindowLong(hwnd, GWL_STYLE);
             if (!(wflags & WS_VISIBLE)) {
               return TRUE;
             };
 
             HWND sndWnd;
-            if (!(sndWnd = FindWindowExW(hwnd, nullptr, L"SHELLDLL_DefView",
-                                         nullptr))) {
+            if (!(sndWnd = ::FindWindowExW(hwnd, nullptr, L"SHELLDLL_DefView",
+                                           nullptr))) {
               return TRUE;
             }
             HWND targetWnd;
-            if (!(targetWnd = FindWindowExW(sndWnd, nullptr, L"SysListView32",
-                                            L"FolderView"))) {
+            if (!(targetWnd = ::FindWindowExW(sndWnd, nullptr, L"SysListView32",
+                                              L"FolderView"))) {
               return TRUE;
             }
 
@@ -45,7 +45,7 @@ inline void setParentToDesktop(QWidget *pWidget) {
 
   // 设置桌面为父窗口
   if (resultHwnd) {
-    SetParent((HWND)pWidget->winId(), resultHwnd);
+    ::SetParent((HWND)pWidget->winId(), resultHwnd);
   }
 }
 

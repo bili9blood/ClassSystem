@@ -1,9 +1,8 @@
 #include <qfontdatabase.h>
 #include <qsharedmemory.h>
-#include <qtranslator.h>
 
-#include "Widgets/MainPanel.h"
-#include "Widgets/PopupMenu.h"
+#include "MainPanel.h"
+#include "PopupMenu.h"
 
 #define QT_NO_OPENGL
 
@@ -30,8 +29,9 @@ int main(int argc, char *argv[]) {
         QFontDatabase::applicationFontFamilies(fontId).first());
 
   checkDirs();
+
   // generate template .stm file
-  ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
+  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
 
   PopupMenu menu;
   menu.show();

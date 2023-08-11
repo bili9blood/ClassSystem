@@ -1,0 +1,8 @@
+<RCC>
+  <qresource>
+    <file>img/drop.png</file>
+    <file>img/save.png</file>
+    <file>img/add.png</file>
+    <file>img/password.png</file>
+  </qresource>
+</RCC>

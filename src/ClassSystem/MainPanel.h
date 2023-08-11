@@ -9,6 +9,7 @@
 #include <qlabel.h>
 #include <qlayoutitem.h>
 #include <qlcdnumber.h>
+#include <qlocalsocket.h>
 #include <qmenu.h>
 #include <qpropertyanimation.h>
 #include <qsettings.h>
@@ -20,6 +21,7 @@
 
 #include "ClassData.h"
 #include "TitleWidget.h"
+
 
 class MainPanel : public QWidget {
   Q_OBJECT
@@ -93,7 +95,13 @@ class MainPanel : public QWidget {
   QPoint m_mouseStartPoint;
   constexpr static int kPadding = 8;
 
+  // local server
+  QLocalSocket *m_socket = new QLocalSocket(this);
+  static constexpr const char kServerName[] = "CLASS-SYSTEM-ADMIN-SERVER";
+  void initLocalSocket();
+
  private slots:
+  void onReadyRead();
 
  protected:
   bool nativeEvent(const QByteArray &, void *message, long *result) override;

@@ -12,16 +12,17 @@
 struct ClassNotice {
   QDate date;
   QString str;
+  int fontPtSize = 20;
 };
 
 Q_DECLARE_METATYPE(ClassNotice)
 
 inline QDataStream &operator<<(QDataStream &out, const ClassNotice &notice) {
-  return out << notice.date << notice.str;
+  return out << notice.date << notice.str << notice.fontPtSize;
 }
 
 inline QDataStream &operator>>(QDataStream &in, ClassNotice &notice) {
-  return in >> notice.date >> notice.str;
+  return in >> notice.date >> notice.str >> notice.fontPtSize;
 }
 
 struct ClassEvent {
@@ -111,9 +112,8 @@ inline Data testData() {
                ClassNotice{{2024, 4, 4},
                            "青春，是我们一生中最美丽的季节，她孕育着早春的生机"
                            "，展现着盛夏的热烈，"
-                           "暗藏着金秋的硕实，昭示着寒冬的希望，充满诗意而不缺"
-                           "乏拼搏的激情，时尚浪"
-                           "漫而又饱含着奋斗的艰辛。"}};
+                           "暗藏着金秋的硕实，昭示着寒冬的希望。",
+                           14}};
   d.events.push({"志愿者", {2023, 8, 10}, false});
   d.events.push({"开学", {2023, 9, 1}, true});
   return d;
@@ -155,9 +155,9 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data) {
   for (int i = 0; i < noticesSize; ++i) {
     QVariant v;
     ds >> v;
-    const auto &[date, str] = v.value<ClassNotice>();
+    const auto &[date, str, fontPtSize] = v.value<ClassNotice>();
     if (date == kForever || date > QDate::currentDate())
-      d.notices << ClassNotice{date, str};
+      d.notices << ClassNotice{date, str, fontPtSize};
   }
   for (int i = 0; i < eventsSize; ++i) {
     QVariant v;

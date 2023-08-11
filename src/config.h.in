@@ -1,4 +1,3 @@
 // clang-format off
 #pragma once
 constexpr const char* projectVersion="@PROJECT_VERSION@";
-constexpr const char* compileTime="@COMPOILE_TIME@";
