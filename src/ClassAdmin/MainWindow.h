@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow {
   void removeStudent();
   void clearStudents();
   void importStudents();
+  void resetPwd();
 
  private:
   bool m_changed = false;

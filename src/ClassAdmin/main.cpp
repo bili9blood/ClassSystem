@@ -20,6 +20,7 @@ void inputPwd() {
   }
 
   QInputDialog pwdDlg;
+  pwdDlg.setAttribute(Qt::WA_InputMethodEnabled, false);
   pwdDlg.setTextEchoMode(QLineEdit::Password);
   pwdDlg.setWindowTitle("ClassAdmin 密码");
   pwdDlg.setLabelText("请输入密码：");

@@ -264,11 +264,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>m_actChangePwd</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>resetPwd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addStudent()</slot>
   <slot>clearStudents()</slot>
   <slot>importStudents()</slot>
   <slot>removeStudent()</slot>
+  <slot>resetPwd()</slot>
  </slots>
 </ui>

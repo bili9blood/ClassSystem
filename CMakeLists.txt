@@ -66,6 +66,8 @@ add_executable(ClassAdmin
 
     src/ClassAdmin/ImportDialog.cpp src/ClassAdmin/ImportDialog.h
 
+    src/ClassAdmin/ResetPwdDialog.cpp src/ClassAdmin/ResetPwdDialog.h
+
     ${UI_SOURCES}
 
     ${UTILS_SOURCES}

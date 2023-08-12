@@ -4,6 +4,7 @@
 #include <qpainter.h>
 
 #include "ImportDialog.h"
+#include "ResetPwdDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) { setupUi(this); }
 
@@ -63,6 +64,11 @@ void MainWindow::importStudents() {
     m_studentsTable->setItem(row, 1, new QTableWidgetItem(name));
   }
   m_changed = true;
+}
+
+void MainWindow::resetPwd() {
+  ResetPwdDialog dlg(this);
+  dlg.exec();
 }
 
 void MainWindow::paintEvent(QPaintEvent *) {
