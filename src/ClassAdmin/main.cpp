@@ -33,9 +33,8 @@ void inputPwd() {
       QMessageBox::critical(nullptr, "密码", "尝试次数过多！");
       exit(0);
     }
-    QMessageBox::warning(
-        nullptr, "密码",
-        QString("密码错误，还有%1次尝试机会！").arg(5 - retryCnt));
+    QMessageBox::warning(nullptr, "密码",
+                         "密码错误，还有%1次尝试机会！"_s.arg(5 - retryCnt));
     ++retryCnt;
   }
 }

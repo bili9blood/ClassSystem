@@ -61,9 +61,9 @@ void PopupMenu::onBtnClicked() {
         case 2:  // show about
           QFile file(":/other/about.md");
           if (!file.open(QFile::ReadOnly | QFile::Text)) break;
-          m_browser.setMarkdown(QString("*V%1*\n---\n%2\n")
-                                    .arg(QString(projectVersion))
-                                    .arg(QString(file.readAll())));
+          m_browser.setMarkdown(
+              "*V%1*\n---\n%2\n"_s.arg(QString(projectVersion))
+                  .arg(QString(file.readAll())));
           m_browser.show();
           QApplication::setActiveWindow(&m_browser);
           break;

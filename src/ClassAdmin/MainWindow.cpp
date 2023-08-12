@@ -3,6 +3,8 @@
 #include <qmessagebox.h>
 #include <qpainter.h>
 
+#include "ImportDialog.h"
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) { setupUi(this); }
 
 void MainWindow::addStudent() {
@@ -28,7 +30,40 @@ void MainWindow::clearStudents() {
   m_changed = true;
 }
 
-void MainWindow::importStudents() {}
+void MainWindow::importStudents() {
+  ImportDialog dlg("1\t张三<br/>2\t李四<br/>3\t王五<br/>", this);
+  if (QDialog::Rejected == dlg.exec()) return;
+  QStringList students = dlg.getData().remove('\r').split('\n');
+  if (students.isEmpty()) return;
+  if (m_studentsTable->rowCount() &&
+      !QMessageBox::warning(this, "导入学生", "是否在导入前清除学生列表？",
+                            "清除", "保留")) {
+    clearStudents();
+    m_changed = true;
+  }
+  for (const QString &stu : students) {
+    if (stu.isEmpty()) continue;
+    QString id = stu.left(stu.indexOf('\t')),
+            name = stu.mid(stu.indexOf('\t') + 1);
+    if (id.isEmpty() || name.isEmpty()) continue;
+
+    bool ok;
+    id.toUInt(&ok);
+    if (!ok) {
+      QMessageBox::critical(this, "导入学生",
+                            "格式错误：<br/>"
+                            "<u style=\"color: red;\">%1</u>\t%2"
+                            "<br/>↑<br/>不是正整数！"_s.arg(id)
+                                .arg(name));
+      return;
+    }
+    int row = m_studentsTable->rowCount();
+    m_studentsTable->insertRow(row);
+    m_studentsTable->setItem(row, 0, new QTableWidgetItem(id));
+    m_studentsTable->setItem(row, 1, new QTableWidgetItem(name));
+  }
+  m_changed = true;
+}
 
 void MainWindow::paintEvent(QPaintEvent *) {
   m_btnRemoveStudent->setEnabled(m_studentsTable->selectedRanges().size());

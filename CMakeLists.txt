@@ -7,8 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets Core Network WinExtras REQUIRED)
 
-add_subdirectory(thirdparty/QXlsx)
-
 string(TIMESTAMP COMPILE_TIME "\"%Y-%m-%d %H:%M:%S\"")
 configure_file(src/config.h.in config.h)
 
@@ -66,12 +64,14 @@ add_executable(ClassAdmin
 
     src/ClassAdmin/MainWindow.cpp src/ClassAdmin/MainWindow.h
 
+    src/ClassAdmin/ImportDialog.cpp src/ClassAdmin/ImportDialog.h
+
     ${UI_SOURCES}
 
     ${UTILS_SOURCES}
 )
 target_include_directories(ClassAdmin PUBLIC src/ClassAdmin)
-target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network QXlsx::QXlsx)
+target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassAdmin PUBLIC src/pch.h)
 
 # target ClassAdmin END
