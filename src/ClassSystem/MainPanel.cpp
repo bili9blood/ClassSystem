@@ -183,10 +183,9 @@ void MainPanel::reloadUi() {
   for (int i = 0; i < 8; ++i) {
     m_lessons->setItem(
         i < 5 ? i : i + 1, 0,
-        new QTableWidgetItem(
-            QString("%1(%2-%3)")
-                .arg(lessonsToday[i], m_data.LessonsTm[i].toString("hh:mm"),
-                     m_data.LessonsTm[i].addSecs(2400).toString("hh:mm"))));
+        new QTableWidgetItem("%1(%2-%3)"_s.arg(
+            lessonsToday[i], m_data.LessonsTm[i].toString("hh:mm"),
+            m_data.LessonsTm[i].addSecs(2400).toString("hh:mm"))));
   }
 
   // notices
@@ -205,8 +204,7 @@ void MainPanel::reloadUi() {
   }
 
   // days left
-  m_eventNameLabel->setText(
-      QString("离%1剩余天数:").arg(m_data.events.top().name));
+  m_eventNameLabel->setText("离%1剩余天数:"_s.arg(m_data.events.top().name));
   m_daysLeftDisplay->display(
       (int)QDate::currentDate().daysTo(m_data.events.top().date));
 

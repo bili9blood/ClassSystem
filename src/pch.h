@@ -61,6 +61,10 @@ struct qFont {
   inline QFont operator()() { return {family, pointSize, weight, italic}; }
 };
 
+inline QString operator""_s(const char *str, size_t size) {
+  return QByteArray(str, size);
+}
+
 inline QStringList matchedList(const QString &str, const QString &cap) {
   QStringList list;
   QRegExp rx(cap);

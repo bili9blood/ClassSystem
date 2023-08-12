@@ -4,7 +4,6 @@
 #include <qmessagebox.h>
 #include <qpainter.h>
 
-
 TableWindow::TableWindow(QWidget *parent) : QWidget(parent) {
   setWindowTitle("表格");
   setStyleSheet(R"(
@@ -76,11 +75,10 @@ void TableWindow::reloadUi() {
         i, new QTableWidgetItem(oneDayOfWeek(i)));
     for (int j = 0; j < 8; ++j) {
       m_lessonsTable->setVerticalHeaderItem(
-          j, new QTableWidgetItem(QString("第%1节").arg(j + 1)));
-      auto item = new QTableWidgetItem(
-          QString("%1\n(%2-%3)")
-              .arg(m_data.lessons[i][j], m_data.LessonsTm[j].toString("hh:mm"),
-                   m_data.LessonsTm[j].addSecs(2400).toString("hh:mm")));
+          j, new QTableWidgetItem("第%1节"_s.arg(j + 1)));
+      auto item = new QTableWidgetItem("%1\n(%2-%3)"_s.arg(
+          m_data.lessons[i][j], m_data.LessonsTm[j].toString("hh:mm"),
+          m_data.LessonsTm[j].addSecs(2400).toString("hh:mm")));
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(
           qFont{.family = "华文中宋",

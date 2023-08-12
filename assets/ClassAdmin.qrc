@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>other/students-template.xlsx</file>
     <file>img/drop.png</file>
     <file>img/save.png</file>
     <file>img/add.png</file>
