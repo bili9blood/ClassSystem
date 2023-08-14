@@ -37,18 +37,24 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QTabWidget" name="m_tabWidget">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="m_tabStudents">
+      <widget class="QWidget" name="tabStudents">
        <attribute name="title">
         <string>学生</string>
        </attribute>
-       <widget class="QGroupBox" name="m_groupBoxStudents">
+       <widget class="QGroupBox" name="groupBoxStudents">
         <property name="geometry">
          <rect>
           <x>20</x>
@@ -62,7 +68,10 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0" colspan="3">
-          <widget class="QTableWidget" name="m_studentsTable">
+          <widget class="QTableWidget" name="studentsTable">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="frameShadow">
             <enum>QFrame::Plain</enum>
            </property>
@@ -71,6 +80,15 @@
            </property>
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>
+           </property>
+           <property name="verticalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
            </property>
            <attribute name="horizontalHeaderMinimumSectionSize">
             <number>0</number>
@@ -97,21 +115,21 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QPushButton" name="m_btnAddStudent">
+          <widget class="QPushButton" name="btnAddStudent">
            <property name="text">
             <string>添加</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QPushButton" name="m_btnRemoveStudent">
+          <widget class="QPushButton" name="btnRemoveStudent">
            <property name="text">
             <string>移除</string>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QPushButton" name="m_btnClearStudents">
+          <widget class="QPushButton" name="btnClearStudents">
            <property name="text">
             <string>清空</string>
            </property>
@@ -126,13 +144,207 @@
          </item>
         </layout>
        </widget>
+       <widget class="QGroupBox" name="groupBoxMealStu">
+        <property name="geometry">
+         <rect>
+          <x>440</x>
+          <y>90</y>
+          <width>335</width>
+          <height>153</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>抬饭生</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QScrollArea" name="scrollAreaMealStu">
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Sunken</enum>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="midLineWidth">
+            <number>0</number>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAsNeeded</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>-105</y>
+              <width>279</width>
+              <height>210</height>
+             </rect>
+            </property>
+            <layout class="QFormLayout" name="formLayout">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelMealStuMon">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>星期一：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QPushButton" name="btnMealStuMon">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>编辑</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelMealStuTue">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>星期二：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QPushButton" name="btnMealStuTue">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>编辑</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelMealStuWed">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>星期三：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="btnMealStuWed">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>编辑</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelMealStuThur">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>星期四：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="btnMealStuThur">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>编辑</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelMealStuFri">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>星期五：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QPushButton" name="btnMealStuFri">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>编辑</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
-      <widget class="QWidget" name="m_tabLessons">
+      <widget class="QWidget" name="tabLessons">
        <attribute name="title">
         <string>课程</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="m_tabNoticesEvents">
+      <widget class="QWidget" name="tabNoticesEvents">
        <attribute name="title">
         <string>公告&amp;&amp;事件</string>
        </attribute>
@@ -160,12 +372,12 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="m_actChangePwd"/>
+   <addaction name="actChangePwd"/>
    <addaction name="separator"/>
-   <addaction name="m_actSave"/>
-   <addaction name="m_actDrop"/>
+   <addaction name="actSave"/>
+   <addaction name="actDrop"/>
   </widget>
-  <action name="m_actChangePwd">
+  <action name="actChangePwd">
    <property name="icon">
     <iconset resource="../../assets/ClassAdmin.qrc">
      <normaloff>:/img/password.png</normaloff>:/img/password.png</iconset>
@@ -174,7 +386,7 @@
     <string>更改密码</string>
    </property>
   </action>
-  <action name="m_actSave">
+  <action name="actSave">
    <property name="icon">
     <iconset resource="../../assets/ClassAdmin.qrc">
      <normaloff>:/img/save.png</normaloff>:/img/save.png</iconset>
@@ -186,7 +398,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="m_actDrop">
+  <action name="actDrop">
    <property name="icon">
     <iconset resource="../../assets/ClassAdmin.qrc">
      <normaloff>:/img/drop.png</normaloff>:/img/drop.png</iconset>
@@ -201,7 +413,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>m_btnAddStudent</sender>
+   <sender>btnAddStudent</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>addStudent()</slot>
@@ -217,7 +429,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_btnClearStudents</sender>
+   <sender>btnClearStudents</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>clearStudents()</slot>
@@ -249,7 +461,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_btnRemoveStudent</sender>
+   <sender>btnRemoveStudent</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>removeStudent()</slot>
@@ -265,7 +477,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>m_actChangePwd</sender>
+   <sender>actChangePwd</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>resetPwd()</slot>

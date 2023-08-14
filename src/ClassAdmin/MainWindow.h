@@ -4,7 +4,7 @@
 #include <qmainwindow.h>
 #include <ui_MainWindow.h>
 
-class MainWindow : public QMainWindow, public Ui::MainWindow {
+class MainWindow : public QMainWindow {
   Q_OBJECT
  public:
   explicit MainWindow(QWidget *parent = nullptr);
@@ -17,6 +17,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow {
   void resetPwd();
 
  private:
+  Ui::MainWindow ui;
   bool m_changed = false;
 
   static constexpr const char *kWindowTitle[] = {

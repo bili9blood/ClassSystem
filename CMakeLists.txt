@@ -24,6 +24,8 @@ set(UTILS_SOURCES src/ClassData.h)
 # target ClassSystem BEGIN
 add_executable(ClassSystem
 
+    assets/ICON.RC
+
     ${APP_CMD_TYPE} # `WIN32` or None
 
     assets/ClassSystem.qrc
@@ -55,6 +57,8 @@ target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 # target ClassAdmin BEGIN
 qt_wrap_ui(UI_SOURCES src/ClassAdmin/MainWindow.ui)
 add_executable(ClassAdmin
+
+    assets/ICON.RC
 
     ${APP_CMD_TYPE} # `WIN32` or None
 
