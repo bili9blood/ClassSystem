@@ -13,7 +13,11 @@
 #include "ScreenCapturer.h"
 #include "TableWindow.h"
 
+class MainPanel;
+
 class PopupMenu : public QWidget {
+  friend class MainPanel;
+
   Q_OBJECT
  public:
   explicit PopupMenu(QWidget *parent = nullptr);

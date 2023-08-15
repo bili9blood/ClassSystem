@@ -2,6 +2,7 @@
 
 #include <qdatetime.h>
 #include <qlist.h>
+#include <qlocalsocket.h>
 #include <qmap.h>
 
 #include <algorithm>
@@ -119,10 +120,13 @@ inline Data testData() {
   return d;
 }
 
-inline bool writeTo(const ClassData::Data &d, QIODevice *device) {
+inline bool writeTo(const ClassData::Data &d, QIODevice *device,
+                    bool shouldClose = true) {
   if (!device->isOpen() &&
-      !device->open(QIODevice::WriteOnly | QIODevice::Truncate))
+      !device->open(QIODevice::ReadWrite | QIODevice::Truncate)) {
+    // qDebug() << device->errorString();
     return false;
+  }
   QDataStream ds(device);
   ds.setVersion(QDataStream::Qt_5_15);
   ds << d.students << d.lessons << d.LessonsTm << d.mealStu << d.stuOnDuty
@@ -130,29 +134,29 @@ inline bool writeTo(const ClassData::Data &d, QIODevice *device) {
   ds << (int)d.notices.size();
   auto q = d.events;
   ds << (int)q.size();
-  for (const auto &n : d.notices) {
-    QVariant v;
-    v.setValue(n);
-    ds << v;
-  }
-  while (q.size()) {
-    QVariant v;
+  for (const auto &n : d.notices) ds << QVariant::fromValue(n);
 
-    v.setValue(q.top());
-    ds << v;
+  while (q.size()) {
+    ds << QVariant::fromValue(q.top());
     q.pop();
   }
+  if (shouldClose) device->close();
   return true;
 }
 
-inline bool readFrom(QIODevice *device, ClassData::Data &data) {
-  if (!device->isOpen() && !device->open(QIODevice::ReadWrite)) return false;
+inline bool readFrom(QIODevice *device, ClassData::Data &data,
+                     bool shouldClose = true) {
+  if (!device->isOpen() && !device->open(QIODevice::ReadWrite)) {
+    // qDebug() << "ClassData::ReadFrom " << device->errorString();
+    return false;
+  }
   QDataStream ds(device);
   ClassData::Data d;
   ds.setVersion(QDataStream::Qt_5_15);
   int noticesSize, eventsSize;
   ds >> d.students >> d.lessons >> d.LessonsTm >> d.mealStu >> d.stuOnDuty >>
       d.dutyJobs >> noticesSize >> eventsSize;
+
   for (int i = 0; i < noticesSize; ++i) {
     QVariant v;
     ds >> v;
@@ -166,7 +170,8 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data) {
     if (v.value<ClassEvent>().date >= QDate::currentDate())
       d.events.push(v.value<ClassEvent>());
   }
-  ClassData::writeTo(d, device);
+  if (!ClassData::writeTo(d, device, shouldClose)) return false;
+
   data = d;
   return true;
 }

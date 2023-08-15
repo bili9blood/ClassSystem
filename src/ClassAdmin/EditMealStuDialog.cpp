@@ -10,7 +10,7 @@ EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
   auto mealStu = data.mealStu[dayOfWeek];
   for (const auto &id : mealStu) {
     auto item = new QListWidgetItem(QString::number(id));
-    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable);
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
     ui.listWidget->addItem(item);
   }
 
@@ -24,7 +24,7 @@ EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
   connect(ui.listWidget->model(), &QAbstractItemModel::dataChanged, this,
           &EditMealStuDialog::onDataChanged);
 
-  setWindowTitle("编辑%1值日生"_s.arg(oneDayOfWeek(dayOfWeek)));
+  setWindowTitle("编辑%1抬饭生"_s.arg(oneDayOfWeek(dayOfWeek)));
 }
 
 std::pair<ClassData::Data, QString> EditMealStuDialog::getResult() {
@@ -34,7 +34,7 @@ std::pair<ClassData::Data, QString> EditMealStuDialog::getResult() {
 void EditMealStuDialog::addMealStu() {
   auto item = new QListWidgetItem("0");
   ui.listWidget->addItem(item);
-  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable);
+  item->setFlags(item->flags() | Qt::ItemIsEditable);
 }
 
 void EditMealStuDialog::removeMealStu() {
@@ -59,7 +59,6 @@ void EditMealStuDialog::onDataChanged(const QModelIndex &idx,
   QList<uint> &ls = m_data.mealStu[m_dayOfWeek];
   while (idx.row() >= ls.size()) ls << 0;
   ls[idx.row()] = idx.data().toUInt();
-  qDebug() << m_data.mealStu[m_dayOfWeek];
   m_changed = true;
 }
 

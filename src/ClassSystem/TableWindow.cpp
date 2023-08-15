@@ -67,15 +67,16 @@ void TableWindow::reloadUi() {
   if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
     QMessageBox::critical(this, "ClassSystem",
                           "无法读取数据！<br/>程序将关闭。");
-    QApplication::quit();
+    exit(0);
   }
   file.close();
 
   // lessons
+  m_lessonsTable->clear();
   for (int i = 0; i < 5; ++i) {
     m_lessonsTable->setHorizontalHeaderItem(
         i, new QTableWidgetItem(oneDayOfWeek(i)));
-    for (int j = 0; j < 8; ++j) {
+    for (int j = 0; j < m_data.lessons[i].size(); ++j) {
       m_lessonsTable->setVerticalHeaderItem(
           j, new QTableWidgetItem("第%1节"_s.arg(j + 1)));
       auto item = new QTableWidgetItem("%1\n(%2-%3)"_s.arg(
@@ -91,11 +92,16 @@ void TableWindow::reloadUi() {
   }
 
   // students carry meals
-  m_mealStuTable->setRowCount(m_data.mealStu[0].size());
+  int mx = std::max({m_data.mealStu[0].size(), m_data.mealStu[1].size(),
+                     m_data.mealStu[2].size(), m_data.mealStu[3].size(),
+                     m_data.mealStu[4].size()});
+
+  m_mealStuTable->clear();
+  m_mealStuTable->setRowCount(mx);
   for (int i = 0; i < 5; ++i) {
     m_mealStuTable->setHorizontalHeaderItem(
         i, new QTableWidgetItem(oneDayOfWeek(i)));
-    for (int j = 0; j < m_data.mealStu[0].size(); ++j) {
+    for (int j = 0; j < m_data.mealStu[i].size(); ++j) {
       auto item = new QTableWidgetItem(m_data.idAndName(m_data.mealStu[i][j]));
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(
@@ -107,6 +113,7 @@ void TableWindow::reloadUi() {
   }
 
   // students on duty
+  m_stuOnDutyTable->clear();
   m_stuOnDutyTable->setRowCount(m_data.dutyJobs.size());
   for (int i = 0; i < 5; ++i) {
     m_stuOnDutyTable->setHorizontalHeaderItem(

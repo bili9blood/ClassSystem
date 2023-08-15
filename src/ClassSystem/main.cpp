@@ -2,7 +2,6 @@
 #include <qsharedmemory.h>
 
 #include "MainPanel.h"
-#include "PopupMenu.h"
 
 #define QT_NO_OPENGL
 
@@ -35,23 +34,11 @@ int main(int argc, char *argv[]) {
   checkDirs();
 
   // generate template .stm file
-  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
+  ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
 
-  PopupMenu menu;
-  menu.show();
   // show panel
   MainPanel panel;
   panel.show();
-
-  // init System Tray Icon
-  QSystemTrayIcon *m_trayIcon =
-      new QSystemTrayIcon(QIcon("D:/Downloads/icon.png"));
-  QMenu *m_trayMenu = new QMenu();
-  QAction *m_quitAction = new QAction("退出");
-  QObject::connect(m_quitAction, &QAction::triggered, [] { exit(0); });
-  m_trayMenu->addAction(m_quitAction);
-  m_trayIcon->setContextMenu(m_trayMenu);
-  m_trayIcon->show();
 
   return QApplication::exec();
 }

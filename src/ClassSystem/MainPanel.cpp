@@ -166,20 +166,21 @@ QFrame {
   m_noticeTimerId = startTimer(5000);
   m_curLessonUpdateTimerId = startTimer(1000);
 
+  QFile file("data.stm");
+
+  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
+    QMessageBox::critical(this, "ClassSystem",
+                          "无法读取数据！<br/>程序将关闭。");
+    exit(0);
+  }
+  file.close();
+
   reloadUi();
   loadFromIni();
   initLocalSocket();
 }
 
 void MainPanel::reloadUi() {
-  QFile file("data.stm");
-  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
-    QMessageBox::critical(this, "ClassSystem",
-                          "无法读取数据！<br/>程序将关闭。");
-    QApplication::quit();
-  }
-  file.close();
-
   // lessons
   auto lessonsToday = m_data.lessons[dayToday()];
 
@@ -193,6 +194,14 @@ void MainPanel::reloadUi() {
   }
 
   // notices
+
+  // clear
+  for (const auto &b : m_noticesTextBrowsers) {
+    m_noticesTextBrowsers.removeOne(b);
+    m_noticesWid->removeWidget(b);
+    b->deleteLater();
+  }
+
   for (const auto &[date, str, fontPtSize] : m_data.notices) {
     auto b = new QTextBrowser(this);
     b->setText(str);
@@ -214,14 +223,15 @@ void MainPanel::reloadUi() {
 
   // students carry meals
   auto mealStuToday = m_data.mealStu[dayToday()];
+  QString mealStuStr;
   for (const uint &id : mealStuToday) {
-    m_mealStuLabel->setText(m_mealStuLabel->text() + "\n" +
-                            m_data.idAndName(id));
+    mealStuStr += "\n" + m_data.idAndName(id);
   }
-  m_mealStuLabel->setText(m_mealStuLabel->text().mid(1));
+  m_mealStuLabel->setText(mealStuStr.mid(1));
 
   // students on duty
   auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
+  QString stuOnDutyStr;
   for (int i = 0; i < stuOnDutyToday.size(); ++i) {
     QList<uint> l = stuOnDutyToday[i];
     if (l.empty()) continue;
@@ -230,11 +240,9 @@ void MainPanel::reloadUi() {
             R"(<font style="font-weight: 1000; font-size: 25pt; display: inline;">%1:</font>)")
             .arg(m_data.dutyJobs[i]);
     for (const uint &id : l) displayStr += " " + m_data.idAndName(id);
-    m_stuOnDutyLabel->setText(m_stuOnDutyLabel->text() + "<br></br>" +
-                              displayStr);
+    stuOnDutyStr += "<br></br>" + displayStr;
   }
-  m_stuOnDutyLabel->setText(
-      m_stuOnDutyLabel->text().mid(9));  // 移除第一个 `<br></br>`
+  m_stuOnDutyLabel->setText(stuOnDutyStr.mid(9));  // 移除第一个 `<br></br>`
 }
 
 void MainPanel::initLocalSocket() {
@@ -256,18 +264,28 @@ void MainPanel::initLocalSocket() {
 }
 
 void MainPanel::onReadyRead() {
-  QDataStream ds(m_socket);
+  QBuffer b;
+  b.setData(m_socket->readAll());
+  b.open(QBuffer::ReadWrite);
+  if (kClassSystemSpec == b.read(2)) return;
+  QDataStream ds(&b);
   MsgType ty;
   ds >> ty;
   switch (ty) {
     case MsgType::Request: {
       QBuffer writeBuf;
       writeBuf.open(QBuffer::WriteOnly);
+      writeBuf.write(kClassSystemSpec, 2);
       ClassData::writeTo(m_data, &writeBuf);
       m_socket->write(writeBuf.data());
       break;
     }
     case MsgType::Save: {
+      ClassData::readFrom(&b, m_data);
+      QFile file("data.stm");
+      ClassData::writeTo(m_data, &file);
+      reloadUi();
+      m_menu->m_tableWindow.reloadUi();
       break;
     }
   }
@@ -308,6 +326,7 @@ bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
 
 void MainPanel::paintEvent(QPaintEvent *) {
   if (m_init) {
+    m_menu->show();
     // init geometry
     setGeometry(m_settings.value("geometry").toRect());
     m_init = false;

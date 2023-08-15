@@ -102,7 +102,20 @@ void MainWindow::resetPwd() {
   dlg.exec();
 }
 
-void MainWindow::saveData() {}
+void MainWindow::saveData() {
+  QBuffer b;
+  b.open(QBuffer::WriteOnly);
+  b.write(kClassAdminSpec, 2);
+  QDataStream ds(&b);
+  ds << MsgType::Save;
+
+  ClassData::writeTo(m_data, &b);
+
+  m_socket->open(QLocalSocket::ReadWrite);
+  m_socket->write(b.data());
+  b.close();
+  m_changed = false;
+}
 
 void MainWindow::dropData() {
   int code = QMessageBox::warning(this, "放弃修改",
@@ -142,12 +155,8 @@ void MainWindow::loadData() {
 }
 
 void MainWindow::onReadyRead() {
-  QBuffer b;
-  b.setData(m_socket->readAll());
-  b.open(QBuffer::ReadWrite);
-
-  ClassData::readFrom(&b, m_data);
-  b.close();
+  if (kClassAdminSpec == m_socket->read(2)) return;
+  ClassData::readFrom(m_socket, m_data, false);
 
   loadData();
 }

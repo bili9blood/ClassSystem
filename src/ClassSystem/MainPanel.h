@@ -20,6 +20,7 @@
 #include <qtimer.h>
 
 #include "ClassData.h"
+#include "PopupMenu.h"
 #include "TitleWidget.h"
 
 class MainPanel : public QWidget {
@@ -98,6 +99,8 @@ class MainPanel : public QWidget {
   QLocalSocket *m_socket = new QLocalSocket(this);
   static constexpr const char kServerName[] = "CLASS-ADMIN-SERVER";
   void initLocalSocket();
+
+  PopupMenu *m_menu = new PopupMenu;
 
  private slots:
   void onReadyRead();
