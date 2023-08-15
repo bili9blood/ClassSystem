@@ -1,6 +1,7 @@
 #include "MainPanel.h"
 
 #include <qbrush.h>
+#include <qbuffer.h>
 #include <qdatetime.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
@@ -171,11 +172,14 @@ QFrame {
 }
 
 void MainPanel::reloadUi() {
-  if (!ClassData::readFrom(new QFile("data.stm"), m_data)) {
+  QFile file("data.stm");
+  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
     QMessageBox::critical(this, "ClassSystem",
                           "无法读取数据！<br/>程序将关闭。");
     QApplication::quit();
   }
+  file.close();
+
   // lessons
   auto lessonsToday = m_data.lessons[dayToday()];
 
@@ -235,21 +239,41 @@ void MainPanel::reloadUi() {
 
 void MainPanel::initLocalSocket() {
   m_socket->setServerName(kServerName);
+  auto reconnectLater = [this]() {
+    QTimer::singleShot(1000, [this] { m_socket->connectToServer(); });
+  };
   connect(m_socket, &QLocalSocket::readyRead, this, &MainPanel::onReadyRead);
+  connect(m_socket, &QLocalSocket::connected, this, &MainPanel::onConnected);
   connect(m_socket, &QLocalSocket::errorOccurred,
-          [this](const QLocalSocket::LocalSocketError &err) {
+          [this, reconnectLater](const QLocalSocket::LocalSocketError &err) {
             if (err != QLocalSocket::ServerNotFoundError) {
               qDebug() << m_socket->errorString();
             }
-            QTimer::singleShot(1000, [this] { m_socket->connectToServer(); });
+            reconnectLater();
           });
+  connect(m_socket, &QLocalSocket::disconnected, reconnectLater);
   m_socket->connectToServer();
 }
 
 void MainPanel::onReadyRead() {
-  qDebug() << m_socket->readAll();
-  qDebug("--------");
+  QDataStream ds(m_socket);
+  MsgType ty;
+  ds >> ty;
+  switch (ty) {
+    case MsgType::Request: {
+      QBuffer writeBuf;
+      writeBuf.open(QBuffer::WriteOnly);
+      ClassData::writeTo(m_data, &writeBuf);
+      m_socket->write(writeBuf.data());
+      break;
+    }
+    case MsgType::Save: {
+      break;
+    }
+  }
 }
+
+void MainPanel::onConnected() {}
 
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
   auto msg = static_cast<MSG *>(message);

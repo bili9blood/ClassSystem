@@ -63,11 +63,13 @@ QTabBar::tab:selected {
 }
 
 void TableWindow::reloadUi() {
-  if (!ClassData::readFrom(new QFile("data.stm"), m_data)) {
+  QFile file("data.stm");
+  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
     QMessageBox::critical(this, "ClassSystem",
                           "无法读取数据！<br/>程序将关闭。");
     QApplication::quit();
   }
+  file.close();
 
   // lessons
   for (int i = 0; i < 5; ++i) {

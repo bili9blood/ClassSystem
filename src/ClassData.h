@@ -120,7 +120,9 @@ inline Data testData() {
 }
 
 inline bool writeTo(const ClassData::Data &d, QIODevice *device) {
-  if (!device->open(QIODevice::WriteOnly | QIODevice::Truncate)) return false;
+  if (!device->isOpen() &&
+      !device->open(QIODevice::WriteOnly | QIODevice::Truncate))
+    return false;
   QDataStream ds(device);
   ds.setVersion(QDataStream::Qt_5_15);
   ds << d.students << d.lessons << d.LessonsTm << d.mealStu << d.stuOnDuty
@@ -140,12 +142,11 @@ inline bool writeTo(const ClassData::Data &d, QIODevice *device) {
     ds << v;
     q.pop();
   }
-  device->close();
   return true;
 }
 
 inline bool readFrom(QIODevice *device, ClassData::Data &data) {
-  if (!device->open(QIODevice::ReadWrite)) return false;
+  if (!device->isOpen() && !device->open(QIODevice::ReadWrite)) return false;
   QDataStream ds(device);
   ClassData::Data d;
   ds.setVersion(QDataStream::Qt_5_15);
@@ -165,7 +166,6 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data) {
     if (v.value<ClassEvent>().date >= QDate::currentDate())
       d.events.push(v.value<ClassEvent>());
   }
-  device->close();
   ClassData::writeTo(d, device);
   data = d;
   return true;

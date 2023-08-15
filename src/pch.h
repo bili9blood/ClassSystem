@@ -61,6 +61,8 @@ struct qFont {
   inline QFont operator()() { return {family, pointSize, weight, italic}; }
 };
 
+enum class MsgType : uint { Request, Save };
+
 inline QString operator""_s(const char *str, size_t size) {
   return QByteArray(str, size);
 }

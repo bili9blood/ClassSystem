@@ -6,20 +6,24 @@
 
 #define QT_NO_OPENGL
 
+void checkHasRunningApp() {
+  auto sm = new QSharedMemory("CLASS-SYSTEM-SINGLE-KEY");
+  if (sm->attach()) exit(0);
+  sm->create(1);
+}
+
 void checkDirs() {
-  const QStringList dirs = {"screenshots"};
+  const QStringList kDirs = {"screenshots"};
   auto c = QDir::current();
-  foreach (const QString &dirName, dirs)
+  for (const QString &dirName : kDirs)
     if (!c.exists(dirName)) c.mkdir(dirName);
 }
 
 int main(int argc, char *argv[]) {
-  // single application
-  QSharedMemory sm("CLASS-SYSTEM-SINGLE-KEY");
-  if (sm.attach()) return 0;
-  sm.create(1);
-
+  checkHasRunningApp();
   QApplication a(argc, argv);
+  QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+
   qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
   // add fonts

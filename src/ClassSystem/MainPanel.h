@@ -22,7 +22,6 @@
 #include "ClassData.h"
 #include "TitleWidget.h"
 
-
 class MainPanel : public QWidget {
   Q_OBJECT
 
@@ -97,11 +96,12 @@ class MainPanel : public QWidget {
 
   // local server
   QLocalSocket *m_socket = new QLocalSocket(this);
-  static constexpr const char kServerName[] = "CLASS-SYSTEM-ADMIN-SERVER";
+  static constexpr const char kServerName[] = "CLASS-ADMIN-SERVER";
   void initLocalSocket();
 
  private slots:
   void onReadyRead();
+  void onConnected();
 
  protected:
   bool nativeEvent(const QByteArray &, void *message, long *result) override;

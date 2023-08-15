@@ -24,11 +24,13 @@ void inputPwd() {
   pwdDlg.setTextEchoMode(QLineEdit::Password);
   pwdDlg.setWindowTitle("ClassAdmin 密码");
   pwdDlg.setLabelText("请输入密码：");
-  int retryCnt = 0;
-  while (pwdDlg.exec(),
-         pwd != QCryptographicHash::hash(pwdDlg.textValue().toUtf8(),
-                                         QCryptographicHash::Md5)
-                    .toHex()) {
+  int code;
+  for (int retryCnt = 0; (code = pwdDlg.exec()),
+           pwd != QCryptographicHash::hash(pwdDlg.textValue().toUtf8(),
+                                           QCryptographicHash::Md5)
+                                 .toHex();
+       ++retryCnt) {
+    if (code == QDialog::Rejected) exit(0);
     qDebug("pwderr");
     if (retryCnt == 5) {
       QMessageBox::critical(nullptr, "密码", "尝试次数过多！");
@@ -36,7 +38,6 @@ void inputPwd() {
     }
     QMessageBox::warning(nullptr, "密码",
                          "密码错误，还有%1次尝试机会！"_s.arg(5 - retryCnt));
-    ++retryCnt;
   }
 }
 
@@ -47,6 +48,10 @@ int main(int argc, char **argv) {
   sm.create(1);
 
   QApplication a(argc, argv);
+  QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+
+  qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
+  qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
 
   inputPwd();
 

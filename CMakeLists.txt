@@ -55,7 +55,7 @@ target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 # target ClassSystem END
 
 # target ClassAdmin BEGIN
-qt_wrap_ui(UI_SOURCES src/ClassAdmin/MainWindow.ui)
+qt_wrap_ui(UI_SOURCES src/ClassAdmin/MainWindow.ui src/ClassAdmin/EditMealStuDialog.ui)
 add_executable(ClassAdmin
 
     assets/ICON.RC
@@ -69,6 +69,8 @@ add_executable(ClassAdmin
     src/ClassAdmin/MainWindow.cpp src/ClassAdmin/MainWindow.h
 
     src/ClassAdmin/ImportDialog.cpp src/ClassAdmin/ImportDialog.h
+
+    src/ClassAdmin/EditMealStuDialog.cpp src/ClassAdmin/EditMealStuDialog.h
 
     src/ClassAdmin/ResetPwdDialog.cpp src/ClassAdmin/ResetPwdDialog.h
 
