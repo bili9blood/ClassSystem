@@ -1,0 +1,3 @@
+[submodule "docs"]
+	path = docs
+	url = https://gitee.com/bili9Blood/class-system-docs.git
