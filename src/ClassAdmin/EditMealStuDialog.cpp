@@ -17,8 +17,6 @@ EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
   ui.buttonBox->setStandardButtons(QDialogButtonBox::NoButton);
   ui.buttonBox->addButton("确认", QDialogButtonBox::AcceptRole);
   ui.buttonBox->addButton("取消", QDialogButtonBox::RejectRole);
-  connect(ui.buttonBox, &QDialogButtonBox::accepted,
-          [this] { m_changed ? accept() : reject(); });
 
   ui.listWidget->setItemDelegate(new IntDelegate);
   connect(ui.listWidget->model(), &QAbstractItemModel::dataChanged, this,
@@ -64,6 +62,7 @@ void EditMealStuDialog::onDataChanged(const QModelIndex &idx,
 
 void EditMealStuDialog::paintEvent(QPaintEvent *) {
   ui.labelPreview->setFixedWidth(ui.scrollArea->width());
+  ui.buttonBox->buttons()[0]->setEnabled(m_changed);  // `确认` 按钮
   ui.btnRemove->setEnabled(ui.listWidget->currentItem());
 
   // gen preview

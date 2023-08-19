@@ -9,9 +9,11 @@ ImportDialog::ImportDialog(QString templateStr, QWidget *parent)
   m_label->setText(
       "从 Excel 中选中特定部分按"
       " <i>Ctrl+C</i> 复制，再在此文本框内按 <i>Ctrl+V</i> 粘贴。"
-      "<br/><br/>正确格式应该如下：<br/>%1"_s.arg(templateStr));
+      "<br/><br/>正确格式应该如下："
+      "<br/><pre>%1</pre><br/>"
+      "<i><strong>关于样例的解释见文档。</strong></i>"_s.arg(templateStr));
 
-  // init button box
+  // init button box`````````
   m_buttonBox->addButton("确定", QDialogButtonBox::AcceptRole);
   m_buttonBox->addButton("取消", QDialogButtonBox::RejectRole);
 

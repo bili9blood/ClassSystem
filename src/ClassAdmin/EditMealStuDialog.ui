@@ -185,6 +185,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>EditMealStuDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>158</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>158</x>
+     <y>225</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addMealStu()</slot>

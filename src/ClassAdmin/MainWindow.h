@@ -20,8 +20,14 @@ class MainWindow : public QMainWindow {
   void clearStudents();
   void importStudents();
 
+  // 移除项目时不会触发
+  void onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
+                         const QVector<int> &);
+
   // students carry meals
   void editMealStu();
+  void clearMealStu();
+  void importMealStu();
 
   // toolbar
   void resetPwd();
@@ -51,7 +57,7 @@ class MainWindow : public QMainWindow {
   void initServer();
   void loadData();
 
-  bool m_init = false;
+  bool m_dataLoaded = false;
 
  protected:
   void paintEvent(QPaintEvent *ev) override;

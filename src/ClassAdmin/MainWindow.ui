@@ -603,6 +603,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnClearMealStu</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearMealStu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>566</x>
+     <y>360</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1503</x>
+     <y>514</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnImportMealStu</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importMealStu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>680</x>
+     <y>359</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1454</x>
+     <y>498</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addStudent()</slot>
@@ -613,5 +645,7 @@
   <slot>resetPwd()</slot>
   <slot>saveData()</slot>
   <slot>dropData()</slot>
+  <slot>clearMealStu()</slot>
+  <slot>importMealStu()</slot>
  </slots>
 </ui>
