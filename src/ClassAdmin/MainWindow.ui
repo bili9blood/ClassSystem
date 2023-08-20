@@ -57,9 +57,9 @@
        <widget class="QGroupBox" name="groupBoxStudents">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>40</y>
-          <width>281</width>
+          <x>13</x>
+          <y>13</y>
+          <width>382</width>
           <height>324</height>
          </rect>
         </property>
@@ -141,10 +141,10 @@
        <widget class="QGroupBox" name="groupBoxMealStu">
         <property name="geometry">
          <rect>
-          <x>460</x>
-          <y>90</y>
-          <width>261</width>
-          <height>261</height>
+          <x>410</x>
+          <y>20</y>
+          <width>491</width>
+          <height>311</height>
          </rect>
         </property>
         <property name="title">
@@ -164,8 +164,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>205</width>
-              <height>206</height>
+              <width>461</width>
+              <height>220</height>
              </rect>
             </property>
             <layout class="QFormLayout" name="editMealStuLayout">
@@ -336,6 +336,19 @@
           </widget>
          </item>
         </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBoxStuOnDuty">
+        <property name="geometry">
+         <rect>
+          <x>13</x>
+          <y>358</y>
+          <width>892</width>
+          <height>361</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>值日生</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="tabLessons">

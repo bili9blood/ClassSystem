@@ -3,12 +3,14 @@
 #include <qbuffer.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
+#include <qstandarditemmodel.h>
 
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
 #include "ResetPwdDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+  QTableWidget w;
   ui.setupUi(this);
 
   ui.studentsTable->setColumnWidth(0, 80);
@@ -30,18 +32,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 void MainWindow::addStudent() {
   ui.studentsTable->insertRow(ui.studentsTable->rowCount());
-  m_changed = true;
+  m_changed();
 }
 
 void MainWindow::removeStudent() {
   for (const auto &r : ui.studentsTable->selectedRanges()) {
     for (int i = r.bottomRow(); i >= r.topRow(); --i) {
-      m_data.students.remove(ui.studentsTable->item(i, 0)->text().toUInt());
+      if (auto item = ui.studentsTable->item(i, 0))
+        m_data.students.remove(item->text().toUInt());
       ui.studentsTable->removeRow(i);
     }
   }
 
-  m_changed = true;
+  m_changed();
 }
 
 void MainWindow::clearStudents() {
@@ -54,7 +57,7 @@ void MainWindow::clearStudents() {
   while (ui.studentsTable->rowCount()) ui.studentsTable->removeRow(0);
   if (m_dataLoaded) {
     m_data.students.clear();
-    m_changed = true;
+    m_changed();
   }
 }
 
@@ -63,11 +66,15 @@ void MainWindow::importStudents() {
   if (QDialog::Rejected == dlg.exec()) return;
   QStringList students = dlg.getData().remove('\r').split('\n');
   if (students.isEmpty()) return;
+  if (!QRegExp(R"((\d+\t\S+\s*)+)").exactMatch(dlg.getData())) {
+    QMessageBox::critical(this, "导入学生", "格式错误，无法导入！");
+    return;
+  }
   if (ui.studentsTable->rowCount() &&
       !QMessageBox::warning(this, "导入学生", "是否在导入前清除学生列表？",
                             "清除", "保留")) {
     clearStudents();
-    m_changed = true;
+    m_changed();
   }
   for (const QString &stu : students) {
     if (stu.isEmpty()) continue;
@@ -75,23 +82,14 @@ void MainWindow::importStudents() {
             name = stu.mid(stu.indexOf('\t') + 1).simplified();
     if (id.isEmpty() || name.isEmpty()) continue;
 
-    bool ok;
-    uint idNum = id.toUInt(&ok);
-    if (!ok) {
-      QMessageBox::critical(this, "导入学生",
-                            "格式错误：<br/>"
-                            "<u style=\"color: red;\">%1</u>\t%2"
-                            "<br/>↑<br/>不是正整数！"_s.arg(id)
-                                .arg(name));
-      return;
-    }
+    uint idNum = id.toUInt();
     int row = ui.studentsTable->rowCount();
     ui.studentsTable->insertRow(row);
     ui.studentsTable->setItem(row, 0, new QTableWidgetItem(id));
     ui.studentsTable->setItem(row, 1, new QTableWidgetItem(name));
     m_data.students[idNum] = name;
+    m_changed();
   }
-  m_changed = true;
 }
 
 void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
@@ -103,7 +101,7 @@ void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
   m_data.students[ui.studentsTable->item(row, 0)->text().toUInt()] =
       ui.studentsTable->item(row, 1)->text();
 
-  m_changed = true;
+  m_changed();
 }
 
 void MainWindow::editMealStu() {
@@ -115,7 +113,7 @@ void MainWindow::editMealStu() {
   QString str;
   std::tie(m_data, str) = dlg.getResult();
   m_mealStuLabels[idx]->setText("%1：%2"_s.arg(oneDayOfWeek(idx)).arg(str));
-  m_changed = true;
+  m_changed();
 }
 
 void MainWindow::clearMealStu() {
@@ -123,27 +121,103 @@ void MainWindow::clearMealStu() {
       this, "清除抬饭生", "所有的抬饭生将被清除，确认继续？", "确认", "取消");
   if (1 == code) return;
 
-  m_data.mealStu.clear();
   for (int i = 0; i < 5; ++i) {
+    m_data.mealStu[i].clear();
     m_mealStuLabels[i]->setText(oneDayOfWeek(i) + "：");
   }
 
-  m_changed = true;
+  m_changed();
 }
-
 void MainWindow::importMealStu() {
+  /* ------------------------ constants begin ----------------------- */
+
   const QString kMsgBoxText = R"(请选择导入模式：
-1. 学号 如果表格里是抬饭生的学号，请选择此模式。
-2. 姓名 如果表格里是抬饭生的姓名，请选择此模式。
+1. 学号模式 如果表格里是抬饭生的学号，请选择此模式。
+2. 姓名模式 如果表格里是抬饭生的姓名，请选择此模式。
 )";
   const QString kImportTemplates[] = {
       "1\t2\t3\t4\t5\n20\t31\t43\t56\t21",
       "张三\t李四\t王五\t赵六\t孙七\n周八\t吴九\t郑十\t小郝\t小惠"};
+  const QString kTemplateSuffix =
+      "\n\n<u>共5纵列，代表周一至周五；每一列代表当日的抬饭生。</u>";
 
-  int code = QMessageBox::information(this, "导入抬饭生", kMsgBoxText,
+  const std::function<void(const QString &)> kFuncs[] = {
+
+      // 学号模式
+      [this](QString str) {
+        auto lines = str.remove('\r').split('\n');
+        if (lines.empty()) return;
+        if (!QRegExp(R"(((\d*\t){4}\d*\t*\n*)+)").exactMatch(str)) {
+          QMessageBox::critical(this, "导入抬饭生", "格式错误，无法导入！");
+          return;
+        }
+
+        for (auto it = lines.cbegin(); it != lines.cend(); ++it) {
+          QString tmp;
+          int i = -1;
+          for (const QChar &ch : *it) {
+            if (ch == '\t') {
+              ++i;
+              tmp = tmp.simplified();
+              if (tmp.isEmpty()) continue;
+              uint id = tmp.toUInt();
+              m_data.mealStu[i] << id;
+
+              QString text = m_mealStuLabels[i]->text();
+              if (text.size()) text += ' ';
+              text += m_data.idAndName(id);
+              m_mealStuLabels[i]->setText(text);
+
+              tmp.clear();
+              m_changed();
+
+              continue;
+            }
+            tmp += ch;
+          }
+          tmp = tmp.simplified();
+          if (tmp.size()) {
+            uint id = tmp.toUInt();
+            m_data.mealStu[4] << id;
+
+            QString text = m_mealStuLabels[4]->text();
+            if (text.size()) text += ' ';
+            text += m_data.idAndName(id);
+            m_mealStuLabels[4]->setText(text);
+
+            m_changed();
+          }
+        }
+      },
+
+      // 姓名模式
+      [this](const QString &str) { m_changed(); }
+
+  };
+
+  /* ------------------------- constants end ------------------------ */
+
+  bool empty = true;
+  for (const auto &ls : m_data.mealStu) {
+    if (ls.size()) {
+      empty = false;
+      break;
+    }
+  }
+
+  if (!empty &&
+      !QMessageBox::warning(this, "导入抬饭生", "是否在导入前清除所有抬饭生？",
+                            "清除", "保留")) {
+    clearMealStu();
+    m_changed();
+  }
+
+  int mode = QMessageBox::information(this, "导入抬饭生", kMsgBoxText,
                                       "学号模式", "姓名模式");
-  ImportDialog dlg(kImportTemplates[code], this);
-  dlg.exec();
+  ImportDialog dlg(kImportTemplates[mode] + kTemplateSuffix, this);
+  if (QDialog::Rejected == dlg.exec()) return;
+
+  kFuncs[mode](dlg.getData());
 }
 
 void MainWindow::resetPwd() {

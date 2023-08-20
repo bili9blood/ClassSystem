@@ -45,7 +45,7 @@ class MainWindow : public QMainWindow {
   QList<QLabel *> m_mealStuLabels;
 
   ClassData::Data m_data;
-  bool m_changed = false;
+  ChangeStatus m_changed;
 
   QLocalServer *m_server = new QLocalServer(this);
   QLocalSocket *m_socket = nullptr;
