@@ -9,22 +9,24 @@ class MainWindow;
 
 class ChangeDataCommand : public QUndoCommand {
  public:
-  explicit ChangeDataCommand(ClassData::Data before, ClassData::Data *after,
-                             MainWindow *window, QUndoCommand *parent = nullptr)
+  explicit ChangeDataCommand(ClassData::Data before, MainWindow *window,
+                             QUndoCommand *parent = nullptr)
       : m_before(before),
-        m_data(after),
-        m_after(*after),
+        m_data(&window->m_data),
+        m_after(window->m_data),
         m_window(window),
         QUndoCommand(parent) {}
 
   void undo() override {
-    *m_data = m_before;
+    m_window->m_data = m_before;
     m_window->loadData();
+    m_window->m_changed = true;
   }
 
   void redo() override {
-    *m_data = m_after;
+    m_window->m_data = m_after;
     m_window->loadData();
+    m_window->m_changed = true;
   }
 
  private:

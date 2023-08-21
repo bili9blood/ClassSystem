@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include <qbuffer.h>
+#include <qdesktopservices.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
 #include <qstandarditemmodel.h>
@@ -42,6 +43,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   ui.toolBar->insertAction(ui.actSave, m_actRedo);
 
   ui.toolBar->insertSeparator(ui.actSave);
+
+  m_undoView.setWindowTitle("操作");
+  m_undoView.setWindowFlag(Qt::WindowMaximizeButtonHint, false);
+  m_undoView.setWindowFlag(Qt::WindowCloseButtonHint, false);
+
+  // menu bar
+  connect(ui.actToggleUndoView, &QAction::triggered, &m_undoView,
+          &QWidget::setVisible);
+  connect(ui.actShowUserDocument, &QAction::triggered, [] {
+    QDesktopServices::openUrl(
+        {"http://bili9blood.gitee.io/class-system-docs/#/"});
+  });
 }
 
 void MainWindow::addStudent() {
@@ -299,7 +312,7 @@ void MainWindow::resetPwd() {
 }
 
 void MainWindow::change(const ClassData::Data &before) {
-  m_undoStk->push(new ChangeDataCommand(before, &m_data, this));
+  m_undoStk->push(new ChangeDataCommand(before, this));
   m_changed = true;
 }
 

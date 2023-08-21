@@ -20,7 +20,7 @@ class EditMealStuDialog : public QDialog {
   int m_dayOfWeek;
   ClassData::Data m_data;
 
-  bool m_changed;
+  bool m_changed = false;
 
  private slots:
   void addMealStu();

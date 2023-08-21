@@ -5,16 +5,19 @@
 #include <qlocalsocket.h>
 #include <qmainwindow.h>
 #include <qundostack.h>
+#include <qundoview.h>
 #include <ui_MainWindow.h>
 
 #include "ClassData.h"
 
-class MainWindow : public QMainWindow {
-  Q_OBJECT
- public:
-  explicit MainWindow(QWidget *parent = nullptr);
+class ChangeDataCommand;
+class ChangeConfigCommand;
 
-  void loadData();
+class MainWindow : public QMainWindow {
+  friend ChangeDataCommand;
+  friend ChangeConfigCommand;
+
+  Q_OBJECT public : explicit MainWindow(QWidget *parent = nullptr);
 
  private slots:
   // students
@@ -23,7 +26,7 @@ class MainWindow : public QMainWindow {
   void clearStudents();
   void importStudents();
 
-  // 移除项目时不会触发
+  // 移除学生时不会触发
   void onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
                          const QVector<int> &);
 
@@ -50,7 +53,7 @@ class MainWindow : public QMainWindow {
   QList<QLabel *> m_mealStuLabels;
 
   ClassData::Data m_data;
-  bool m_changed;
+  bool m_changed = false;
 
   QLocalServer *m_server = new QLocalServer(this);
   QLocalSocket *m_socket = nullptr;
@@ -65,8 +68,10 @@ class MainWindow : public QMainWindow {
   QUndoStack *m_undoStk = new QUndoStack(this);
   QAction *m_actUndo;
   QAction *m_actRedo;
+  QUndoView m_undoView = QUndoView(m_undoStk, nullptr);
 
   void initServer();
+  void loadData();
 
  protected:
   void paintEvent(QPaintEvent *ev) override;

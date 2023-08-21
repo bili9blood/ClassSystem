@@ -389,6 +389,30 @@
    <addaction name="separator"/>
    <addaction name="actChangePwd"/>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>924</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>视图</string>
+    </property>
+    <addaction name="actToggleUndoView"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+    <addaction name="actShowUserDocument"/>
+   </widget>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
+  </widget>
   <action name="actChangePwd">
    <property name="icon">
     <iconset resource="../../assets/ClassAdmin.qrc">
@@ -417,6 +441,19 @@
    </property>
    <property name="text">
     <string>放弃修改</string>
+   </property>
+  </action>
+  <action name="actToggleUndoView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>操作（&amp;O）</string>
+   </property>
+  </action>
+  <action name="actShowUserDocument">
+   <property name="text">
+    <string>使用文档（&amp;H）</string>
    </property>
   </action>
  </widget>
