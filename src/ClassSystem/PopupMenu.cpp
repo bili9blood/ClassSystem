@@ -1,5 +1,6 @@
 #include "PopupMenu.h"
 
+#include <qdesktopservices.h>
 #include <qpainter.h>
 #include <qtextbrowser.h>
 
@@ -11,7 +12,7 @@ PopupMenu::PopupMenu(QWidget *parent)
   // append buttons
   m_btnsList << new MenuButton({":/img/capture.png"}, "截图", &m_btnsWidget)
              << new MenuButton({":img/table.png"}, "表格", &m_btnsWidget)
-             << new MenuButton({":/img/about.png"}, "关于", &m_btnsWidget);
+             << new MenuButton({":/img/help.png"}, "帮助", &m_btnsWidget);
   setWidgetTransparent(&m_btnsWidget);
   m_btnsLayout.setMargin(0);
   m_btnsLayout.setSpacing(0);
@@ -21,8 +22,6 @@ PopupMenu::PopupMenu(QWidget *parent)
   }
 
   m_btnsWidget.installEventFilter(this);
-
-  m_browser.setWindowTitle("关于");
 
   // init layouts
   m_mainLayout->addWidget(m_popMenuLabel);
@@ -58,14 +57,9 @@ void PopupMenu::onBtnClicked() {
           m_tableWindow.show();
           QApplication::setActiveWindow(&m_tableWindow);
           break;
-        case 2:  // show about
-          QFile file(":/other/about.md");
-          if (!file.open(QFile::ReadOnly | QFile::Text)) break;
-          m_browser.setMarkdown(
-              "*V%1*\n---\n%2\n"_s.arg(QString(projectVersion))
-                  .arg(QString(file.readAll())));
-          m_browser.show();
-          QApplication::setActiveWindow(&m_browser);
+        case 2:  // show help
+          QDesktopServices::openUrl(
+              {"http://bili9blood.gitee.io/class-system-docs/#/"});
           break;
       }
       break;

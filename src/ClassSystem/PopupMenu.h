@@ -50,7 +50,6 @@ class PopupMenu : public QWidget {
 
   ScreenCapturer m_capturer;
   TableWindow m_tableWindow;
-  QTextBrowser m_browser;
 
   // functions
   void updateBtnsPosition();
