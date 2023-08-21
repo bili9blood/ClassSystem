@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
   QApplication a(argc, argv);
   QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 
+  qRegisterMetaType<ClassData::Data>("ClassData::Data");
   qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
 

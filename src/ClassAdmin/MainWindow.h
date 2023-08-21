@@ -4,6 +4,7 @@
 #include <qlocalserver.h>
 #include <qlocalsocket.h>
 #include <qmainwindow.h>
+#include <qundostack.h>
 #include <ui_MainWindow.h>
 
 #include "ClassData.h"
@@ -12,6 +13,8 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
  public:
   explicit MainWindow(QWidget *parent = nullptr);
+
+  void loadData();
 
  private slots:
   // students
@@ -31,8 +34,10 @@ class MainWindow : public QMainWindow {
 
   // toolbar
   void resetPwd();
-  void saveData();
-  void dropData();
+
+  void change(const ClassData::Data &before);
+  void save();
+  void drop();
 
   // local server
   void onReadyRead();
@@ -45,7 +50,7 @@ class MainWindow : public QMainWindow {
   QList<QLabel *> m_mealStuLabels;
 
   ClassData::Data m_data;
-  ChangeStatus m_changed;
+  bool m_changed;
 
   QLocalServer *m_server = new QLocalServer(this);
   QLocalSocket *m_socket = nullptr;
@@ -54,10 +59,14 @@ class MainWindow : public QMainWindow {
   static constexpr const char *kWindowTitle[] = {
       "ClassSystem 管理后台", "ClassSystem 管理后台 *(未保存)"};
 
-  void initServer();
-  void loadData();
-
   bool m_dataLoaded = false;
+
+  // undo & redo
+  QUndoStack *m_undoStk = new QUndoStack(this);
+  QAction *m_actUndo;
+  QAction *m_actRedo;
+
+  void initServer();
 
  protected:
   void paintEvent(QPaintEvent *ev) override;

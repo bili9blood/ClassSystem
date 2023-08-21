@@ -65,17 +65,6 @@ constexpr const char kClassAdminSpec[] = "A";
 constexpr const char kClassSystemSpec[] = "S";
 enum class MsgType : uint { Request, Save };
 
-struct ChangeStatus {
-  ChangeStatus() {}
-  ChangeStatus(bool v) : m_changed(v) {}
-
-  void operator()() { m_changed = true; }
-  [[nodiscard]] operator bool &() { return m_changed; }
-
- private:
-  bool m_changed = false;
-};
-
 inline QString operator""_s(const char *str, size_t size) {
   return QByteArray(str, size);
 }

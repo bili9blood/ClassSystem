@@ -5,6 +5,7 @@
 #include <qpainter.h>
 #include <qstandarditemmodel.h>
 
+#include "Commands.h"
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
 #include "ResetPwdDialog.h"
@@ -28,26 +29,43 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   ui.scrollAreaMealStu->setPalette(pa);
 
   initServer();
+
+  // init undo stack
+  m_actUndo = m_undoStk->createUndoAction(this, "撤销");
+  m_actUndo->setIcon(QIcon(":/img/undo.png"));
+  m_actUndo->setShortcut(QKeySequence::Undo);
+  ui.toolBar->insertAction(ui.actSave, m_actUndo);
+
+  m_actRedo = m_undoStk->createRedoAction(this, "重做");
+  m_actRedo->setIcon(QIcon(":/img/redo.png"));
+  m_actRedo->setShortcut(QKeySequence::Redo);
+  ui.toolBar->insertAction(ui.actSave, m_actRedo);
+
+  ui.toolBar->insertSeparator(ui.actSave);
 }
 
 void MainWindow::addStudent() {
   ui.studentsTable->insertRow(ui.studentsTable->rowCount());
-  m_changed();
 }
 
 void MainWindow::removeStudent() {
+  bool changed = false;
+  ClassData::Data before = m_data;
   for (const auto &r : ui.studentsTable->selectedRanges()) {
     for (int i = r.bottomRow(); i >= r.topRow(); --i) {
       if (auto item = ui.studentsTable->item(i, 0))
         m_data.students.remove(item->text().toUInt());
       ui.studentsTable->removeRow(i);
+      changed = true;
     }
   }
-
-  m_changed();
+  if (changed) {
+    change(before);
+  }
 }
 
 void MainWindow::clearStudents() {
+  ClassData::Data before = m_data;
   if (!ui.studentsTable->rowCount()) return;
   if (m_dataLoaded &&
       QMessageBox::warning(this, "清除学生", "所有的学生将被清除，确认继续？",
@@ -57,11 +75,13 @@ void MainWindow::clearStudents() {
   while (ui.studentsTable->rowCount()) ui.studentsTable->removeRow(0);
   if (m_dataLoaded) {
     m_data.students.clear();
-    m_changed();
+    change(before);
   }
 }
 
 void MainWindow::importStudents() {
+  bool changed = false;
+  ClassData::Data before = m_data;
   ImportDialog dlg("1\t张三<br/>2\t李四<br/>3\t王五<br/>", this);
   if (QDialog::Rejected == dlg.exec()) return;
   QStringList students = dlg.getData().remove('\r').split('\n');
@@ -74,7 +94,6 @@ void MainWindow::importStudents() {
       !QMessageBox::warning(this, "导入学生", "是否在导入前清除学生列表？",
                             "清除", "保留")) {
     clearStudents();
-    m_changed();
   }
   for (const QString &stu : students) {
     if (stu.isEmpty()) continue;
@@ -88,12 +107,16 @@ void MainWindow::importStudents() {
     ui.studentsTable->setItem(row, 0, new QTableWidgetItem(id));
     ui.studentsTable->setItem(row, 1, new QTableWidgetItem(name));
     m_data.students[idNum] = name;
-    m_changed();
+    changed = true;
+  }
+  if (changed) {
+    change(before);
   }
 }
 
 void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
                                    const QVector<int> &) {
+  ClassData::Data before = m_data;
   if (!m_dataLoaded) return;
   int row = idx.row();
   if (!ui.studentsTable->item(row, 0) || !ui.studentsTable->item(row, 1))
@@ -101,10 +124,11 @@ void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
   m_data.students[ui.studentsTable->item(row, 0)->text().toUInt()] =
       ui.studentsTable->item(row, 1)->text();
 
-  m_changed();
+  change(before);
 }
 
 void MainWindow::editMealStu() {
+  ClassData::Data before = m_data;
   auto btn = qobject_cast<QPushButton *>(sender());
   int idx = m_mealStuBtns.indexOf(btn);
   QString strBefore = m_mealStuLabels[idx]->text();
@@ -113,10 +137,11 @@ void MainWindow::editMealStu() {
   QString str;
   std::tie(m_data, str) = dlg.getResult();
   m_mealStuLabels[idx]->setText("%1：%2"_s.arg(oneDayOfWeek(idx)).arg(str));
-  m_changed();
+  change(before);
 }
 
 void MainWindow::clearMealStu() {
+  ClassData::Data before = m_data;
   int code = QMessageBox::warning(
       this, "清除抬饭生", "所有的抬饭生将被清除，确认继续？", "确认", "取消");
   if (1 == code) return;
@@ -126,7 +151,7 @@ void MainWindow::clearMealStu() {
     m_mealStuLabels[i]->setText(oneDayOfWeek(i) + "：");
   }
 
-  m_changed();
+  change(before);
 }
 void MainWindow::importMealStu() {
   /* ------------------------ constants begin ----------------------- */
@@ -145,9 +170,60 @@ void MainWindow::importMealStu() {
 
       // 学号模式
       [this](QString str) {
+        bool changed = false;
+        ClassData::Data before = m_data;
         auto lines = str.remove('\r').split('\n');
         if (lines.empty()) return;
         if (!QRegExp(R"(((\d*\t){4}\d*\t*\n*)+)").exactMatch(str)) {
+          QMessageBox::critical(this, "导入抬饭生", "格式错误，无法导入！");
+          return;
+        }
+
+        for (auto it = lines.cbegin(); it != lines.cend(); ++it) {
+          uint tmp = 0;
+          int i = -1;
+          for (const QChar &ch : *it) {
+            if (ch == '\t') {
+              ++i;
+              if (!tmp) continue;
+              m_data.mealStu[i] << tmp;
+
+              QString text = m_mealStuLabels[i]->text();
+              if (text.size()) text += ' ';
+              text += m_data.idAndName(tmp);
+              m_mealStuLabels[i]->setText(text);
+
+              tmp = 0;
+              changed = true;
+
+              continue;
+            }
+            tmp = tmp * 10 + (ch.toLatin1() ^ 48);
+          }
+          if (tmp) {
+            m_data.mealStu[4] << tmp;
+
+            QString text = m_mealStuLabels[4]->text();
+            if (text.size()) text += ' ';
+            text += m_data.idAndName(tmp);
+            m_mealStuLabels[4]->setText(text);
+
+            tmp = 0;
+            changed = true;
+          }
+        }
+        if (changed) {
+          change(before);
+        }
+      },
+
+      // 姓名模式
+      [this](QString str) {
+        bool changed = false;
+        ClassData::Data before = m_data;
+        auto lines = str.remove('\r').split('\n');
+        if (lines.empty()) return;
+        if (!QRegExp(R"(((\S*\t){4}\S*\t*\n*)+)").exactMatch(str)) {
           QMessageBox::critical(this, "导入抬饭生", "格式错误，无法导入！");
           return;
         }
@@ -160,7 +236,7 @@ void MainWindow::importMealStu() {
               ++i;
               tmp = tmp.simplified();
               if (tmp.isEmpty()) continue;
-              uint id = tmp.toUInt();
+              uint id = m_data.students.key(tmp);
               m_data.mealStu[i] << id;
 
               QString text = m_mealStuLabels[i]->text();
@@ -169,7 +245,7 @@ void MainWindow::importMealStu() {
               m_mealStuLabels[i]->setText(text);
 
               tmp.clear();
-              m_changed();
+              changed = true;
 
               continue;
             }
@@ -177,7 +253,7 @@ void MainWindow::importMealStu() {
           }
           tmp = tmp.simplified();
           if (tmp.size()) {
-            uint id = tmp.toUInt();
+            uint id = m_data.students.key(tmp);
             m_data.mealStu[4] << id;
 
             QString text = m_mealStuLabels[4]->text();
@@ -185,15 +261,13 @@ void MainWindow::importMealStu() {
             text += m_data.idAndName(id);
             m_mealStuLabels[4]->setText(text);
 
-            m_changed();
+            changed = true;
           }
         }
-      },
-
-      // 姓名模式
-      [this](const QString &str) { m_changed(); }
-
-  };
+        if (changed) {
+          change(before);
+        }
+      }};
 
   /* ------------------------- constants end ------------------------ */
 
@@ -209,7 +283,6 @@ void MainWindow::importMealStu() {
       !QMessageBox::warning(this, "导入抬饭生", "是否在导入前清除所有抬饭生？",
                             "清除", "保留")) {
     clearMealStu();
-    m_changed();
   }
 
   int mode = QMessageBox::information(this, "导入抬饭生", kMsgBoxText,
@@ -225,7 +298,12 @@ void MainWindow::resetPwd() {
   dlg.exec();
 }
 
-void MainWindow::saveData() {
+void MainWindow::change(const ClassData::Data &before) {
+  m_undoStk->push(new ChangeDataCommand(before, &m_data, this));
+  m_changed = true;
+}
+
+void MainWindow::save() {
   QBuffer b;
   b.open(QBuffer::WriteOnly);
   b.write(kClassAdminSpec, 2);
@@ -240,7 +318,8 @@ void MainWindow::saveData() {
   m_changed = false;
 }
 
-void MainWindow::dropData() {
+void MainWindow::drop() {
+  m_undoStk->clear();
   int code = QMessageBox::warning(this, "放弃修改",
                                   "所有将还原被客户端的数据覆盖，是否继续？",
                                   "确认", "取消");

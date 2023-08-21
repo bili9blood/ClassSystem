@@ -48,7 +48,7 @@ void EditMealStuDialog::removeMealStu() {
   }
 
   m_data.mealStu[m_dayOfWeek].removeAt(ui.listWidget->currentRow());
-  m_changed();
+  m_changed = true;
 }
 
 void EditMealStuDialog::onDataChanged(const QModelIndex &idx,
@@ -57,7 +57,7 @@ void EditMealStuDialog::onDataChanged(const QModelIndex &idx,
   QList<uint> &ls = m_data.mealStu[m_dayOfWeek];
   while (idx.row() >= ls.size()) ls << 0;
   ls[idx.row()] = idx.data().toUInt();
-  m_changed();
+  m_changed = true;
 }
 
 void EditMealStuDialog::paintEvent(QPaintEvent *) {

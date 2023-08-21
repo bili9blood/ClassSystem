@@ -365,7 +365,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QToolBar" name="m_toolBar">
+  <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -384,10 +384,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actChangePwd"/>
-   <addaction name="separator"/>
    <addaction name="actSave"/>
    <addaction name="actDrop"/>
+   <addaction name="separator"/>
+   <addaction name="actChangePwd"/>
   </widget>
   <action name="actChangePwd">
    <property name="icon">
@@ -588,7 +588,7 @@
    <sender>actSave</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>saveData()</slot>
+   <slot>save()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -604,7 +604,7 @@
    <sender>actDrop</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>dropData()</slot>
+   <slot>drop()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -656,8 +656,8 @@
   <slot>removeStudent()</slot>
   <slot>editMealStu()</slot>
   <slot>resetPwd()</slot>
-  <slot>saveData()</slot>
-  <slot>dropData()</slot>
+  <slot>save()</slot>
+  <slot>drop()</slot>
   <slot>clearMealStu()</slot>
   <slot>importMealStu()</slot>
  </slots>

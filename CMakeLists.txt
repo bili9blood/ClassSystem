@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(ClassSystem LANGUAGES CXX VERSION 0.1.0)
+set(CMAKE_CXX_FLAGS_MINSIZEREL "-ffast-math -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-ffast-math -O3")
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -24,9 +26,9 @@ set(UTILS_SOURCES src/ClassData.h)
 # target ClassSystem BEGIN
 add_executable(ClassSystem
 
-    assets/ICON.RC
-
     ${APP_CMD_TYPE} # `WIN32` or None
+
+    assets/ICON.RC
 
     assets/ClassSystem.qrc
 
@@ -58,21 +60,25 @@ target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 qt_wrap_ui(UI_SOURCES src/ClassAdmin/MainWindow.ui src/ClassAdmin/EditMealStuDialog.ui)
 add_executable(ClassAdmin
 
-    assets/ICON.RC
-
     ${APP_CMD_TYPE} # `WIN32` or None
 
+    assets/ICON.RC
     assets/ClassAdmin.qrc
 
     src/ClassAdmin/main.cpp
-
     src/ClassAdmin/MainWindow.cpp src/ClassAdmin/MainWindow.h
 
+    # 学生
     src/ClassAdmin/ImportDialog.cpp src/ClassAdmin/ImportDialog.h
-
     src/ClassAdmin/EditMealStuDialog.cpp src/ClassAdmin/EditMealStuDialog.h
 
+    # 课程
+
+    # 公告&事件
+
+    # 工具栏
     src/ClassAdmin/ResetPwdDialog.cpp src/ClassAdmin/ResetPwdDialog.h
+    src/ClassAdmin/Commands.h
 
     ${UI_SOURCES}
 
