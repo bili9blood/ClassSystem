@@ -58,7 +58,7 @@ module.exports = {
       return {
         output: {
           publicPath:
-            "https://cdn.jsdelivr.net/gh/class-system-docs/class-system-docs.git.io/",
+            "https://cdn.jsdelivr.net/gh/class-system-docs/class-system-docs.github.io/",
         },
         resolve: {
           //配置路径别名
