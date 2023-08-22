@@ -11,15 +11,7 @@ jobs:
       uses: actions/setup-node@v3.8.1
 
     - name: Build
-      working-directory: docs
-      run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && yarn vuepress build . && echo "$PWD" && tree | grep vuepress
+      run: sh deploy.sh
       
     - name: test
       run: ls docs
-
-    - name: Push to gh-pages
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        github_token: ${ secrets.GITHUB_TOKEN }
-        branch: gh-pages
-        directory: docs/.vuepress/dict
