@@ -6,6 +6,8 @@ set -e
 cd docs
 
 # 生成静态文件
+yarn install
+yarn global add vuepress
 yarn run docs:build
 
 # 进入生成的文件夹
