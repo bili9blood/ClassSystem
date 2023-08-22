@@ -12,7 +12,6 @@ class ChangeDataCommand : public QUndoCommand {
   explicit ChangeDataCommand(ClassData::Data before, MainWindow *window,
                              QUndoCommand *parent = nullptr)
       : m_before(before),
-        m_data(&window->m_data),
         m_after(window->m_data),
         m_window(window),
         QUndoCommand(parent) {}
@@ -30,7 +29,6 @@ class ChangeDataCommand : public QUndoCommand {
   }
 
  private:
-  ClassData::Data *m_data;
   const ClassData::Data m_before;
   const ClassData::Data m_after;
 
