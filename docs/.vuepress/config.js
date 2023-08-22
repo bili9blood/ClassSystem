@@ -41,6 +41,7 @@ module.exports = {
 
   plugins: [
     [
+      "img-lazy",
       "vuepress-plugin-zooming",
       {
         delay: 1000,
