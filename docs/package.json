@@ -1,0 +1,17 @@
+{
+  "name": "class-system-docs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docs:dev": "set NODE_OPTIONS=\"--openssl-legacy-provider\" && vuepress dev .",
+    "docs:build": "set NODE_OPTIONS=\"--openssl-legacy-provider\" && vuepress build ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vuepress": "^1.9.10",
+    "vuepress-plugin-zooming": "^1.1.8"
+  }
+}
