@@ -8,6 +8,7 @@ cd docs
 # 生成静态文件
 yarn install
 yarn global add vuepress
+export NODE_OPTIONS=--openssl-legacy-provider
 yarn run docs:build
 
 # 进入生成的文件夹
