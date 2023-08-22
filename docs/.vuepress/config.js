@@ -1,7 +1,6 @@
 const path = require("path");
 
 module.exports = {
-  base: "/class-system-docs/",
   title: "ClassSystem 使用文档",
   head: [
     ["link", { rel: "icon", href: "logo.ico" }],
