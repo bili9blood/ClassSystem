@@ -35,6 +35,8 @@ git commit -m 'deploy'
 
 if [-z $1]
 then
+  echo "Done."
 else
   git push -f https://$1@github.com/class-system-docs/class-system-docs.github.io.git master:gh-pages
+  echo "Done."
 fi
