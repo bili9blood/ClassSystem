@@ -16,7 +16,7 @@ jobs:
       run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && yarn vuepress build .
       
     - name: test
-      run: echo "$PWD"
+      run: tree ./
 
     - name: Push to gh-pages
       uses: ad-m/github-push-action@v0.6.0
