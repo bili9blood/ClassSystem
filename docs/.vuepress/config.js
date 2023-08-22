@@ -39,19 +39,7 @@ module.exports = {
     ],
   },
 
-  plugins: [
-    [
-      "img-lazy",
-      "vuepress-plugin-zooming",
-      {
-        delay: 1000,
-        options: {
-          bgColor: "#383a3c80",
-          zIndex: 10000,
-        },
-      },
-    ],
-  ],
+  plugins: [["img-lazy"]],
   configureWebpack: () => {
     const NODE_ENV = process.env.NODE_ENV;
     //判断是否是生产环境

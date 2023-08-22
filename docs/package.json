@@ -12,7 +12,6 @@
   "license": "ISC",
   "devDependencies": {
     "vuepress": "^1.9.10",
-    "vuepress-plugin-img-lazy": "^1.0.4",
-    "vuepress-plugin-zooming": "^1.1.8"
+    "vuepress-plugin-img-lazy": "^1.0.4"
   }
 }
