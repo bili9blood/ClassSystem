@@ -11,9 +11,8 @@ jobs:
       uses: actions/setup-node@v3.8.1
 
     - name: Build
-      shell: bash
       working-directory: docs
-      run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && yarn vuepress build .
+      run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && yarn vuepress build . && ls
       
     - name: test
       run: ls docs
