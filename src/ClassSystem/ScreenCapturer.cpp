@@ -115,6 +115,7 @@ void ScreenCapturer::mousePressEvent(QMouseEvent *ev) {
   m_btnBox->close();
   m_captureRect.setTopLeft(ev->pos());
   m_captureRect.setBottomRight(ev->pos());
+  m_title->move(0, 0);
 }
 void ScreenCapturer::mouseMoveEvent(QMouseEvent *ev) {
   m_status = Status::Selecting;
