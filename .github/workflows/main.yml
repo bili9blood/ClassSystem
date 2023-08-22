@@ -2,7 +2,7 @@ name: Build Docs
 on: push
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v3.5.3
@@ -11,11 +11,12 @@ jobs:
       uses: actions/setup-node@v3.8.1
 
     - name: Build
-      shell: cmd
+      shell: bash
       working-directory: docs
-      run: |
-        yarn install
-        yarn run docs:build
+      run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && vuepress build .
+      
+    - name: test
+      run: echo "$PWD"
 
     - name: Push to gh-pages
       uses: ad-m/github-push-action@v0.6.0
