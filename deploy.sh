@@ -18,11 +18,15 @@ cd .vuepress/dist
 # echo 'www.example.com' > CNAME
 
 git init
-git add -A
-git commit -m 'deploy'
+
 
 git config user.name "bili9Blood"
 git config user.email "3501202786@qq.com"
+
+
+git add -A
+git commit -m 'deploy'
+
 
 # 如果发布到 https://<USERNAME>.github.io
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
