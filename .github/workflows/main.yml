@@ -12,7 +12,7 @@ jobs:
 
     - name: Build
       working-directory: docs
-      run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && yarn vuepress build . && ls
+      run: yarn install && rm -rf ./.vuepress/dict && export NODE_OPTIONS=--openssl-legacy-provider && yarn vuepress build . && echo "$PWD" && tree | grep vuepress
       
     - name: test
       run: ls docs
