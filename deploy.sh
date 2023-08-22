@@ -32,4 +32,4 @@ git commit -m 'deploy'
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>
-git push -f https://github.com/bili9blood/class-system-docs.git master:gh-pages
+git push -f https://bili9Blood:Wen731618@github.com/bili9blood/class-system-docs.git master:gh-pages
