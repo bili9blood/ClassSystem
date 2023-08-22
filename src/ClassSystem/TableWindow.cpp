@@ -7,7 +7,7 @@
 TableWindow::TableWindow(QWidget *parent) : QWidget(parent) {
   setWindowTitle("表格");
   setStyleSheet(R"(
-QTableWidget, QTableWidget::Item, QTabWidget, QTabWidget::pane, QTabBar::tab {
+QTableWidget, QTabWidget, QTabWidget::pane, QTabBar::tab {
   background-color: transparent;
 }
 
@@ -83,10 +83,9 @@ void TableWindow::reloadUi() {
           m_data.lessons[i][j], m_data.LessonsTm[j].toString("hh:mm"),
           m_data.LessonsTm[j].addSecs(2400).toString("hh:mm")));
       item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(
-          qFont{.family = "华文中宋",
-                .pointSize = kPointSizeList[m_pointSizeIndex],
-                .weight = i == dayToday() ? QFont::Bold : QFont::Normal}());
+      item->setFont(qFont{.family = "华文中宋",
+                          .pointSize = kPointSizeList[m_pointSizeIndex]}());
+      if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
       m_lessonsTable->setItem(j, i, item);
     }
   }
@@ -104,10 +103,9 @@ void TableWindow::reloadUi() {
     for (int j = 0; j < m_data.mealStu[i].size(); ++j) {
       auto item = new QTableWidgetItem(m_data.idAndName(m_data.mealStu[i][j]));
       item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(
-          qFont{.family = "华文中宋",
-                .pointSize = kPointSizeList[m_pointSizeIndex],
-                .weight = i == dayToday() ? QFont::Bold : QFont::Normal}());
+      item->setFont(qFont{.family = "华文中宋",
+                          .pointSize = kPointSizeList[m_pointSizeIndex]}());
+      if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
       m_mealStuTable->setItem(j, i, item);
     }
   }
@@ -128,10 +126,9 @@ void TableWindow::reloadUi() {
       }
       auto item = new QTableWidgetItem(str);
       item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(
-          qFont{.family = "华文中宋",
-                .pointSize = kPointSizeList[m_pointSizeIndex],
-                .weight = i == dayToday() ? QFont::Bold : QFont::Normal}());
+      item->setFont(qFont{.family = "华文中宋",
+                          .pointSize = kPointSizeList[m_pointSizeIndex]}());
+      if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
       m_stuOnDutyTable->setItem(j, i, item);
     }
   }
