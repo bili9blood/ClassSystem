@@ -1,5 +1,9 @@
 name: Build Docs
-on: push
+on:
+  push:
+    paths:
+      - "docs/**"
+
 jobs:
   build:
     runs-on: ubuntu-latest
