@@ -5,10 +5,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@latest
+      uses: actions/checkout@v3.5.3
 
     - name: Setup Node.js
-      uses: action/setup-node@latest
+      uses: actions/setup-node@v3.8.1
 
     - name: Build
       shell: cmd
@@ -18,7 +18,7 @@ jobs:
         yarn run docs:build
 
     - name: Push to gh-pages
-      uses: ad-m/github-push-action@latest
+      uses: ad-m/github-push-action@v0.6.0
       with:
         github-token: ${ secrets.GITHUB_TOKEN }
         branch: gh-pages
