@@ -16,6 +16,3 @@ jobs:
 
       - name: Build
         run: sh deploy.sh ${{ secrets.ACCESS_TOKEN }}
-
-      - name: test
-        run: ls docs
