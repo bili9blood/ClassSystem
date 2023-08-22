@@ -22,10 +22,10 @@
         <tr>
             <th class="first-col"><a href="#抬饭生">抬饭生</a></th>
             <td rowspan=3>在
-              <a href="/class-system/main-panel">主面板</a>
-              显示当日，在
-              <a href="/class-system/popup-menu#表格">悬停菜单> 表格</a>
-              显示完整表格。
+                <a href="/class-system/main-panel">主面板</a>
+                显示当日，在
+                <a href="/class-system/popup-menu#表格">悬停菜单> 表格</a>
+                显示完整表格。
             </td>
         </tr>
         <tr>
@@ -39,7 +39,7 @@
             <td>在<a href="/class-system/main-panel">主面板</a>轮播公告。</td>
         </tr>
         <tr>
-            <th class="first-col"><a href="事件倒计日">事件倒计日</a></th>
+            <th class="first-col"><a href="#事件倒计日">事件倒计日</a></th>
             <td>在<a href="/class-system/main-panel">主面板</a>显示一个事件。</td>
         </tr>
         <tr>
@@ -56,3 +56,11 @@
 ## 抬饭生
 
 从周一至周五每日负责送上/送下饭框的学生，每日抬饭生的个数不一定相同。
+
+## 课程
+
+## 公告
+
+## 事件倒计日
+
+## 学生

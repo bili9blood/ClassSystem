@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   base: "/class-system-docs/",
   title: "ClassSystem 使用文档",
@@ -50,8 +52,7 @@ module.exports = {
       },
     ],
   ],
-
-  configureWebPack: () => {
+  configureWebpack: () => {
     const NODE_ENV = process.env.NODE_ENV;
     //判断是否是生产环境
     if (NODE_ENV === "production") {
