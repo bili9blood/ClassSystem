@@ -74,7 +74,7 @@ void ScreenCapturer::paintEvent(QPaintEvent *) {
     return;
   }
 
-  // Status::Painting
+  // m_status == Status::Painting
   QPen pen;
   pen.setColor({2, 185, 246});
   pen.setWidth(2);
