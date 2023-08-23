@@ -54,302 +54,418 @@
        <attribute name="title">
         <string>学生</string>
        </attribute>
-       <widget class="QGroupBox" name="groupBoxStudents">
-        <property name="geometry">
-         <rect>
-          <x>13</x>
-          <y>13</y>
-          <width>382</width>
-          <height>324</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>学生</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0" colspan="3">
-          <widget class="QTableWidget" name="studentsTable">
-           <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAsNeeded</enum>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBoxStudents">
+          <property name="title">
+           <string>学生</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0" colspan="3">
+            <widget class="QTableWidget" name="studentsTable">
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="verticalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="horizontalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>0</number>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>180</number>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderMinimumSectionSize">
+              <number>0</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>学号</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>姓名</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="btnRemoveStudent">
+             <property name="text">
+              <string>移除</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="btnClearStudents">
+             <property name="text">
+              <string>清空</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="3">
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>导入</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnAddStudent">
+             <property name="text">
+              <string>添加</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBoxStuOnDuty">
+          <property name="title">
+           <string>值日生</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>2</number>
            </property>
-           <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAsNeeded</enum>
-           </property>
-           <property name="verticalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
-           </property>
-           <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
-           </property>
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-           <attribute name="horizontalHeaderMinimumSectionSize">
+           <property name="leftMargin">
             <number>0</number>
-           </attribute>
-           <attribute name="horizontalHeaderDefaultSectionSize">
-            <number>120</number>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
-            <bool>false</bool>
-           </attribute>
-           <attribute name="verticalHeaderMinimumSectionSize">
+           </property>
+           <property name="topMargin">
             <number>0</number>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>学号</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>姓名</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="btnRemoveStudent">
-           <property name="text">
-            <string>移除</string>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QPushButton" name="btnClearStudents">
-           <property name="text">
-            <string>清空</string>
+           <property name="rightMargin">
+            <number>0</number>
            </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="3">
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>导入</string>
+           <property name="bottomMargin">
+            <number>0</number>
            </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QPushButton" name="btnAddStudent">
-           <property name="text">
-            <string>添加</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QGroupBox" name="groupBoxMealStu">
-        <property name="geometry">
-         <rect>
-          <x>410</x>
-          <y>20</y>
-          <width>491</width>
-          <height>311</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>抬饭生</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0" colspan="2">
-          <widget class="QScrollArea" name="scrollAreaMealStu">
-           <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAsNeeded</enum>
-           </property>
-           <property name="widgetResizable">
-            <bool>true</bool>
-           </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>461</width>
-              <height>220</height>
-             </rect>
-            </property>
-            <layout class="QFormLayout" name="editMealStuLayout">
-             <property name="fieldGrowthPolicy">
-              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           <item>
+            <widget class="QScrollArea" name="scrollAreaStuOnDuty">
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
              </property>
-             <property name="rowWrapPolicy">
-              <enum>QFormLayout::DontWrapRows</enum>
+             <property name="widgetResizable">
+              <bool>true</bool>
              </property>
-             <property name="leftMargin">
-              <number>0</number>
+             <widget class="QWidget" name="scrollAreaWidgetContents_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>890</width>
+                <height>252</height>
+               </rect>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item alignment="Qt::AlignHCenter">
+                <widget class="QLabel" name="labelNoDutyJobs">
+                 <property name="text">
+                  <string>（无职位）</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTableWidget" name="stuOnDutyTable">
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>120</number>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <attribute name="verticalHeaderMinimumSectionSize">
+                  <number>120</number>
+                 </attribute>
+                 <attribute name="verticalHeaderDefaultSectionSize">
+                  <number>120</number>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>职位</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>周一</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>周二</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>周三</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>周四</string>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>周五</string>
+                  </property>
+                 </column>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;在单元格中：输入学生的学号而不是姓名。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
-             <property name="topMargin">
-              <number>0</number>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QPushButton" name="btnMealStuMon">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QPushButton" name="pushButton_2">
                <property name="text">
-                <string>编辑</string>
+                <string>添加职位</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="labelMealStuMon">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
+             <item>
+              <widget class="QPushButton" name="btnClearStuOnDuty">
                <property name="text">
-                <string>周一：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QPushButton" name="btnMealStuTue">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>编辑</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="labelMealStuTue">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>周二：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QPushButton" name="btnMealStuWed">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>编辑</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="labelMealStuWed">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>周三：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QPushButton" name="btnMealStuThur">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>编辑</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLabel" name="labelMealStuThur">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>周四：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QPushButton" name="btnMealStuFri">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>编辑</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QLabel" name="labelMealStuFri">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>周五：</string>
+                <string>清空</string>
                </property>
               </widget>
              </item>
             </layout>
-           </widget>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QPushButton" name="btnClearMealStu">
-           <property name="text">
-            <string>清空</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="btnImportMealStu">
-           <property name="text">
-            <string>导入</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QGroupBox" name="groupBoxStuOnDuty">
-        <property name="geometry">
-         <rect>
-          <x>13</x>
-          <y>358</y>
-          <width>892</width>
-          <height>361</height>
-         </rect>
-        </property>
-        <property name="title">
-         <string>值日生</string>
-        </property>
-       </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QGroupBox" name="groupBoxMealStu">
+          <property name="title">
+           <string>抬饭生</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0" colspan="2">
+            <widget class="QScrollArea" name="scrollAreaMealStu">
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="widgetResizable">
+              <bool>true</bool>
+             </property>
+             <widget class="QWidget" name="scrollAreaWidgetContents">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>411</width>
+                <height>243</height>
+               </rect>
+              </property>
+              <layout class="QFormLayout" name="editMealStuLayout">
+               <property name="fieldGrowthPolicy">
+                <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               </property>
+               <property name="rowWrapPolicy">
+                <enum>QFormLayout::DontWrapRows</enum>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QPushButton" name="btnMealStuMon">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>编辑</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="labelMealStuMon">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>周一：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="btnMealStuTue">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>编辑</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="labelMealStuTue">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>周二：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="btnMealStuWed">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>编辑</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="labelMealStuWed">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>周三：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QPushButton" name="btnMealStuThur">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>编辑</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLabel" name="labelMealStuThur">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>周四：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QPushButton" name="btnMealStuFri">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>编辑</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QLabel" name="labelMealStuFri">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>周五：</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnClearMealStu">
+             <property name="text">
+              <string>清空</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="btnImportMealStu">
+             <property name="text">
+              <string>导入</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tabLessons">
        <attribute name="title">
@@ -448,7 +564,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>操作（&amp;O）</string>
+    <string>操作列表（&amp;O）</string>
+   </property>
+   <property name="toolTip">
+    <string>操作列表（O）</string>
    </property>
   </action>
   <action name="actShowUserDocument">
@@ -468,8 +587,8 @@
    <slot>clearStudents()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>225</x>
-     <y>326</y>
+     <x>442</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>422</x>
@@ -500,8 +619,8 @@
    <slot>removeStudent()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>174</x>
-     <y>310</y>
+     <x>301</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>491</x>
@@ -532,8 +651,8 @@
    <slot>editMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>530</x>
-     <y>174</y>
+     <x>592</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel">
      <x>1407</x>
@@ -548,8 +667,8 @@
    <slot>editMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>524</x>
-     <y>217</y>
+     <x>592</x>
+     <y>179</y>
     </hint>
     <hint type="destinationlabel">
      <x>1087</x>
@@ -564,8 +683,8 @@
    <slot>editMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>558</x>
-     <y>260</y>
+     <x>592</x>
+     <y>222</y>
     </hint>
     <hint type="destinationlabel">
      <x>1319</x>
@@ -596,8 +715,8 @@
    <slot>editMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>495</x>
-     <y>284</y>
+     <x>565</x>
+     <y>265</y>
     </hint>
     <hint type="destinationlabel">
      <x>1233</x>
@@ -612,8 +731,8 @@
    <slot>editMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>486</x>
-     <y>331</y>
+     <x>556</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
      <x>1419</x>
@@ -676,12 +795,44 @@
    <slot>importMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>680</x>
-     <y>359</y>
+     <x>892</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>1454</x>
      <y>498</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnClearStuOnDuty</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearStuOnDuty()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>615</x>
+     <y>718</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>480</x>
+     <y>1222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addDutyJob()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>718</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>532</x>
+     <y>1008</y>
     </hint>
    </hints>
   </connection>
@@ -697,5 +848,7 @@
   <slot>drop()</slot>
   <slot>clearMealStu()</slot>
   <slot>importMealStu()</slot>
+  <slot>clearStuOnDuty()</slot>
+  <slot>addDutyJob()</slot>
  </slots>
 </ui>

@@ -57,7 +57,13 @@ target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 # target ClassSystem END
 
 # target ClassAdmin BEGIN
-qt_wrap_ui(UI_SOURCES src/ClassAdmin/MainWindow.ui src/ClassAdmin/EditMealStuDialog.ui)
+qt_wrap_ui(
+    UI_SOURCES
+
+    src/ClassAdmin/MainWindow.ui
+    src/ClassAdmin/EditMealStuDialog.ui
+    src/ClassAdmin/StuOnDutyCellWdiget.ui
+)
 add_executable(ClassAdmin
 
     ${APP_CMD_TYPE} # `WIN32` or None
@@ -71,6 +77,7 @@ add_executable(ClassAdmin
     # 学生
     src/ClassAdmin/ImportDialog.cpp src/ClassAdmin/ImportDialog.h
     src/ClassAdmin/EditMealStuDialog.cpp src/ClassAdmin/EditMealStuDialog.h
+    src/ClassAdmin/StuOnDutyCellWidget.cpp src/ClassAdmin/StuOnDutyCellWidget.h
 
     # 课程
 

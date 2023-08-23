@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>img/subtract.png</file>
     <file>img/redo.png</file>
     <file>img/undo.png</file>
     <file>img/drop.png</file>

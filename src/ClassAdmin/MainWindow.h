@@ -25,7 +25,6 @@ class MainWindow : public QMainWindow {
   void removeStudent();
   void clearStudents();
   void importStudents();
-
   // 移除学生时不会触发
   void onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
                          const QVector<int> &);
@@ -34,6 +33,14 @@ class MainWindow : public QMainWindow {
   void editMealStu();
   void clearMealStu();
   void importMealStu();
+
+  // students on duty
+  void addDutyJob();
+  void clearStuOnDuty();
+  void onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
+                        const QVector<int> &);
+  void onStuOnDutyEdited(const QList<uint> &ls, const int &row,
+                         const int &column);
 
   // toolbar
   void resetPwd();
@@ -51,6 +58,8 @@ class MainWindow : public QMainWindow {
 
   QList<QPushButton *> m_mealStuBtns;
   QList<QLabel *> m_mealStuLabels;
+
+  const QColor kDutyJobsColor = {240, 240, 240};
 
   ClassData::Data m_data;
   bool m_changed = false;

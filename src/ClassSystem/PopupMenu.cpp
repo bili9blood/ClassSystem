@@ -32,7 +32,9 @@ PopupMenu::PopupMenu(QWidget *parent)
 
 void PopupMenu::updateBtnsPosition() {
   m_btnsWidget.move(x() - 10 - m_btnsWidget.width(),
-                    y() - m_btnsWidget.height() / 2 + height() / 2);
+                    qBound(0, y() - m_btnsWidget.height() / 2 + height() / 2,
+                           QApplication::primaryScreen()->size().height() -
+                               m_btnsWidget.height()));
 }
 void PopupMenu::setBtnsVisible(bool visible) {
   if (visible) {

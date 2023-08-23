@@ -19,12 +19,14 @@ class ChangeDataCommand : public QUndoCommand {
   void undo() override {
     m_window->m_data = m_before;
     m_window->loadData();
+    m_window->update();
     m_window->m_changed = true;
   }
 
   void redo() override {
     m_window->m_data = m_after;
     m_window->loadData();
+    m_window->update();
     m_window->m_changed = true;
   }
 

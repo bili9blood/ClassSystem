@@ -10,6 +10,7 @@
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
 #include "ResetPwdDialog.h"
+#include "StuOnDutyCellWidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   ui.setupUi(this);
@@ -23,6 +24,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   m_mealStuLabels << ui.labelMealStuMon << ui.labelMealStuTue
                   << ui.labelMealStuWed << ui.labelMealStuThur
                   << ui.labelMealStuFri;
+
+  connect(ui.stuOnDutyTable->model(), &QAbstractItemModel::dataChanged, this,
+          &MainWindow::onDutyJobsEdited);
 
   // let scroll areas have transparent background
   QPalette pa = ui.scrollAreaMealStu->palette();
@@ -88,7 +92,6 @@ void MainWindow::clearStudents() {
       QMessageBox::warning(this, "清除学生", "所有的学生将被清除，确认继续？",
                            "确认", "取消"))
     return;
-  ui.studentsTable->clearContents();
   while (ui.studentsTable->rowCount()) ui.studentsTable->removeRow(0);
   if (m_dataLoaded) {
     m_data.students.clear();
@@ -316,6 +319,73 @@ void MainWindow::importMealStu() {
 }
 
 /* ---------------------------------------------------------------- */
+/*                     Students On Duty Methods                     */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::addDutyJob() {
+  int row = ui.stuOnDutyTable->rowCount();
+  ui.stuOnDutyTable->insertRow(row);
+
+  auto jobItem = new QTableWidgetItem;
+  jobItem->setBackground(kDutyJobsColor);
+  jobItem->setFlags(jobItem->flags() | Qt::ItemIsEditable);
+  ui.stuOnDutyTable->setItem(row, 0, jobItem);
+
+  for (int i = 0; i < 5; ++i) {
+    auto widget = new StuOnDutyCellWidget(row, i, m_data.stuOnDuty[i][row],
+                                          ui.stuOnDutyTable);
+    connect(widget, &StuOnDutyCellWidget::edited, this,
+            &MainWindow::onStuOnDutyEdited);
+    ui.stuOnDutyTable->setCellWidget(row, i, widget);
+  }
+}
+
+void MainWindow::clearStuOnDuty() {
+  if (m_data.dutyJobs.empty()) return;
+
+  if (m_dataLoaded) {
+    int code = QMessageBox::warning(
+        this, "清除值日生", "所有值日生将被清除，是否继续？", "确认", "取消");
+    if (code) return;
+  }
+
+  ClassData::Data before = m_data;
+
+  // clear table
+  while (ui.stuOnDutyTable->rowCount()) ui.stuOnDutyTable->removeRow(0);
+
+  // clear data
+  m_data.dutyJobs.clear();
+  for (int i = 0; i < 5; ++i) m_data.stuOnDuty[i].clear();
+
+  change(before);
+}
+
+void MainWindow::onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
+                                  const QVector<int> &) {
+  if (idx.row() || !m_dataLoaded) return;
+  ClassData::Data before = m_data;
+  auto &jobs = m_data.dutyJobs;
+  int col = idx.column();
+
+  while (jobs.size() <= col) jobs << "";
+  for (int i = 0; i < 5; ++i) {
+    auto &ls = m_data.stuOnDuty[i];
+    while (ls.size() <= col) ls << QList<uint>();
+  }
+
+  m_data.dutyJobs[col] = ui.stuOnDutyTable->item(0, col)->text();
+  change(before);
+}
+
+void MainWindow::onStuOnDutyEdited(const QList<uint> &ls, const int &row,
+                                   const int &column) {
+  ClassData::Data before = m_data;
+  m_data.stuOnDuty[column - 1 /* 星期几 */][row] = ls;
+  change(before);
+}
+
+/* ---------------------------------------------------------------- */
 /*                          ToolBar Methods                         */
 /* ---------------------------------------------------------------- */
 
@@ -327,6 +397,7 @@ void MainWindow::resetPwd() {
 void MainWindow::change(const ClassData::Data &before) {
   m_undoStk->push(new ChangeDataCommand(before, this));
   m_changed = true;
+  update();
 }
 
 void MainWindow::save() {
@@ -379,6 +450,27 @@ void MainWindow::loadData() {
     }
     m_mealStuLabels[i]->setText(str);
   }
+
+  // students on duty
+  for (int row = ui.stuOnDutyTable->rowCount(); row < m_data.dutyJobs.size();
+       ++row)
+    ui.stuOnDutyTable->insertRow(row);
+
+  for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
+    auto jobItem = new QTableWidgetItem(m_data.dutyJobs[i]);
+    jobItem->setBackground(kDutyJobsColor);
+    jobItem->setFlags(jobItem->flags() | Qt::ItemIsEditable);
+    ui.stuOnDutyTable->setItem(i, 0, jobItem);
+
+    for (int j = 0; j < 5; ++j) {
+      auto widget = new StuOnDutyCellWidget(i, j + 1, m_data.stuOnDuty[j][i],
+                                            ui.stuOnDutyTable);
+      connect(widget, &StuOnDutyCellWidget::edited, this,
+              &MainWindow::onStuOnDutyEdited);
+      ui.stuOnDutyTable->setCellWidget(i, j + 1, widget);
+    }
+  }
+
   m_dataLoaded = true;
 }
 
@@ -419,10 +511,38 @@ void MainWindow::initServer() {
 /* ---------------------------------------------------------------- */
 
 void MainWindow::paintEvent(QPaintEvent *) {
+  // students
   ui.btnRemoveStudent->setEnabled(ui.studentsTable->selectedRanges().size());
   ui.btnClearStudents->setEnabled(ui.studentsTable->rowCount());
+
+  // students on duty
+  if (m_data.dutyJobs.empty()) {
+    // show label, hide table
+
+    ui.labelNoDutyJobs->show();
+    ui.labelNoDutyJobs->setSizePolicy(QSizePolicy::Ignored,
+                                      QSizePolicy::Ignored);
+
+    ui.stuOnDutyTable->hide();
+    ui.stuOnDutyTable->setSizePolicy(QSizePolicy::Preferred,
+                                     QSizePolicy::Preferred);
+  } else {
+    // hide label, show table
+
+    ui.labelNoDutyJobs->hide();
+    ui.labelNoDutyJobs->setSizePolicy(QSizePolicy::Preferred,
+                                      QSizePolicy::Preferred);
+
+    ui.stuOnDutyTable->show();
+    ui.stuOnDutyTable->setSizePolicy(QSizePolicy::Ignored,
+                                     QSizePolicy::Ignored);
+  }
+
+  // toolbar
   ui.actDrop->setEnabled(m_changed);
   ui.actSave->setEnabled(m_changed);
+
+  // title
   if (windowTitle() != kWindowTitle[m_changed])
     setWindowTitle(kWindowTitle[m_changed]);
 }

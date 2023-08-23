@@ -239,7 +239,10 @@ void MainPanel::reloadUi() {
         QString(
             R"(<font style="font-weight: 1000; font-size: 25pt; display: inline;">%1:</font>)")
             .arg(m_data.dutyJobs[i]);
-    for (const uint &id : l) displayStr += " " + m_data.idAndName(id);
+    for (const uint &id : l) {
+      if (!id) continue;
+      displayStr += " " + m_data.idAndName(id);
+    }
     stuOnDutyStr += "<br></br>" + displayStr;
   }
   m_stuOnDutyLabel->setText(stuOnDutyStr.mid(9));  // 移除第一个 `<br></br>`
