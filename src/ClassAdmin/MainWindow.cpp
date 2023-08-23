@@ -37,12 +37,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   initServer();
 
   // init undo stack
-  m_actUndo = m_undoStk->createUndoAction(this, "撤销");
+  m_actUndo = m_undoStk->createUndoAction(this, "撤销：");
   m_actUndo->setIcon(QIcon(":/img/undo.png"));
   m_actUndo->setShortcut(QKeySequence::Undo /* Ctrl+Z */);
   ui.toolBar->insertAction(ui.actSave, m_actUndo);
 
-  m_actRedo = m_undoStk->createRedoAction(this, "重做");
+  m_actRedo = m_undoStk->createRedoAction(this, "重做：");
   m_actRedo->setIcon(QIcon(":/img/redo.png"));
   m_actRedo->setShortcut(QKeySequence::Redo /* Ctrl+Y */);
   ui.toolBar->insertAction(ui.actSave, m_actRedo);
@@ -81,7 +81,7 @@ void MainWindow::removeStudent() {
     }
   }
   if (changed) {
-    change(before);
+    change(before, "移除学生");
   }
 }
 
@@ -95,7 +95,7 @@ void MainWindow::clearStudents() {
   while (ui.studentsTable->rowCount()) ui.studentsTable->removeRow(0);
   if (m_dataLoaded) {
     m_data.students.clear();
-    change(before);
+    change(before, "清除学生");
   }
 }
 
@@ -130,7 +130,7 @@ void MainWindow::importStudents() {
     changed = true;
   }
   if (changed) {
-    change(before);
+    change(before, "导入学生");
   }
 }
 
@@ -144,7 +144,7 @@ void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
   m_data.students[ui.studentsTable->item(row, 0)->text().toUInt()] =
       ui.studentsTable->item(row, 1)->text();
 
-  change(before);
+  change(before, "编辑学生");
 }
 
 /* ---------------------------------------------------------------- */
@@ -161,7 +161,7 @@ void MainWindow::editMealStu() {
   QString str;
   std::tie(m_data, str) = dlg.getResult();
   m_mealStuLabels[idx]->setText("%1：%2"_s.arg(oneDayOfWeek(idx)).arg(str));
-  change(before);
+  change(before, "编辑抬饭生");
 }
 
 void MainWindow::clearMealStu() {
@@ -175,7 +175,7 @@ void MainWindow::clearMealStu() {
     m_mealStuLabels[i]->setText(oneDayOfWeek(i) + "：");
   }
 
-  change(before);
+  change(before, "清除抬饭生");
 }
 
 void MainWindow::importMealStu() {
@@ -238,7 +238,7 @@ void MainWindow::importMealStu() {
           }
         }
         if (changed) {
-          change(before);
+          change(before, "导入抬饭生");
         }
       },
 
@@ -290,7 +290,7 @@ void MainWindow::importMealStu() {
           }
         }
         if (changed) {
-          change(before);
+          change(before, "导入抬饭生");
         }
       }};
 
@@ -326,6 +326,8 @@ void MainWindow::addDutyJob() {
   int row = ui.stuOnDutyTable->rowCount();
   ui.stuOnDutyTable->insertRow(row);
 
+  ClassData::Data before = m_data;
+
   auto &jobs = m_data.dutyJobs;
   while (jobs.size() <= row) jobs << "";
   for (int i = 0; i < 5; ++i) {
@@ -345,6 +347,7 @@ void MainWindow::addDutyJob() {
             &MainWindow::onStuOnDutyEdited);
     ui.stuOnDutyTable->setCellWidget(row, i + 1, widget);
   }
+  change(before, "新增值日职位");
 }
 
 void MainWindow::removeDutyJob() {
@@ -360,7 +363,7 @@ void MainWindow::removeDutyJob() {
     m_data.stuOnDuty[i].removeAt(row);
   }
 
-  change(before);
+  change(before, "移除值日职位");
 }
 
 void MainWindow::clearStuOnDuty() {
@@ -381,7 +384,7 @@ void MainWindow::clearStuOnDuty() {
   m_data.dutyJobs.clear();
   for (int i = 0; i < 5; ++i) m_data.stuOnDuty[i].clear();
 
-  change(before);
+  change(before, "清除值日生");
 }
 
 void MainWindow::onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
@@ -399,14 +402,14 @@ void MainWindow::onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
 
   if (auto item = ui.stuOnDutyTable->item(row, 0))
     m_data.dutyJobs[row] = item->text();
-  change(before);
+  change(before, "编辑值日职位");
 }
 
 void MainWindow::onStuOnDutyEdited(const QList<uint> &ls, const int &row,
                                    const int &column) {
   ClassData::Data before = m_data;
   m_data.stuOnDuty[column - 1 /* 星期几 */][row] = ls;
-  change(before);
+  change(before, "编辑值日生");
 }
 
 /* ---------------------------------------------------------------- */
@@ -418,8 +421,11 @@ void MainWindow::resetPwd() {
   dlg.exec();
 }
 
-void MainWindow::change(const ClassData::Data &before) {
-  m_undoStk->push(new ChangeDataCommand(before, this));
+void MainWindow::change(const ClassData::Data &before, const QString &text) {
+  QString textWithTime =
+      "%1 %2"_s.arg(QTime::currentTime().toString("hh:mm"), text);
+
+  m_undoStk->push(new ChangeDataCommand(before, this, textWithTime));
   m_changed = true;
   update();
 }

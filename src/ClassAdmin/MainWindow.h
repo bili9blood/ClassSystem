@@ -46,7 +46,7 @@ class MainWindow : public QMainWindow {
   // toolbar
   void resetPwd();
 
-  void change(const ClassData::Data &before);
+  void change(const ClassData::Data &before, const QString &text);
   void save();
   void drop();
 
