@@ -28,18 +28,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   QPalette pa = ui.scrollAreaMealStu->palette();
   pa.setBrush(QPalette::Window, Qt::transparent);
   ui.scrollAreaMealStu->setPalette(pa);
+  ui.scrollAreaStuOnDuty->setPalette(pa);
 
   initServer();
 
   // init undo stack
   m_actUndo = m_undoStk->createUndoAction(this, "撤销");
   m_actUndo->setIcon(QIcon(":/img/undo.png"));
-  m_actUndo->setShortcut(QKeySequence::Undo);
+  m_actUndo->setShortcut(QKeySequence::Undo /* Ctrl+Z */);
   ui.toolBar->insertAction(ui.actSave, m_actUndo);
 
   m_actRedo = m_undoStk->createRedoAction(this, "重做");
   m_actRedo->setIcon(QIcon(":/img/redo.png"));
-  m_actRedo->setShortcut(QKeySequence::Redo);
+  m_actRedo->setShortcut(QKeySequence::Redo /* Ctrl+Y */);
   ui.toolBar->insertAction(ui.actSave, m_actRedo);
 
   ui.toolBar->insertSeparator(ui.actSave);
@@ -55,6 +56,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     QDesktopServices::openUrl({"https://class-system-docs.gitee.io/"});
   });
 }
+
+/* ---------------------------------------------------------------- */
+/*                         Students Methods                         */
+/* ---------------------------------------------------------------- */
 
 void MainWindow::addStudent() {
   ui.studentsTable->insertRow(ui.studentsTable->rowCount());
@@ -139,6 +144,10 @@ void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
   change(before);
 }
 
+/* ---------------------------------------------------------------- */
+/*                   Students Carry Meals Methods                   */
+/* ---------------------------------------------------------------- */
+
 void MainWindow::editMealStu() {
   ClassData::Data before = m_data;
   auto btn = qobject_cast<QPushButton *>(sender());
@@ -165,6 +174,7 @@ void MainWindow::clearMealStu() {
 
   change(before);
 }
+
 void MainWindow::importMealStu() {
   /* ------------------------ constants begin ----------------------- */
 
@@ -305,6 +315,10 @@ void MainWindow::importMealStu() {
   kFuncs[mode](dlg.getData());
 }
 
+/* ---------------------------------------------------------------- */
+/*                          ToolBar Methods                         */
+/* ---------------------------------------------------------------- */
+
 void MainWindow::resetPwd() {
   ResetPwdDialog dlg(this);
   dlg.exec();
@@ -368,6 +382,10 @@ void MainWindow::loadData() {
   m_dataLoaded = true;
 }
 
+/* ---------------------------------------------------------------- */
+/*                 Init QLocalServer & QLocalSocket                 */
+/* ---------------------------------------------------------------- */
+
 void MainWindow::onReadyRead() {
   if (kClassAdminSpec == m_socket->read(2)) return;
   ClassData::readFrom(m_socket, m_data, false);
@@ -395,6 +413,10 @@ void MainWindow::initServer() {
   connect(m_server, &QLocalServer::newConnection, this,
           &MainWindow::onNewConnection);
 }
+
+/* ---------------------------------------------------------------- */
+/*                              Events                              */
+/* ---------------------------------------------------------------- */
 
 void MainWindow::paintEvent(QPaintEvent *) {
   ui.btnRemoveStudent->setEnabled(ui.studentsTable->selectedRanges().size());
