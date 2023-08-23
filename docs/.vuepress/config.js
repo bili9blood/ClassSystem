@@ -3,8 +3,8 @@ const path = require("path");
 module.exports = {
   title: "ClassSystem 使用文档",
   head: [
-    ["link", { rel: "icon", href: "logo.ico" }],
-    ["link", { rel: "icon", href: "logo.png" }],
+    ["link", { rel: "icon", href: "~/public/img/logo.ico" }],
+    ["link", { rel: "icon", href: "~/public/img/logo.png" }],
   ],
   locales: {
     "/": {
