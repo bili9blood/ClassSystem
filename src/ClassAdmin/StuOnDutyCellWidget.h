@@ -1,5 +1,8 @@
 #pragma once
 
+#include <qevent.h>
+#include <qtablewidget.h>
+
 #include "ui_StuOnDutyCellWidget.h"
 
 class StuOnDutyCellWidget : public QWidget {
@@ -25,4 +28,8 @@ class StuOnDutyCellWidget : public QWidget {
   int m_col;
 
   Ui::StuOnDutyCellWidget ui;
+
+ protected:
+  void enterEvent(QEvent *ev) override;
+  void leaveEvent(QEvent *ev) override;
 };

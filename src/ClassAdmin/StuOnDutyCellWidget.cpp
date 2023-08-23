@@ -19,6 +19,14 @@ StuOnDutyCellWidget::StuOnDutyCellWidget(int row, int column,
 
   connect(ui.listWidget->model(), &QAbstractItemModel::dataChanged, this,
           &StuOnDutyCellWidget::onDataChanged);
+
+  ui.btnAdd->hide();
+  ui.btnRemove->hide();
+
+  QSizePolicy policy = ui.btnAdd->sizePolicy();
+  policy.setRetainSizeWhenHidden(true);
+  ui.btnAdd->setSizePolicy(policy);
+  ui.btnRemove->setSizePolicy(policy);
 }
 
 void StuOnDutyCellWidget::onAdd() {
@@ -52,4 +60,14 @@ void StuOnDutyCellWidget::onDataChanged(const QModelIndex &idx,
   int row = idx.row();
   m_stuOnDuty[row] = ui.listWidget->item(row)->data(Qt::DisplayRole).toUInt();
   emit edited(m_stuOnDuty, m_row, m_col);
+}
+
+void StuOnDutyCellWidget::enterEvent(QEvent *) {
+  ui.btnAdd->show();
+  ui.btnRemove->show();
+}
+
+void StuOnDutyCellWidget::leaveEvent(QEvent *) {
+  ui.btnAdd->hide();
+  ui.btnRemove->hide();
 }
