@@ -1,3 +1,5 @@
+const path = require("path");
+
 module.exports = {
   title: "ClassSystem 使用文档",
   head: [
@@ -38,4 +40,12 @@ module.exports = {
   },
 
   plugins: [["img-lazy"]],
+  configureWebpack: {
+    resolve: {
+      //配置路径别名
+      alias: {
+        public: path.resolve(__dirname, "./public"),
+      },
+    },
+  },
 };
