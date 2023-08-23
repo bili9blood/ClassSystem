@@ -254,9 +254,16 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="btnAddDutyJob">
                <property name="text">
                 <string>添加职位</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnRemoveDutyJob">
+               <property name="text">
+                <string>移除职位</string>
                </property>
               </widget>
              </item>
@@ -821,18 +828,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_2</sender>
+   <sender>btnAddDutyJob</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>addDutyJob()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>384</x>
+     <x>306</x>
      <y>718</y>
     </hint>
     <hint type="destinationlabel">
      <x>532</x>
      <y>1008</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemoveDutyJob</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeDutyJob()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>406</x>
+     <y>723</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>370</x>
+     <y>1148</y>
     </hint>
    </hints>
   </connection>
@@ -850,5 +873,6 @@
   <slot>importMealStu()</slot>
   <slot>clearStuOnDuty()</slot>
   <slot>addDutyJob()</slot>
+  <slot>removeDutyJob()</slot>
  </slots>
 </ui>

@@ -326,18 +326,41 @@ void MainWindow::addDutyJob() {
   int row = ui.stuOnDutyTable->rowCount();
   ui.stuOnDutyTable->insertRow(row);
 
+  auto &jobs = m_data.dutyJobs;
+  while (jobs.size() <= row) jobs << "";
+  for (int i = 0; i < 5; ++i) {
+    auto &ls = m_data.stuOnDuty[i];
+    while (ls.size() <= row) ls << QList<uint>();
+  }
+
   auto jobItem = new QTableWidgetItem;
   jobItem->setBackground(kDutyJobsColor);
   jobItem->setFlags(jobItem->flags() | Qt::ItemIsEditable);
   ui.stuOnDutyTable->setItem(row, 0, jobItem);
 
   for (int i = 0; i < 5; ++i) {
-    auto widget = new StuOnDutyCellWidget(row, i, m_data.stuOnDuty[i][row],
+    auto widget = new StuOnDutyCellWidget(row, i + 1, m_data.stuOnDuty[i][row],
                                           ui.stuOnDutyTable);
     connect(widget, &StuOnDutyCellWidget::edited, this,
             &MainWindow::onStuOnDutyEdited);
-    ui.stuOnDutyTable->setCellWidget(row, i, widget);
+    ui.stuOnDutyTable->setCellWidget(row, i + 1, widget);
   }
+}
+
+void MainWindow::removeDutyJob() {
+  int row = ui.stuOnDutyTable->currentRow();
+  if (-1 == row) return;
+
+  ClassData::Data before = m_data;
+
+  ui.stuOnDutyTable->removeRow(row);
+
+  m_data.dutyJobs.removeAt(row);
+  for (int i = 0; i < 5; ++i) {
+    m_data.stuOnDuty[i].removeAt(row);
+  }
+
+  change(before);
 }
 
 void MainWindow::clearStuOnDuty() {
@@ -363,18 +386,19 @@ void MainWindow::clearStuOnDuty() {
 
 void MainWindow::onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
                                   const QVector<int> &) {
-  if (idx.row() || !m_dataLoaded) return;
+  if (idx.column() || !m_dataLoaded) return;
   ClassData::Data before = m_data;
   auto &jobs = m_data.dutyJobs;
-  int col = idx.column();
+  int row = idx.row();
 
-  while (jobs.size() <= col) jobs << "";
+  while (jobs.size() <= row) jobs << "";
   for (int i = 0; i < 5; ++i) {
     auto &ls = m_data.stuOnDuty[i];
-    while (ls.size() <= col) ls << QList<uint>();
+    while (ls.size() <= row) ls << QList<uint>();
   }
 
-  m_data.dutyJobs[col] = ui.stuOnDutyTable->item(0, col)->text();
+  if (auto item = ui.stuOnDutyTable->item(row, 0))
+    m_data.dutyJobs[row] = item->text();
   change(before);
 }
 

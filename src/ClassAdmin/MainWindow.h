@@ -36,6 +36,7 @@ class MainWindow : public QMainWindow {
 
   // students on duty
   void addDutyJob();
+  void removeDutyJob();
   void clearStuOnDuty();
   void onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
                         const QVector<int> &);
