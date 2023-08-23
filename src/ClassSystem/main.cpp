@@ -26,8 +26,10 @@ int main(int argc, char *argv[]) {
   qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
   // add fonts
-  int fontId = QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
-  if (fontId != -1)
+
+  if (int fontId =
+          QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
+      fontId != -1)
     QApplication::setFont(
         QFontDatabase::applicationFontFamilies(fontId).first());
 
