@@ -34,7 +34,10 @@ int main(int argc, char *argv[]) {
   checkDirs();
 
   // generate template .stm file
-  ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
+
+#ifdef _Debug
+  // ClassData::writeTo(ClassData::testData(), new QFile("data.stm"));
+#endif
 
   // show panel
   MainPanel panel;

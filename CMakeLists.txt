@@ -16,6 +16,7 @@ set(ClassSystemDir ${CMAKE_SOURCE_DIR}/src/ClassSystem)
 set(APP_CMD_TYPE WIN32)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-D_Debug)
     set(APP_CMD_TYPE)
 endif()
 
