@@ -20,23 +20,17 @@ cd .vuepress/dist
 git init
 
 
-git config user.name "bili9Blood"
+git config user.name "class-system-docs"
 git config user.email "3501202786@qq.com"
 
 
 git add -A
 git commit -m 'deploy'
 
-
-# 如果发布到 https://<USERNAME>.github.io
-# git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
-
-# 如果发布到 https://<USERNAME>.github.io/<REPO>
-
 if [-z $1]
 then
   echo "Done."
 else
-  git push -f https://$1@github.com/class-system-docs/class-system-docs.github.io.git master:gh-pages
+  git push -f https://$1@gitee.com/class-system-docs/class-system-docs.git master
   echo "Done."
 fi
