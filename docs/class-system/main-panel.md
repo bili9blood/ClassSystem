@@ -2,4 +2,4 @@
 
 在桌面显示[班级信息](/class-data)。
 
-![主面板](~public/img/main-panel.png)
+![主面板](/img/main-panel.png)

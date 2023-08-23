@@ -9,9 +9,9 @@
 </style>
 <div class="img-div">
 
-![收起状态的悬停菜单](~public/img/popup-menu.png)
+![收起状态的悬停菜单](/img/popup-menu.png)
 
-![展开状态的悬停菜单](~public/img/popup-menu-opened.png)
+![展开状态的悬停菜单](/img/popup-menu-opened.png)
 
 </div>
 
@@ -19,7 +19,7 @@
 
 点击唤起截图功能并打开截图界面。
 
-![截图界面](~public/img/print-screen.png)
+![截图界面](/img/print-screen.png)
 
 | 操作                | 功能     |
 | ------------------- | -------- |
@@ -80,7 +80,7 @@
 
 显示完整的课程表、抬饭表、值日表，表中当日列高亮。
 
-![表格](~public/img/table-window.png)
+![表格](/img/table-window.png)
 
 鼠标点击上方选项卡以切换表格，在表格上滚动鼠标滚轮以调整字体大小。
 

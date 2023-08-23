@@ -3,8 +3,8 @@ const path = require("path");
 module.exports = {
   title: "ClassSystem 使用文档",
   head: [
-    ["link", { rel: "icon", href: "~/public/img/logo.ico" }],
-    ["link", { rel: "icon", href: "~/public/img/logo.png" }],
+    ["link", { rel: "icon", href: "/img/logo.ico" }],
+    ["link", { rel: "icon", href: "/img/logo.png" }],
   ],
   locales: {
     "/": {
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   themeConfig: {
-    logo: "/logo.png",
+    logo: "/img/logo.png",
     smoothScroll: true,
     sidebar: [
       "/",
@@ -40,12 +40,4 @@ module.exports = {
   },
 
   plugins: [["img-lazy"]],
-  configureWebpack: {
-    resolve: {
-      //配置路径别名
-      alias: {
-        public: path.resolve(__dirname, "./public"),
-      },
-    },
-  },
 };
