@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                   << ui.labelMealStuWed << ui.labelMealStuThur
                   << ui.labelMealStuFri;
 
+  // let scroll areas have transparent background
   QPalette pa = ui.scrollAreaMealStu->palette();
   pa.setBrush(QPalette::Window, Qt::transparent);
   ui.scrollAreaMealStu->setPalette(pa);
