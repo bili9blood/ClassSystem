@@ -1,5 +1,7 @@
 #include "EditMealStuDialog.h"
 
+#include "IntDelegate.h"
+
 EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
                                      QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint),

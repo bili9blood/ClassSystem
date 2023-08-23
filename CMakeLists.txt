@@ -80,6 +80,8 @@ add_executable(ClassAdmin
     src/ClassAdmin/ResetPwdDialog.cpp src/ClassAdmin/ResetPwdDialog.h
     src/ClassAdmin/Commands.h
 
+    src/ClassAdmin/IntDelegate.h
+
     ${UI_SOURCES}
 
     ${UTILS_SOURCES}

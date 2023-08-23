@@ -33,17 +33,3 @@ class EditMealStuDialog : public QDialog {
  protected:
   void paintEvent(QPaintEvent *ev) override;
 };
-
-class IntDelegate : public QItemDelegate {
- public:
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                        const QModelIndex &index) const {
-    QLineEdit *lineEdit = new QLineEdit(parent);
-
-    QIntValidator *validator =
-        new QIntValidator(0, std::numeric_limits<int>::max(), lineEdit);
-    lineEdit->setValidator(validator);
-
-    return lineEdit;
-  }
-};
