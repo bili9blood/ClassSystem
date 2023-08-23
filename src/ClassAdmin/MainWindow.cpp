@@ -52,8 +52,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   connect(ui.actToggleUndoView, &QAction::triggered, &m_undoView,
           &QWidget::setVisible);
   connect(ui.actShowUserDocument, &QAction::triggered, [] {
-    QDesktopServices::openUrl(
-        {"http://bili9blood.gitee.io/class-system-docs/#/"});
+    QDesktopServices::openUrl({"https://class-system-docs.gitee.io/"});
   });
 }
 

@@ -58,8 +58,7 @@ void PopupMenu::onBtnClicked() {
           QApplication::setActiveWindow(&m_tableWindow);
           break;
         case 2:  // show help
-          QDesktopServices::openUrl(
-              {"http://bili9blood.gitee.io/class-system-docs/#/"});
+          QDesktopServices::openUrl({"https://class-system-docs.gitee.io/"});
           break;
       }
       break;
