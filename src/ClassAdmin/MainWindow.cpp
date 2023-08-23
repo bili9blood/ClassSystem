@@ -12,7 +12,6 @@
 #include "ResetPwdDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-  QTableWidget w;
   ui.setupUi(this);
 
   ui.studentsTable->setColumnWidth(0, 80);
