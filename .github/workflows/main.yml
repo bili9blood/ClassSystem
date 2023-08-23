@@ -15,4 +15,4 @@ jobs:
         uses: actions/setup-node@v3.8.1
 
       - name: Build
-        run: sh deploy.sh ${{ secrets.ACCESS_TOKEN }}
+        run: sh deploy-docs.sh ${{ secrets.ACCESS_TOKEN }}
