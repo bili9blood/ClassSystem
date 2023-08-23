@@ -28,9 +28,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   connect(ui.stuOnDutyTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onDutyJobsEdited);
 
-  // let scroll areas have transparent background
   QPalette pa = ui.scrollAreaMealStu->palette();
-  pa.setBrush(QPalette::Window, Qt::transparent);
+  pa.setBrush(QPalette::Window, Qt::white);
   ui.scrollAreaMealStu->setPalette(pa);
   ui.scrollAreaStuOnDuty->setPalette(pa);
 
