@@ -487,6 +487,9 @@
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="0" colspan="4">
          <widget class="QTableWidget" name="lessonsTable">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
           <property name="verticalScrollMode">
            <enum>QAbstractItemView::ScrollPerPixel</enum>
           </property>
@@ -495,9 +498,6 @@
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
            <number>130</number>
-          </attribute>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
           </attribute>
           <column>
            <property name="text">

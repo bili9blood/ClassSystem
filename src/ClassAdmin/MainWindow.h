@@ -48,6 +48,8 @@ class MainWindow : public QMainWindow {
   void removeLesson();
   void clearLessons();
   void importLessons();
+  void onLessonsChanged(const QModelIndex &idx, const QModelIndex &,
+                        const QVector<int> &);
 
   // toolbar
   void resetPwd();
@@ -71,7 +73,6 @@ class MainWindow : public QMainWindow {
   QList<QLabel *> m_mealStuLabels;
 
   const QColor kDutyJobsColor = {240, 240, 240};
-  const QColor kLessonsTmColor = {240, 240, 240};
 
   ClassData::Data m_data;
   bool m_changed = false;
@@ -90,8 +91,8 @@ class MainWindow : public QMainWindow {
   bool m_loadingData = false;
   bool m_isFirstLoad = true;
 
-  // 执行 `onReadyRead()` 时是否 `loadData()`，`onReadyRead()`结束后设置为 true
-  bool m_shouldLoadOnReadyRead = true;
+  // 正在运行 `change()`
+  bool m_doingChange = false;
 
   // undo & redo
   QUndoStack *m_undoStk = new QUndoStack(this);

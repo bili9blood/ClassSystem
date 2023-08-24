@@ -1,6 +1,6 @@
 #include "StuOnDutyCellWidget.h"
 
-#include "IntDelegate.h"
+#include "ItemDelegates.h"
 
 StuOnDutyCellWidget::StuOnDutyCellWidget(int row, int column,
                                          QList<uint> stuOnDuty, QWidget *parent)

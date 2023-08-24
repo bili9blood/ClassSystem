@@ -1,6 +1,6 @@
 #include "EditMealStuDialog.h"
 
-#include "IntDelegate.h"
+#include "ItemDelegates.h"
 
 EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
                                      QWidget *parent)

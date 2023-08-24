@@ -183,8 +183,9 @@ QFrame {
 void MainPanel::reloadUi() {
   /* ---------------------------- lessons --------------------------- */
 
-  auto lessonsToday = m_data.lessons[dayToday()];
+  m_lessons->clear();
 
+  auto lessonsToday = m_data.lessons[dayToday()];
   for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
     m_lessons->setItem(
         i, 0,
@@ -217,6 +218,7 @@ void MainPanel::reloadUi() {
   }
 
   /* --------------------------- days left -------------------------- */
+
   m_eventNameLabel->setText("离%1剩余天数:"_s.arg(m_data.events.top().name));
   m_daysLeftDisplay->display(
       (int)QDate::currentDate().daysTo(m_data.events.top().date));

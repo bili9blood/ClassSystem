@@ -4,12 +4,12 @@
 #include <qdesktopservices.h>
 #include <qfiledialog.h>
 #include <qmessagebox.h>
-#include <qpainter.h>
 #include <qstandarditemmodel.h>
 
 #include "Commands.h"
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
+#include "ItemDelegates.h"
 #include "ResetPwdDialog.h"
 #include "StuOnDutyCellWidget.h"
 
@@ -28,6 +28,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
   connect(ui.stuOnDutyTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onDutyJobsEdited);
+
+  ui.lessonsTable->setItemDelegateForColumn(0, new TimeDelegate);
+  connect(ui.lessonsTable->model(), &QAbstractItemModel::dataChanged, this,
+          &MainWindow::onLessonsChanged);
 
   QPalette pa = ui.scrollAreaMealStu->palette();
   pa.setBrush(QPalette::Window, Qt::white);
@@ -423,13 +427,130 @@ void MainWindow::onStuOnDutyEdited(const QList<uint> &ls, const int &row,
 /*                          Lessons Methods                         */
 /* ---------------------------------------------------------------- */
 
-void MainWindow::addLesson() {}
+void MainWindow::addLesson() {
+  int row = ui.lessonsTable->rowCount();
+  if (int cRow = ui.lessonsTable->currentRow(); cRow != -1) row = cRow + 1;
 
-void MainWindow::removeLesson() {}
+  ui.lessonsTable->insertRow(row);
 
-void MainWindow::clearLessons() {}
+  ui.lessonsTable->setItem(row, 0, new QTableWidgetItem);
 
-void MainWindow::importLessons() {}
+  ClassData::Data before = m_data;
+
+  while (m_data.lessonsTm.size() <= row) m_data.lessonsTm << QTime();
+  for (int i = 0; i < 5; ++i) {
+    ui.lessonsTable->setItem(row, i, new QTableWidgetItem);
+
+    auto &ls = m_data.lessons[i];
+    while (ls.size() <= row) ls << QString();
+  }
+
+  change(before, "添加课节");
+}
+
+void MainWindow::removeLesson() {
+  int row = ui.lessonsTable->currentRow();
+  if (row == -1) return;
+
+  ui.lessonsTable->removeRow(row);
+
+  ClassData::Data before = m_data;
+
+  m_data.lessonsTm.removeAt(row);
+  auto &ls = m_data.lessons;
+  for (int i = 0; i < 5; ++i) {
+    ls[i].removeAt(row);
+  }
+
+  change(before, "移除第%1节课"_s.arg(row + 1));
+}
+
+void MainWindow::clearLessons() {
+  if (!m_loadingData) {
+    int code = QMessageBox::warning(
+        this, "清空课程", "所有课程将被清除，是否继续？", "确认", "取消");
+    if (1 == code) return;
+  }
+
+  for (int i = m_data.lessonsTm.size() - 1; i >= 0; --i)
+    ui.lessonsTable->removeRow(i);
+
+  if (m_loadingData) return;
+
+  ClassData::Data before = m_data;
+
+  m_data.lessonsTm.clear();
+  for (int i = 0; i < 5; ++i) {
+    m_data.lessons[i].clear();
+  }
+
+  if (!m_loadingData) change(before, "清空课程");
+}
+
+void MainWindow::importLessons() {
+  QString templateStr = R"(8:50	班会	数学	语文	生物	地理
+9:40	语文	物理	体育	英语	政治
+10:30	英语	历史	历史	语文	数学
+
+<i>时间中间可以是英文冒号也可以是中文冒号。</i>
+)";
+
+  ImportDialog dlg(templateStr, this);
+  bool changed = false;
+  int code = dlg.exec();
+  if (code == QDialog::Rejected) return;
+
+  QString str = dlg.getData();
+  if (str.isSimpleText()) return;
+  if (!QRegExp(R"((\d{1,2}[:：]\d{1,2}\t(\S+\t){4}\S+\s*)+)").exactMatch(str)) {
+    QMessageBox::critical(this, "导入课程", "格式错误，无法导入!");
+    return;
+  }
+
+  clearLessons();
+
+  ClassData::Data before = m_data;
+
+  QStringList lines = str.remove('\r').split('\n');
+
+  for (int row = ui.lessonsTable->rowCount(); row <= lines.size(); ++row)
+    ui.lessonsTable->insertRow(row);
+
+  for (int i = 0; i < lines.size(); ++i) {
+    const auto &line = lines.at(i);
+
+    QString time = line.left(line.indexOf('\t'));
+    if (QRegExp(R"(\d{1,2}:\d{1,2})").exactMatch(time)) {
+      m_data.lessonsTm << QTime::fromString(time, "h:m");
+    } else {  // 中文冒号
+      m_data.lessonsTm << QTime::fromString(time, "h：m");
+    }
+
+    for (int i = 0; i < 4; ++i) {
+      // TODO:解析tsv
+    }
+    changed = true;
+  }
+
+  if (changed) change(before, "导入课程");
+}
+
+void MainWindow::onLessonsChanged(const QModelIndex &idx, const QModelIndex &,
+                                  const QVector<int> &) {
+  if (m_loadingData) return;
+  int row = idx.row(), col = idx.column();
+  ClassData::Data before;
+  if (row == 0) {  // lessonsTm changed
+    m_data.lessonsTm[row] =
+        ui.lessonsTable->item(row, 0)->data(Qt::DisplayRole).toTime();
+
+    change(before, "编辑第%1节课时间"_s.arg(row + 1));
+  } else {  // lessons changed
+    m_data.lessons[col - 1][row] = ui.lessonsTable->item(row, col)->text();
+
+    change(before, "编辑%1第%2节课"_s.arg(oneDayOfWeek(col - 1)).arg(row + 1));
+  }
+}
 
 /* ---------------------------------------------------------------- */
 /*                          ToolBar Methods                         */
@@ -441,10 +562,14 @@ void MainWindow::resetPwd() {
 }
 
 void MainWindow::change(const ClassData::Data &before, const QString &text) {
+  m_doingChange = true;
+
   QString textWithTime =
       "%1 %2"_s.arg(QTime::currentTime().toString("hh:mm"), text);
 
   m_undoStk->push(new ChangeDataCommand(before, this, textWithTime));
+
+  m_doingChange = false;
   m_changed = true;
   update();
 }
@@ -568,6 +693,24 @@ void MainWindow::loadData() {
     }
   }
 
+  // lessons
+  clearLessons();
+  for (int row = ui.lessonsTable->rowCount(); row < m_data.lessonsTm.size();
+       ++row) {
+    ui.lessonsTable->insertRow(row);
+  }
+
+  for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
+    auto timeItem = new QTableWidgetItem;
+    timeItem->setData(Qt::DisplayRole, m_data.lessonsTm[i]);
+    ui.lessonsTable->setItem(i, 0, timeItem);
+
+    for (int j = 0; j < 5; ++j) {
+      ui.lessonsTable->setItem(i, j + 1,
+                               new QTableWidgetItem(m_data.lessons[j][i]));
+    }
+  }
+
   m_changed = false;
   m_loadingData = false;
   m_isFirstLoad = false;
@@ -680,6 +823,15 @@ void MainWindow::paintEvent(QPaintEvent *) {
     ui.stuOnDutyTable->show();
     ui.stuOnDutyTable->setSizePolicy(QSizePolicy::Ignored,
                                      QSizePolicy::Ignored);
+  }
+
+  // lessons
+  for (int i = 0; i < ui.lessonsTable->rowCount(); ++i) {
+    QString text = "第%1节"_s.arg(i + 1);
+    if (auto item = ui.lessonsTable->verticalHeaderItem(i))
+      item->setText(text);
+    else
+      ui.lessonsTable->setVerticalHeaderItem(i, new QTableWidgetItem(text));
   }
 
   // toolbar

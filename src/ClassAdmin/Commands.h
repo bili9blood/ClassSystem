@@ -20,6 +20,8 @@ class ChangeDataCommand : public QUndoCommand {
   }
 
   void undo() override {
+    if (m_window->m_doingChange) return;
+
     m_window->m_data = m_before;
     m_window->loadData();
     m_window->update();
@@ -27,6 +29,8 @@ class ChangeDataCommand : public QUndoCommand {
   }
 
   void redo() override {
+    if (m_window->m_doingChange) return;
+
     m_window->m_data = m_after;
     m_window->loadData();
     m_window->update();
