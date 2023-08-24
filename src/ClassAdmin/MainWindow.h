@@ -43,12 +43,22 @@ class MainWindow : public QMainWindow {
   void onStuOnDutyEdited(const QList<uint> &ls, const int &row,
                          const int &column);
 
+  // lessons
+  void addLesson();
+  void removeLesson();
+  void clearLessons();
+  void importLessons();
+
   // toolbar
   void resetPwd();
 
   void change(const ClassData::Data &before, const QString &text);
-  void save();
+  void sync();
   void drop();
+
+  // menubar
+  void openFile();
+  void saveToFile();
 
   // local server
   void onReadyRead();
@@ -61,6 +71,7 @@ class MainWindow : public QMainWindow {
   QList<QLabel *> m_mealStuLabels;
 
   const QColor kDutyJobsColor = {240, 240, 240};
+  const QColor kLessonsTmColor = {240, 240, 240};
 
   ClassData::Data m_data;
   bool m_changed = false;
@@ -68,11 +79,20 @@ class MainWindow : public QMainWindow {
   QLocalServer *m_server = new QLocalServer(this);
   QLocalSocket *m_socket = nullptr;
   static constexpr const char kServerName[] = "CLASS-ADMIN-SERVER";
+  bool m_connected = false;
+
+  bool m_fileOpened = false;
+  QFile m_file;
 
   static constexpr const char *kWindowTitle[] = {
       "ClassSystem 管理后台", "ClassSystem 管理后台 *(未保存)"};
 
-  bool m_dataLoaded = false;
+  bool m_loadingData = false;
+  bool m_isFirstLoad = true;
+  bool m_isDropping = false;
+
+  // 执行 `onReadyRead()` 时是否 `loadData()`，`onReadyRead()`结束后设置为 true
+  bool m_shouldLoadOnReadyRead = true;
 
   // undo & redo
   QUndoStack *m_undoStk = new QUndoStack(this);

@@ -181,19 +181,19 @@ QFrame {
 }
 
 void MainPanel::reloadUi() {
-  // lessons
+  /* ---------------------------- lessons --------------------------- */
+
   auto lessonsToday = m_data.lessons[dayToday()];
 
-  m_lessons->setItem(5, 0, new QTableWidgetItem("午休(13:00-13:50)"));
-  for (int i = 0; i < 8; ++i) {
+  for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
     m_lessons->setItem(
-        i < 5 ? i : i + 1, 0,
+        i, 0,
         new QTableWidgetItem("%1(%2-%3)"_s.arg(
-            lessonsToday[i], m_data.LessonsTm[i].toString("hh:mm"),
-            m_data.LessonsTm[i].addSecs(2400).toString("hh:mm"))));
+            lessonsToday[i], m_data.lessonsTm[i].toString("hh:mm"),
+            m_data.lessonsTm[i].addSecs(2400).toString("hh:mm"))));
   }
 
-  // notices
+  /* ---------------------------- notices --------------------------- */
 
   // clear
   for (const auto &b : m_noticesTextBrowsers) {
@@ -216,12 +216,13 @@ void MainPanel::reloadUi() {
     m_noticesWid->addWidget(b);
   }
 
-  // days left
+  /* --------------------------- days left -------------------------- */
   m_eventNameLabel->setText("离%1剩余天数:"_s.arg(m_data.events.top().name));
   m_daysLeftDisplay->display(
       (int)QDate::currentDate().daysTo(m_data.events.top().date));
 
-  // students carry meals
+  /* --------------------- students carry meals --------------------- */
+
   auto mealStuToday = m_data.mealStu[dayToday()];
   QString mealStuStr;
   for (const uint &id : mealStuToday) {
@@ -229,7 +230,8 @@ void MainPanel::reloadUi() {
   }
   m_mealStuLabel->setText(mealStuStr.mid(1));
 
-  // students on duty
+  /* ----------------------- students on duty ----------------------- */
+
   auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
   QString stuOnDutyStr;
   for (int i = 0; i < stuOnDutyToday.size(); ++i) {
@@ -379,17 +381,11 @@ void MainPanel::timerEvent(QTimerEvent *ev) {
     auto color = [](bool b) {
       return b ? QColor(229, 192, 123) : QColor(206, 210, 206);
     };
-    if (kCur >= QTime(12, 50) && kCur <= QTime(13, 50)) {
-      for (int i = 0; i < 9; ++i)
-        m_lessons->item(i, 0)->setForeground(color(i == 5));
-      return;
-    }
-    m_lessons->item(5, 0)->setForeground(color(false));
-    for (int i = 0; i < 8; ++i) {
-      auto tm = m_data.LessonsTm[i];
-      m_lessons->item(i < 5 ? i : i + 1, 0)
-          ->setForeground(
-              color(kCur >= tm.addSecs(-600) && kCur <= tm.addSecs(2400)));
+
+    for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
+      auto tm = m_data.lessonsTm[i];
+      m_lessons->item(i, 0)->setForeground(
+          color(kCur >= tm.addSecs(-600) && kCur <= tm.addSecs(2400)));
     }
   }
 }

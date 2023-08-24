@@ -2,6 +2,7 @@
 
 #include <qbuffer.h>
 #include <qdesktopservices.h>
+#include <qfiledialog.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
 #include <qstandarditemmodel.h>
@@ -39,14 +40,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   m_actUndo = m_undoStk->createUndoAction(this, "撤销：");
   m_actUndo->setIcon(QIcon(":/img/undo.png"));
   m_actUndo->setShortcut(QKeySequence::Undo /* Ctrl+Z */);
-  ui.toolBar->insertAction(ui.actSave, m_actUndo);
+  ui.toolBar->insertAction(ui.actSync, m_actUndo);
 
   m_actRedo = m_undoStk->createRedoAction(this, "重做：");
   m_actRedo->setIcon(QIcon(":/img/redo.png"));
   m_actRedo->setShortcut(QKeySequence::Redo /* Ctrl+Y */);
-  ui.toolBar->insertAction(ui.actSave, m_actRedo);
+  ui.toolBar->insertAction(ui.actSync, m_actRedo);
 
-  ui.toolBar->insertSeparator(ui.actSave);
+  ui.toolBar->insertSeparator(ui.actSync);
 
   m_undoView.setWindowTitle("操作");
   m_undoView.setWindowFlag(Qt::WindowMaximizeButtonHint, false);
@@ -87,12 +88,12 @@ void MainWindow::removeStudent() {
 void MainWindow::clearStudents() {
   ClassData::Data before = m_data;
   if (!ui.studentsTable->rowCount()) return;
-  if (m_dataLoaded &&
+  if (!m_loadingData &&
       QMessageBox::warning(this, "清除学生", "所有的学生将被清除，确认继续？",
                            "确认", "取消"))
     return;
   while (ui.studentsTable->rowCount()) ui.studentsTable->removeRow(0);
-  if (m_dataLoaded) {
+  if (!m_loadingData) {
     m_data.students.clear();
     change(before, "清除学生");
   }
@@ -136,12 +137,19 @@ void MainWindow::importStudents() {
 void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
                                    const QVector<int> &) {
   ClassData::Data before = m_data;
-  if (!m_dataLoaded) return;
+  if (m_loadingData) return;
   int row = idx.row();
-  if (!ui.studentsTable->item(row, 0) || !ui.studentsTable->item(row, 1))
-    return;
-  m_data.students[ui.studentsTable->item(row, 0)->text().toUInt()] =
-      ui.studentsTable->item(row, 1)->text();
+
+  uint id = 0;
+  QString name;
+
+  if (ui.studentsTable->item(row, 0))
+    id = ui.studentsTable->item(row, 0)->data(Qt::DisplayRole).toUInt();
+
+  if (ui.studentsTable->item(row, 1))
+    name = ui.studentsTable->item(row, 1)->text();
+
+  m_data.students[id] = name;
 
   change(before, "编辑学生");
 }
@@ -368,7 +376,7 @@ void MainWindow::removeDutyJob() {
 void MainWindow::clearStuOnDuty() {
   if (m_data.dutyJobs.empty()) return;
 
-  if (m_dataLoaded) {
+  if (!m_loadingData) {
     int code = QMessageBox::warning(
         this, "清除值日生", "所有值日生将被清除，是否继续？", "确认", "取消");
     if (code) return;
@@ -388,7 +396,7 @@ void MainWindow::clearStuOnDuty() {
 
 void MainWindow::onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
                                   const QVector<int> &) {
-  if (idx.column() || !m_dataLoaded) return;
+  if (idx.column() || m_loadingData) return;
   ClassData::Data before = m_data;
   auto &jobs = m_data.dutyJobs;
   int row = idx.row();
@@ -412,6 +420,18 @@ void MainWindow::onStuOnDutyEdited(const QList<uint> &ls, const int &row,
 }
 
 /* ---------------------------------------------------------------- */
+/*                          Lessons Methods                         */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::addLesson() {}
+
+void MainWindow::removeLesson() {}
+
+void MainWindow::clearLessons() {}
+
+void MainWindow::importLessons() {}
+
+/* ---------------------------------------------------------------- */
 /*                          ToolBar Methods                         */
 /* ---------------------------------------------------------------- */
 
@@ -429,7 +449,16 @@ void MainWindow::change(const ClassData::Data &before, const QString &text) {
   update();
 }
 
-void MainWindow::save() {
+void MainWindow::sync() {
+  if (!m_connected) {
+    QMessageBox::warning(this, "同步",
+                         "未连接到 ClassSystem，无法进行同步！"
+                         "<br/><br />"
+                         "建议：将修改保存到文件，待连接到 ClassSystem "
+                         "后再将文件内容同步。");
+    return;
+  }
+
   QBuffer b;
   b.open(QBuffer::WriteOnly);
   b.write(kClassAdminSpec, 2);
@@ -445,19 +474,64 @@ void MainWindow::save() {
 }
 
 void MainWindow::drop() {
-  m_undoStk->clear();
-  int code = QMessageBox::warning(this, "放弃修改",
-                                  "所有将还原被客户端的数据覆盖，是否继续？",
-                                  "确认", "取消");
-  if (1 == code) return;
+  const auto load = [this] {
+    m_isDropping = true;
+    loadData();
+    m_isDropping = false;
+  };
+  const auto getFromClassSystem = [load, this] {
+    int code = QMessageBox::warning(
+        this, "放弃", "所有修改将被 ClassSystem 的数据覆盖，是否继续？", "确认",
+        "取消");
+    if (1 == code) return;
 
-  QDataStream ds(m_socket);
-  ds << MsgType::Request;
+    m_undoStk->clear();
+    QDataStream ds(m_socket);
+    m_isDropping = true;
+    ds << MsgType::Request;
+  };
+
+  const auto getFromFile = [load, this] {
+    int code = QMessageBox::warning(
+        this, "放弃",
+        "所有修改将被 %1 的数据覆盖，是否继续？"_s.arg(m_file.fileName()),
+        "确认", "取消");
+    if (1 == code) return;
+
+    m_undoStk->clear();
+    m_file.open(QFile::ReadWrite);
+    ClassData::readFrom(&m_file, m_data);
+    m_file.close();
+    load();
+  };
+
+  const auto clear = [load, this] {
+    int code = QMessageBox::warning(this, "放弃", "所有修改将清空，是否继续？",
+                                    "确认", "取消");
+    if (1 == code) return;
+
+    m_undoStk->clear();
+    m_data = ClassData::Data();
+    load();
+  };
+
+  if (m_connected && !m_fileOpened)
+    getFromClassSystem();
+  else if (!m_connected && m_fileOpened)
+    getFromFile();
+  else if (!m_connected && !m_fileOpened)
+    clear();
+  else  // m_connected && m_fileOpened
+    (0 == QMessageBox::information(this, "放弃", "请选择重新加载的数据来源：",
+                                   "ClassSystem",
+                                   "打开的文件：" + m_file.fileName()))
+        ? getFromClassSystem()
+        : getFromFile();
 }
 
 void MainWindow::loadData() {
-  m_dataLoaded = false;
-  m_changed = false;
+  m_loadingData = true;
+
   clearStudents();
 
   // students
@@ -500,7 +574,42 @@ void MainWindow::loadData() {
     }
   }
 
-  m_dataLoaded = true;
+  m_changed = false;
+  m_loadingData = false;
+  m_isFirstLoad = false;
+  update();
+}
+
+/* ---------------------------------------------------------------- */
+/*                          MenuBar Methods                         */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::openFile() {
+  m_file.setFileName(QFileDialog::getOpenFileName(
+      this, "打开文件", {}, "ClassData 数据文件 (*.stm)"));
+
+  m_file.open(QFile::ReadWrite);
+  ClassData::readFrom(&m_file, m_data);
+  m_file.close();
+  m_fileOpened = true;
+
+  loadData();
+}
+
+void MainWindow::saveToFile() {
+  if (m_fileOpened) {
+    m_file.open(QFile::WriteOnly | QFile::Truncate);
+    ClassData::writeTo(m_data, &m_file);
+  } else {  // !m_fileOpened
+    QFile saveFile = QFileDialog::getSaveFileName(
+        this, "保存为文件", "data.stm", "ClassData 数据文件 (*.stm)");
+
+    saveFile.open(QFile::WriteOnly | QFile::Truncate);
+    ClassData::writeTo(m_data, &saveFile);
+  }
+
+  m_changed = false;
+  update();
 }
 
 /* ---------------------------------------------------------------- */
@@ -515,11 +624,23 @@ void MainWindow::onReadyRead() {
 }
 
 void MainWindow::onNewConnection() {
+  m_connected = true;
   m_socket = m_server->nextPendingConnection();
   QDataStream ds(m_socket);
-  ds << MsgType::Request;
+  if (!m_isFirstLoad) {
+    int code = QMessageBox::warning(
+        this, "ClassSystem 管理后台",
+        "连接到 ClassSystem，是否向其询问数据并加载？（会覆盖现有数据）", "是",
+        "否");
+    if (0 == code) {
+      ds << MsgType::Request;
+    }
+  } else  // m_isFirstLoaded
+    ds << MsgType::Request;
   connect(m_socket, &QLocalSocket::readyRead, this, &MainWindow::onReadyRead);
   connect(m_socket, &QLocalSocket::disconnected, [this] {
+    m_connected = false;
+    update();
     m_socket->deleteLater();
     m_socket = nullptr;
   });
@@ -568,8 +689,8 @@ void MainWindow::paintEvent(QPaintEvent *) {
   }
 
   // toolbar
+  ui.actSync->setEnabled(m_changed);
   ui.actDrop->setEnabled(m_changed);
-  ui.actSave->setEnabled(m_changed);
 
   // title
   if (windowTitle() != kWindowTitle[m_changed])

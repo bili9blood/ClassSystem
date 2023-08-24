@@ -49,9 +49,18 @@ inline QDataStream &operator>>(QDataStream &in, ClassEvent &event) {
 
 namespace ClassData {
 struct Data {
+  Data() {
+    lessons << QStringList() << QStringList() << QStringList() << QStringList()
+            << QStringList();
+
+    using StuOnDutyEachDay = QList<QList<uint>>;
+    stuOnDuty << StuOnDutyEachDay() << StuOnDutyEachDay() << StuOnDutyEachDay()
+              << StuOnDutyEachDay() << StuOnDutyEachDay();
+  }
+
   QMap<uint, QString> students;
   QList<QStringList> lessons;
-  QList<QTime> LessonsTm;
+  QList<QTime> lessonsTm;
   QList<QList<uint>> mealStu;
   QList<QList<QList<uint>>> stuOnDuty;
   QList<QString> dutyJobs;
@@ -73,7 +82,7 @@ inline bool writeTo(const ClassData::Data &d, QIODevice *device,
   }
   QDataStream ds(device);
   ds.setVersion(QDataStream::Qt_5_15);
-  ds << d.students << d.lessons << d.LessonsTm << d.mealStu << d.stuOnDuty
+  ds << d.students << d.lessons << d.lessonsTm << d.mealStu << d.stuOnDuty
      << d.dutyJobs;
   ds << (int)d.notices.size();
   auto q = d.events;
@@ -98,7 +107,7 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data,
   ClassData::Data d;
   ds.setVersion(QDataStream::Qt_5_15);
   int noticesSize, eventsSize;
-  ds >> d.students >> d.lessons >> d.LessonsTm >> d.mealStu >> d.stuOnDuty >>
+  ds >> d.students >> d.lessons >> d.lessonsTm >> d.mealStu >> d.stuOnDuty >>
       d.dutyJobs >> noticesSize >> eventsSize;
 
   for (int i = 0; i < noticesSize; ++i) {

@@ -45,7 +45,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
@@ -117,7 +117,7 @@
             </widget>
            </item>
            <item row="2" column="0" colspan="3">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="btnImportStudents">
              <property name="text">
               <string>导入</string>
              </property>
@@ -484,6 +484,82 @@
        <attribute name="title">
         <string>课程</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0" colspan="4">
+         <widget class="QTableWidget" name="lessonsTable">
+          <property name="verticalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
+          <property name="horizontalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>130</number>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>上课时间</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>周一</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>周二</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>周三</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>周四</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>周五</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="btnAddLesson">
+          <property name="text">
+           <string>添加课节</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="btnRemoveLesson">
+          <property name="text">
+           <string>移除课节</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QPushButton" name="btnClearLessons">
+          <property name="text">
+           <string>清空</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="btnImportLessons">
+          <property name="text">
+           <string>导入</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tabNoticesEvents">
        <attribute name="title">
@@ -513,7 +589,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actSave"/>
+   <addaction name="actSync"/>
    <addaction name="actDrop"/>
    <addaction name="separator"/>
    <addaction name="actChangePwd"/>
@@ -539,6 +615,14 @@
     </property>
     <addaction name="actShowUserDocument"/>
    </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="actOpenFile"/>
+    <addaction name="actSaveToFile"/>
+   </widget>
+   <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -551,16 +635,13 @@
     <string>更改密码</string>
    </property>
   </action>
-  <action name="actSave">
+  <action name="actSync">
    <property name="icon">
     <iconset resource="../../assets/ClassAdmin.qrc">
-     <normaloff>:/img/save.png</normaloff>:/img/save.png</iconset>
+     <normaloff>:/img/sync.png</normaloff>:/img/sync.png</iconset>
    </property>
    <property name="text">
-    <string>保存修改</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>同步</string>
    </property>
   </action>
   <action name="actDrop">
@@ -569,7 +650,7 @@
      <normaloff>:/img/drop.png</normaloff>:/img/drop.png</iconset>
    </property>
    <property name="text">
-    <string>放弃修改</string>
+    <string>放弃</string>
    </property>
   </action>
   <action name="actToggleUndoView">
@@ -588,29 +669,109 @@
     <string>使用文档（&amp;H）</string>
    </property>
   </action>
+  <action name="actOpenFile">
+   <property name="text">
+    <string>打开文件</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actSaveToFile">
+   <property name="text">
+    <string>保存为文件</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../assets/ClassAdmin.qrc"/>
  </resources>
  <connections>
   <connection>
-   <sender>btnClearStudents</sender>
-   <signal>clicked()</signal>
+   <sender>actChangePwd</sender>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>clearStudents()</slot>
+   <slot>resetPwd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>442</x>
-     <y>346</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>422</x>
-     <y>1037</y>
+     <x>461</x>
+     <y>404</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>actSync</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>sync()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actDrop</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>drop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actOpenFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actSaveToFile</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveToFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>461</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnImportStudents</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>importStudents()</slot>
@@ -622,6 +783,38 @@
     <hint type="destinationlabel">
      <x>343</x>
      <y>927</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnMealStuFri</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editMealStu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>556</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1419</x>
+     <y>356</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnImportMealStu</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importMealStu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>892</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1454</x>
+     <y>498</y>
     </hint>
    </hints>
   </connection>
@@ -642,18 +835,82 @@
    </hints>
   </connection>
   <connection>
-   <sender>actChangePwd</sender>
-   <signal>triggered()</signal>
+   <sender>btnMealStuThur</sender>
+   <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>resetPwd()</slot>
+   <slot>editMealStu()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
+     <x>565</x>
+     <y>265</y>
     </hint>
     <hint type="destinationlabel">
-     <x>461</x>
-     <y>404</y>
+     <x>1233</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnClearMealStu</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearMealStu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>566</x>
+     <y>360</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1503</x>
+     <y>514</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnAddDutyJob</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addDutyJob()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>718</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>532</x>
+     <y>1008</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnMealStuWed</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>editMealStu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>592</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1319</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemoveDutyJob</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeDutyJob()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>406</x>
+     <y>723</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>370</x>
+     <y>1148</y>
     </hint>
    </hints>
   </connection>
@@ -690,130 +947,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnMealStuWed</sender>
+   <sender>btnClearStudents</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>editMealStu()</slot>
+   <slot>clearStudents()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>592</x>
-     <y>222</y>
+     <x>442</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1319</x>
-     <y>229</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnAddStudent</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>addStudent()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>100</x>
-     <y>316</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>529</x>
-     <y>869</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnMealStuThur</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>editMealStu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>565</x>
-     <y>265</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1233</x>
-     <y>182</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnMealStuFri</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>editMealStu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>556</x>
-     <y>308</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1419</x>
-     <y>356</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actSave</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>save()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>461</x>
-     <y>404</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actDrop</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>drop()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>461</x>
-     <y>404</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnClearMealStu</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>clearMealStu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>566</x>
-     <y>360</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1503</x>
-     <y>514</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btnImportMealStu</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>importMealStu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>892</x>
-     <y>389</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1454</x>
-     <y>498</y>
+     <x>422</x>
+     <y>1037</y>
     </hint>
    </hints>
   </connection>
@@ -834,34 +979,82 @@
    </hints>
   </connection>
   <connection>
-   <sender>btnAddDutyJob</sender>
+   <sender>btnAddStudent</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>addDutyJob()</slot>
+   <slot>addStudent()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>306</x>
-     <y>718</y>
+     <x>100</x>
+     <y>316</y>
     </hint>
     <hint type="destinationlabel">
-     <x>532</x>
-     <y>1008</y>
+     <x>529</x>
+     <y>869</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btnRemoveDutyJob</sender>
+   <sender>btnAddLesson</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
-   <slot>removeDutyJob()</slot>
+   <slot>addLesson()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>406</x>
-     <y>723</y>
+     <x>138</x>
+     <y>728</y>
     </hint>
     <hint type="destinationlabel">
-     <x>370</x>
-     <y>1148</y>
+     <x>180</x>
+     <y>1161</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemoveLesson</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeLesson()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>735</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>423</x>
+     <y>1232</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnClearLessons</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearLessons()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>593</x>
+     <y>737</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>547</x>
+     <y>1076</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnImportLessons</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>importLessons()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>808</x>
+     <y>734</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>821</x>
+     <y>1248</y>
     </hint>
    </hints>
   </connection>
@@ -873,12 +1066,18 @@
   <slot>removeStudent()</slot>
   <slot>editMealStu()</slot>
   <slot>resetPwd()</slot>
-  <slot>save()</slot>
+  <slot>sync()</slot>
   <slot>drop()</slot>
   <slot>clearMealStu()</slot>
   <slot>importMealStu()</slot>
   <slot>clearStuOnDuty()</slot>
   <slot>addDutyJob()</slot>
   <slot>removeDutyJob()</slot>
+  <slot>openFile()</slot>
+  <slot>saveToFile()</slot>
+  <slot>addLesson()</slot>
+  <slot>removeLesson()</slot>
+  <slot>clearLessons()</slot>
+  <slot>importLessons()</slot>
  </slots>
 </ui>

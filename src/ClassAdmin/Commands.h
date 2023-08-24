@@ -39,5 +39,3 @@ class ChangeDataCommand : public QUndoCommand {
 
   MainWindow *m_window;
 };
-
-class ChangeConfigCommand : public QUndoCommand {};

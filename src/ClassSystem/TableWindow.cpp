@@ -80,8 +80,8 @@ void TableWindow::reloadUi() {
       m_lessonsTable->setVerticalHeaderItem(
           j, new QTableWidgetItem("第%1节"_s.arg(j + 1)));
       auto item = new QTableWidgetItem("%1\n(%2-%3)"_s.arg(
-          m_data.lessons[i][j], m_data.LessonsTm[j].toString("hh:mm"),
-          m_data.LessonsTm[j].addSecs(2400).toString("hh:mm")));
+          m_data.lessons[i][j], m_data.lessonsTm[j].toString("hh:mm"),
+          m_data.lessonsTm[j].addSecs(2400).toString("hh:mm")));
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(qFont{.family = "华文中宋",
                           .pointSize = kPointSizeList[m_pointSizeIndex]}());
