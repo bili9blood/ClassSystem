@@ -474,12 +474,7 @@ void MainWindow::sync() {
 }
 
 void MainWindow::drop() {
-  const auto load = [this] {
-    m_isDropping = true;
-    loadData();
-    m_isDropping = false;
-  };
-  const auto getFromClassSystem = [load, this] {
+  const auto getFromClassSystem = [this] {
     int code = QMessageBox::warning(
         this, "放弃", "所有修改将被 ClassSystem 的数据覆盖，是否继续？", "确认",
         "取消");
@@ -487,11 +482,10 @@ void MainWindow::drop() {
 
     m_undoStk->clear();
     QDataStream ds(m_socket);
-    m_isDropping = true;
     ds << MsgType::Request;
   };
 
-  const auto getFromFile = [load, this] {
+  const auto getFromFile = [this] {
     int code = QMessageBox::warning(
         this, "放弃",
         "所有修改将被 %1 的数据覆盖，是否继续？"_s.arg(m_file.fileName()),
@@ -502,17 +496,17 @@ void MainWindow::drop() {
     m_file.open(QFile::ReadWrite);
     ClassData::readFrom(&m_file, m_data);
     m_file.close();
-    load();
+    loadData();
   };
 
-  const auto clear = [load, this] {
+  const auto clear = [this] {
     int code = QMessageBox::warning(this, "放弃", "所有修改将清空，是否继续？",
                                     "确认", "取消");
     if (1 == code) return;
 
     m_undoStk->clear();
     m_data = ClassData::Data();
-    load();
+    loadData();
   };
 
   if (m_connected && !m_fileOpened)

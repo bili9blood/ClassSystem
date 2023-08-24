@@ -89,7 +89,6 @@ class MainWindow : public QMainWindow {
 
   bool m_loadingData = false;
   bool m_isFirstLoad = true;
-  bool m_isDropping = false;
 
   // 执行 `onReadyRead()` 时是否 `loadData()`，`onReadyRead()`结束后设置为 true
   bool m_shouldLoadOnReadyRead = true;
