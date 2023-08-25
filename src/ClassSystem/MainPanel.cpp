@@ -161,11 +161,6 @@ QFrame {
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyLabel, 0, Qt::AlignTop);
 
-  //  init timers
-  m_clockTimerId = startTimer(500);
-  m_noticeTimerId = startTimer(5000);
-  m_curLessonUpdateTimerId = startTimer(1000);
-
   QFile file("data.stm");
 
   if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
@@ -181,6 +176,16 @@ QFrame {
 }
 
 void MainPanel::reloadUi() {
+  /* ---------------------------- timers ---------------------------- */
+  if (m_clockTimerId) killTimer(m_clockTimerId);
+  m_clockTimerId = startTimer(500);
+
+  if (m_noticeTimerId) killTimer(m_noticeTimerId);
+  m_noticeTimerId = startTimer(5000);
+
+  if (m_curLessonUpdateTimerId) killTimer(m_curLessonUpdateTimerId);
+  m_curLessonUpdateTimerId = startTimer(1000);
+
   /* ---------------------------- lessons --------------------------- */
 
   m_lessons->clear();

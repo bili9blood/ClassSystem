@@ -84,9 +84,9 @@ class MainPanel : public QWidget {
   void loadFromIni();
 
   // timers
-  int m_clockTimerId;
-  int m_noticeTimerId;
-  int m_curLessonUpdateTimerId;
+  int m_clockTimerId = 0;
+  int m_noticeTimerId = 0;
+  int m_curLessonUpdateTimerId = 0;
   constexpr static const char *kTimeFormat[2] = {"hh:mm:ss", "hh mm ss"};
   bool m_formatWithColons = true;
 
