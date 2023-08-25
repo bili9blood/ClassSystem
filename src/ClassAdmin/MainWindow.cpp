@@ -501,7 +501,7 @@ void MainWindow::importLessons() {
   if (code == QDialog::Rejected) return;
 
   QString str = dlg.getData();
-  if (str.isSimpleText()) return;
+  if (str.isEmpty()) return;
   if (!QRegExp(R"((\d{1,2}[:：]\d{1,2}\t(\S+\t){4}\S+\s*)+)").exactMatch(str)) {
     QMessageBox::critical(this, "导入课程", "格式错误，无法导入!");
     return;
@@ -509,28 +509,48 @@ void MainWindow::importLessons() {
 
   clearLessons();
 
+  m_loadingData = true;
+
   ClassData::Data before = m_data;
 
-  QStringList lines = str.remove('\r').split('\n');
+  QStringList strLs = str.simplified().split(' ');
 
-  for (int row = ui.lessonsTable->rowCount(); row <= lines.size(); ++row)
+  constexpr int kColumnCount = 6;  // 1 (时间) + 5 (周一 ~ 周五) == 6
+  int rowCount = strLs.size() / kColumnCount;
+
+  for (int row = ui.lessonsTable->rowCount(); row < rowCount; ++row)
     ui.lessonsTable->insertRow(row);
 
-  for (int i = 0; i < lines.size(); ++i) {
-    const auto &line = lines.at(i);
+  while (m_data.lessonsTm.size() < rowCount) m_data.lessonsTm << QTime();
 
-    QString time = line.left(line.indexOf('\t'));
-    if (QRegExp(R"(\d{1,2}:\d{1,2})").exactMatch(time)) {
-      m_data.lessonsTm << QTime::fromString(time, "h:m");
-    } else {  // 中文冒号
-      m_data.lessonsTm << QTime::fromString(time, "h：m");
-    }
-
-    for (int i = 0; i < 4; ++i) {
-      // TODO:解析tsv
-    }
-    changed = true;
+  for (int i = 0; i < 5; ++i) {
+    auto &ls = m_data.lessons[i];
+    while (ls.size() < rowCount) ls << QString();
   }
+
+  for (int i = 0; i < rowCount; ++i) {
+    QString tmStr = strLs[i * kColumnCount];
+
+    QTime time;
+
+    if (QRegExp(R"(\d{1,2}:\d{1,2})").exactMatch(tmStr)) {
+      m_data.lessonsTm[i] = time = QTime::fromString(tmStr, "h:m");
+    } else {  // 中文冒号
+      m_data.lessonsTm[i] = time = QTime::fromString(tmStr, "h：m");
+    }
+
+    auto timeItem = new QTableWidgetItem;
+    timeItem->setData(Qt::DisplayRole, time);
+    ui.lessonsTable->setItem(i, 0, timeItem);
+
+    for (int j = 1; j < kColumnCount; ++j) {
+      QString lesson = strLs[i * kColumnCount + j];
+      m_data.lessons[j - 1][i] = lesson;
+      ui.lessonsTable->setItem(i, j, new QTableWidgetItem(lesson));
+      changed = true;
+    }
+  }
+  m_loadingData = false;
 
   if (changed) change(before, "导入课程");
 }
