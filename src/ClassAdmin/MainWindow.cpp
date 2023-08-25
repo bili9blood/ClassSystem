@@ -121,8 +121,8 @@ void MainWindow::importStudents() {
   }
   for (const QString &stu : students) {
     if (stu.isEmpty()) continue;
-    QString id = stu.left(stu.indexOf('\t')).simplified(),
-            name = stu.mid(stu.indexOf('\t') + 1).simplified();
+    QString id = stu.left(stu.indexOf('\t')),
+            name = stu.mid(stu.indexOf('\t') + 1).trimmed();
     if (id.isEmpty() || name.isEmpty()) continue;
 
     uint idNum = id.toUInt();
@@ -270,7 +270,7 @@ void MainWindow::importMealStu() {
           for (const QChar &ch : *it) {
             if (ch == '\t') {
               ++i;
-              tmp = tmp.simplified();
+              tmp = tmp.trimmed();
               if (tmp.isEmpty()) continue;
               uint id = m_data.students.key(tmp);
               m_data.mealStu[i] << id;
@@ -287,7 +287,7 @@ void MainWindow::importMealStu() {
             }
             tmp += ch;
           }
-          tmp = tmp.simplified();
+          tmp = tmp.trimmed();
           if (tmp.size()) {
             uint id = m_data.students.key(tmp);
             m_data.mealStu[4] << id;
@@ -501,7 +501,7 @@ void MainWindow::importLessons() {
   if (code == QDialog::Rejected) return;
 
   QString str = dlg.getData();
-  if (str.isEmpty()) return;
+  if (str.trimmed().isEmpty()) return;
   if (!QRegExp(R"((\d{1,2}[:：]\d{1,2}\t(\S+\t){4}\S+\s*)+)").exactMatch(str)) {
     QMessageBox::critical(this, "导入课程", "格式错误，无法导入!");
     return;
