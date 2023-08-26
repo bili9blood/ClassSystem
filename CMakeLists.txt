@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 file(STRINGS version.txt VER LIMIT_COUNT 1)
 
+string(LENGTH ${VER} VER_LENGTH)
+
+string(SUBSTRING ${VER} 1 ${VER_LENGTH}-1 VER)
+
 project(ClassSystem LANGUAGES CXX VERSION ${VER})
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-ffast-math -O3")
 set(CMAKE_CXX_FLAGS_RELEASE "-ffast-math -O3")
