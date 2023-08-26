@@ -49,7 +49,7 @@ inline void setParentToDesktop(QWidget *pWidget) {
   }
 }
 
-constexpr void setWidgetTransparent(QWidget *widget) {
+inline void setWidgetTransparent(QWidget *widget) {
   widget->setAttribute(Qt::WA_TranslucentBackground);
 }
 

@@ -119,4 +119,5 @@ class MainWindow : public QMainWindow {
 
  protected:
   void paintEvent(QPaintEvent *ev) override;
+  void closeEvent(QCloseEvent *ev) override;
 };

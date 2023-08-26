@@ -1071,3 +1071,19 @@ void MainWindow::paintEvent(QPaintEvent *) {
   if (windowTitle() != kWindowTitle[m_changed])
     setWindowTitle(kWindowTitle[m_changed]);
 }
+
+void MainWindow::closeEvent(QCloseEvent *ev) {
+  if (!m_changed) {
+    ev->accept();
+    return;
+  }
+
+  int code = QMessageBox::warning(this, "关闭 ClassAdmin",
+                                  "修改尚未保存/同步，是否放弃修改并关闭程序？",
+                                  "关闭", "取消");
+  if (1 == code) {
+    ev->ignore();
+  } else {
+    ev->accept();
+  }
+}
