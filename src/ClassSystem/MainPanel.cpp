@@ -284,7 +284,6 @@ void MainPanel::onReadyRead() {
   QBuffer b;
   b.setData(m_socket->readAll());
   b.open(QBuffer::ReadWrite);
-  if (kClassSystemSpec == b.read(2)) return;
   QDataStream ds(&b);
   MsgType ty;
   ds >> ty;
@@ -292,7 +291,6 @@ void MainPanel::onReadyRead() {
     case MsgType::Request: {
       QBuffer writeBuf;
       writeBuf.open(QBuffer::WriteOnly);
-      writeBuf.write(kClassSystemSpec, 2);
       ClassData::writeTo(m_data, &writeBuf);
       m_socket->write(writeBuf.data());
       break;

@@ -10,6 +10,6 @@
         <file>img/table.png</file>
         <file>img/help.png</file>
 
-        <file>other/sentences.txt</file>
+        <file>text/sentences.txt</file>
     </qresource>
 </RCC>

@@ -1,3 +1,4 @@
+#include <qbuffer.h>
 #include <qfontdatabase.h>
 #include <qsharedmemory.h>
 
@@ -6,22 +7,29 @@
 #define QT_NO_OPENGL
 
 void checkHasRunningApp() {
-  auto sm = new QSharedMemory("CLASS-SYSTEM-SINGLE-KEY");
+  auto sm = new QSharedMemory("CLASS-SYSTEM-PATH");
   if (sm->attach()) exit(0);
-  sm->create(1);
+
+  QByteArray ba = QApplication::applicationDirPath().toUtf8();
+  QBuffer b;
+  b.open(QBuffer::WriteOnly);
+  b.write(ba);
+  sm->create(b.size());
+  memcpy(sm->data(), b.data(), b.size());
 }
 
 void checkDirs() {
   const QStringList kDirs = {"screenshots"};
-  auto c = QDir::current();
+  QDir c = QApplication::applicationDirPath();
   for (const QString &dirName : kDirs)
     if (!c.exists(dirName)) c.mkdir(dirName);
 }
 
 int main(int argc, char *argv[]) {
-  checkHasRunningApp();
   QApplication a(argc, argv);
   QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+
+  checkHasRunningApp();
 
   qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");

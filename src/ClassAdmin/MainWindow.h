@@ -85,9 +85,16 @@ class MainWindow : public QMainWindow {
   // local server
   void onReadyRead();
   void onNewConnection();
+  void initServer();
+  void loadData();
 
   // check online updates
   void checkAvailableUpdates();
+  void onRequestFinished(QNetworkReply *reply);
+  bool isGtLocalVer(int major, int minor, int patch);
+
+  // update ClassSystem
+  void copyUpdateFiles();
 
  private:
   Ui::MainWindow ui;
@@ -108,6 +115,8 @@ class MainWindow : public QMainWindow {
   bool m_fileOpened = false;
   QFile m_file;
 
+  bool m_updated = false;
+
   static constexpr const char *kWindowTitle[] = {
       "ClassSystem 管理后台", "ClassSystem 管理后台 *(未保存)"};
 
@@ -123,8 +132,8 @@ class MainWindow : public QMainWindow {
   QAction *m_actRedo;
   QUndoView m_undoView = QUndoView(m_undoStk, nullptr);
 
-  void initServer();
-  void loadData();
+  // network
+  QNetworkAccessManager *m_nam = new QNetworkAccessManager(this);
 
  protected:
   void paintEvent(QPaintEvent *ev) override;

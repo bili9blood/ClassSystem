@@ -1,22 +1,25 @@
 #include "MainWindow.h"
 
-#include <qbuffer.h>
-#include <qdesktopservices.h>
-
 // ui
 #include <qfiledialog.h>
 #include <qmessagebox.h>
+#include <qprogressdialog.h>
+#include <qsharedmemory.h>
 #include <qstandarditemmodel.h>
 
-#include "Commands.h"
-#include "ItemDelegates.h"
-
-// ui
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
 #include "NoticesCellWidget.h"
 #include "ResetPwdDialog.h"
 #include "StuOnDutyCellWidget.h"
+
+// other
+#include <qbuffer.h>
+#include <qdesktopservices.h>
+#include <qprocess.h>
+
+#include "Commands.h"
+#include "ItemDelegates.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   ui.setupUi(this);
@@ -786,7 +789,6 @@ void MainWindow::sync() {
 
   QBuffer b;
   b.open(QBuffer::WriteOnly);
-  b.write(kClassAdminSpec, 2);
   QDataStream ds(&b);
   ds << MsgType::Save;
 
@@ -846,6 +848,194 @@ void MainWindow::drop() {
                                    "打开的文件：" + m_file.fileName()))
         ? getFromClassSystem()
         : getFromFile();
+}
+
+/* ---------------------------------------------------------------- */
+/*                          MenuBar Methods                         */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::openFile() {
+  QString fileName = QFileDialog::getOpenFileName(this, "打开文件", {},
+                                                  "ClassData 数据文件 (*.stm)");
+  if (fileName.isEmpty()) return;
+  m_file.setFileName(fileName);
+
+  m_file.open(QFile::ReadWrite);
+  ClassData::readFrom(&m_file, m_data);
+  m_file.close();
+  m_fileOpened = true;
+
+  loadData();
+}
+
+void MainWindow::saveToFile() {
+  if (m_fileOpened) {
+    m_file.open(QFile::WriteOnly | QFile::Truncate);
+    ClassData::writeTo(m_data, &m_file);
+  } else {  // !m_fileOpened
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "保存为文件", "data.stm", "ClassData 数据文件 (*.stm)");
+    if (fileName.isEmpty()) return;
+
+    QFile saveFile(fileName);
+
+    saveFile.open(QFile::WriteOnly | QFile::Truncate);
+    ClassData::writeTo(m_data, &saveFile);
+  }
+
+  m_changed = false;
+  update();
+}
+
+/* ---------------------------------------------------------------- */
+/*                      Check Available Updates                     */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::checkAvailableUpdates() {
+  constexpr char remoteVerUrl[] =
+      R"(https://gitee.com/class-system-docs/ClassSystem/raw/master/version.txt)";
+
+  connect(m_nam, &QNetworkAccessManager::finished, this,
+          &MainWindow::onRequestFinished);
+  m_nam->get(QNetworkRequest({remoteVerUrl}));
+}
+
+void MainWindow::onRequestFinished(QNetworkReply *reply) {
+  auto err = reply->error();
+
+  if (err != QNetworkReply::NoError) {
+    QMessageBox::critical(
+        this, "检查更新",
+        "无法检查更新！<br/><br/>原因：" + reply->errorString());
+    return;
+  }
+
+  // 无错误，读取远程版本并对比
+  QTextStream ts(reply);
+  const char *remoteVer = ts.readLine().toUtf8();
+  QUrl downloadUrl(ts.readLine());
+
+  int major, minor, patch;
+
+  sscanf(remoteVer, "v%d.%d.%d", &major, &minor, &patch);
+
+  if (!isGtLocalVer(major, minor, patch)) {
+    // everything is up-to-date
+    return;
+  }
+
+  // 有新版本可供更新
+  QFile file(":/text/update-info-msg.md");
+  file.open(QFile::ReadOnly);
+
+  QMessageBox msg(this);
+  msg.setWindowTitle("检查更新");
+  // msg.setIcon(QMessageBox::Information);
+  msg.setText(QString(file.readAll())
+                  .arg("v%1.%2.%3"_s.arg(PROJECT_VERSION_MAJOR)
+                           .arg(PROJECT_VERSION_MINOR)
+                           .arg(PROJECT_VERSION_PATCH))
+                  .arg(remoteVer));
+  msg.setTextFormat(Qt::MarkdownText);
+  msg.addButton("打开链接", QMessageBox::AcceptRole);
+  msg.addButton("关闭页面", QMessageBox::RejectRole);
+
+  file.close();
+  while (0 == msg.exec()) QDesktopServices::openUrl(downloadUrl);
+}
+
+bool MainWindow::isGtLocalVer(int major, int minor, int patch) {
+  // 比较的顺序不能变
+
+  if (major < PROJECT_VERSION_MAJOR) return false;
+  if (major > PROJECT_VERSION_MAJOR) return true;
+
+  if (minor < PROJECT_VERSION_MINOR) return false;
+  if (minor > PROJECT_VERSION_MINOR) return true;
+
+  if (patch < PROJECT_VERSION_PATCH) return false;
+  if (patch > PROJECT_VERSION_PATCH) return true;
+
+  return false;
+}
+
+/* ---------------------------------------------------------------- */
+/*                        Update ClassSystem                        */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::copyUpdateFiles() {
+  if (m_updated) return;
+
+  QString path;
+  QSharedMemory sm("CLASS-SYSTEM-PATH");
+  sm.attach();
+  path = QString::fromUtf8(QByteArray((char *)sm.data(), sm.size()));
+  sm.detach();
+
+  QDir updatesDir(QApplication::applicationDirPath() + "/class-system-update/");
+
+  QProcess process;
+  process.setProgram("taskkill");
+  process.setArguments({"/f", "/t", "/im", "ClassSystem.exe"});
+  process.start();
+  process.waitForFinished();
+
+  if (!copyDir(updatesDir.path(), path)) {
+    QMessageBox::critical(this, "更新 ClassSystem", "无法更新 ClassSystem。");
+  }
+
+  updatesDir.removeRecursively();
+
+  QProcess::startDetached(path + "/ClassSystem.exe", {});
+
+  m_updated = true;
+}
+
+/* ---------------------------------------------------------------- */
+/*                 Init QLocalServer & QLocalSocket                 */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::onReadyRead() {
+  ClassData::readFrom(m_socket, m_data, false);
+
+  loadData();
+}
+
+void MainWindow::onNewConnection() {
+  m_connected = true;
+  m_socket = m_server->nextPendingConnection();
+  QDataStream ds(m_socket);
+  if (!m_isFirstLoad && m_changed) {
+    int code = QMessageBox::warning(
+        this, "ClassSystem 管理后台",
+        "连接到 ClassSystem，是否向其询问数据并加载？（会覆盖现有数据）", "是",
+        "否");
+    if (0 == code) {
+      ds << MsgType::Request;
+    }
+  } else  // m_isFirstLoaded
+    ds << MsgType::Request;
+  connect(m_socket, &QLocalSocket::readyRead, this, &MainWindow::onReadyRead);
+  connect(m_socket, &QLocalSocket::disconnected, [this] {
+    m_connected = false;
+    update();
+    m_socket->deleteLater();
+    m_socket = nullptr;
+  });
+
+  // update ClassSystem
+  QDir appDir(QApplication::applicationDirPath());
+  if (appDir.exists("class-system-update")) copyUpdateFiles();
+}
+
+void MainWindow::initServer() {
+  if (!m_server->listen(kServerName)) {
+    QMessageBox::critical(this, "ClassAdmin", "无法监听 Socket ！");
+    QApplication::quit();
+  }
+  m_server->setMaxPendingConnections(1);
+  connect(m_server, &QLocalServer::newConnection, this,
+          &MainWindow::onNewConnection);
 }
 
 void MainWindow::loadData() {
@@ -945,96 +1135,6 @@ void MainWindow::loadData() {
   m_loadingData = false;
   m_isFirstLoad = false;
   update();
-}
-
-/* ---------------------------------------------------------------- */
-/*                          MenuBar Methods                         */
-/* ---------------------------------------------------------------- */
-
-void MainWindow::openFile() {
-  QString fileName = QFileDialog::getOpenFileName(this, "打开文件", {},
-                                                  "ClassData 数据文件 (*.stm)");
-  if (fileName.isEmpty()) return;
-  m_file.setFileName(fileName);
-
-  m_file.open(QFile::ReadWrite);
-  ClassData::readFrom(&m_file, m_data);
-  m_file.close();
-  m_fileOpened = true;
-
-  loadData();
-}
-
-void MainWindow::saveToFile() {
-  if (m_fileOpened) {
-    m_file.open(QFile::WriteOnly | QFile::Truncate);
-    ClassData::writeTo(m_data, &m_file);
-  } else {  // !m_fileOpened
-    QString fileName = QFileDialog::getSaveFileName(
-        this, "保存为文件", "data.stm", "ClassData 数据文件 (*.stm)");
-    if (fileName.isEmpty()) return;
-
-    QFile saveFile(fileName);
-
-    saveFile.open(QFile::WriteOnly | QFile::Truncate);
-    ClassData::writeTo(m_data, &saveFile);
-  }
-
-  m_changed = false;
-  update();
-}
-
-/* ---------------------------------------------------------------- */
-/*                      Check Available Updates                     */
-/* ---------------------------------------------------------------- */
-
-void MainWindow::checkAvailableUpdates() {
-  constexpr char remoteVerUrl[] =
-      R"(https://ghproxy.com/raw.githubusercontent.com/bili9blood/ClassSystem/main/version.txt)";
-}
-
-/* ---------------------------------------------------------------- */
-/*                 Init QLocalServer & QLocalSocket                 */
-/* ---------------------------------------------------------------- */
-
-void MainWindow::onReadyRead() {
-  if (kClassAdminSpec == m_socket->read(2)) return;
-  ClassData::readFrom(m_socket, m_data, false);
-
-  loadData();
-}
-
-void MainWindow::onNewConnection() {
-  m_connected = true;
-  m_socket = m_server->nextPendingConnection();
-  QDataStream ds(m_socket);
-  if (!m_isFirstLoad) {
-    int code = QMessageBox::warning(
-        this, "ClassSystem 管理后台",
-        "连接到 ClassSystem，是否向其询问数据并加载？（会覆盖现有数据）", "是",
-        "否");
-    if (0 == code) {
-      ds << MsgType::Request;
-    }
-  } else  // m_isFirstLoaded
-    ds << MsgType::Request;
-  connect(m_socket, &QLocalSocket::readyRead, this, &MainWindow::onReadyRead);
-  connect(m_socket, &QLocalSocket::disconnected, [this] {
-    m_connected = false;
-    update();
-    m_socket->deleteLater();
-    m_socket = nullptr;
-  });
-}
-
-void MainWindow::initServer() {
-  if (!m_server->listen(kServerName)) {
-    QMessageBox::critical(this, "ClassAdmin", "无法监听 Socket ！");
-    QApplication::quit();
-  }
-  m_server->setMaxPendingConnections(1);
-  connect(m_server, &QLocalServer::newConnection, this,
-          &MainWindow::onNewConnection);
 }
 
 /* ---------------------------------------------------------------- */

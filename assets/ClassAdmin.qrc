@@ -7,5 +7,6 @@
     <file>img/drop.png</file>
     <file>img/add.png</file>
     <file>img/password.png</file>
+    <file>text/update-info-msg.md</file>
   </qresource>
 </RCC>

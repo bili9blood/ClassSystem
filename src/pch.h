@@ -69,6 +69,29 @@ inline QString operator""_s(const char *str, size_t size) {
   return QByteArray(str, size);
 }
 
+inline bool copyDir(QString src, QString dst) {
+  QDir srcDir(src);
+  QDir dstDir(dst);
+
+  if (!dstDir.exists()) {
+    dstDir.mkdir(dstDir.absolutePath());
+  }
+
+  auto list =
+      srcDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
+
+  for (const QFileInfo &info : list) {
+    if (info.isDir()) {
+      if (!copyDir(info.filePath(), dst + "/" + info.fileName())) return false;
+    } else {  // info.isFile()
+      QFile file(info.filePath());
+      if (!file.copy(dst + "/" + info.fileName())) return false;
+    }
+  }
+
+  return true;
+}
+
 inline QStringList matchedList(const QString &str, const QString &cap) {
   QStringList list;
   QRegExp rx(cap);
