@@ -931,7 +931,6 @@ void MainWindow::onRequestFinished(QNetworkReply *reply) {
 
   QMessageBox msg(this);
   msg.setWindowTitle("检查更新");
-  msg.setIcon(QMessageBox::Information);
   msg.setText(QString(file.readAll())
                   .arg("v%1.%2.%3"_s.arg(PROJECT_VERSION_MAJOR)
                            .arg(PROJECT_VERSION_MINOR)
