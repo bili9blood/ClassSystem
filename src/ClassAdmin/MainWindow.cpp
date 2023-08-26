@@ -912,8 +912,9 @@ void MainWindow::onRequestFinished(QNetworkReply *reply) {
 
   // 无错误，读取远程版本并对比
   QTextStream ts(reply);
-  const char *remoteVer = ts.readLine().toUtf8();
+  auto remoteVer = ts.readLine().toUtf8();
   QUrl downloadUrl(ts.readLine());
+  // qDebug() << ts.readAll();
 
   int major, minor, patch;
 
@@ -930,12 +931,12 @@ void MainWindow::onRequestFinished(QNetworkReply *reply) {
 
   QMessageBox msg(this);
   msg.setWindowTitle("检查更新");
-  // msg.setIcon(QMessageBox::Information);
+  msg.setIcon(QMessageBox::Information);
   msg.setText(QString(file.readAll())
                   .arg("v%1.%2.%3"_s.arg(PROJECT_VERSION_MAJOR)
                            .arg(PROJECT_VERSION_MINOR)
                            .arg(PROJECT_VERSION_PATCH))
-                  .arg(remoteVer));
+                  .arg(QString::fromUtf8(remoteVer)));
   msg.setTextFormat(Qt::MarkdownText);
   msg.addButton("打开链接", QMessageBox::AcceptRole);
   msg.addButton("关闭页面", QMessageBox::RejectRole);
