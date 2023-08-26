@@ -2,14 +2,18 @@
 
 #include <qbuffer.h>
 #include <qdesktopservices.h>
+
+// ui
 #include <qfiledialog.h>
 #include <qmessagebox.h>
 #include <qstandarditemmodel.h>
 
 #include "Commands.h"
+#include "ItemDelegates.h"
+
+// ui
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
-#include "ItemDelegates.h"
 #include "NoticesCellWidget.h"
 #include "ResetPwdDialog.h"
 #include "StuOnDutyCellWidget.h"
@@ -84,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   connect(ui.actShowUserDocument, &QAction::triggered, [] {
     QDesktopServices::openUrl({"https://class-system-docs.gitee.io/"});
   });
+
+  checkAvailableUpdates();
 }
 
 /* ---------------------------------------------------------------- */
@@ -976,6 +982,15 @@ void MainWindow::saveToFile() {
 
   m_changed = false;
   update();
+}
+
+/* ---------------------------------------------------------------- */
+/*                      Check Available Updates                     */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::checkAvailableUpdates() {
+  constexpr char remoteVerUrl[] =
+      R"(https://ghproxy.com/raw.githubusercontent.com/bili9blood/ClassSystem/main/version.txt)";
 }
 
 /* ---------------------------------------------------------------- */

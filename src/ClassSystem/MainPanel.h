@@ -1,27 +1,32 @@
 #pragma once
 
-#include <QAnimationStackedWidget/QAnimationStackedWidget.h>
-#include <qaction.h>
+// layouts
 #include <qboxlayout.h>
-#include <qevent.h>
+#include <qlayoutitem.h>
+
+// widgets
+#include <QAnimationStackedWidget/QAnimationStackedWidget.h>
 #include <qframe.h>
 #include <qheaderview.h>
 #include <qlabel.h>
-#include <qlayoutitem.h>
 #include <qlcdnumber.h>
-#include <qlocalsocket.h>
-#include <qmenu.h>
 #include <qpropertyanimation.h>
-#include <qsettings.h>
-#include <qstackedwidget.h>
-#include <qsystemtrayicon.h>
 #include <qtablewidget.h>
 #include <qtextbrowser.h>
+
+// local socket
+#include <qlocalsocket.h>
+
+// other
+#include <qaction.h>
+#include <qevent.h>
+#include <qsettings.h>
 #include <qtimer.h>
 
 #include "ClassData.h"
 #include "PopupMenu.h"
 #include "TitleWidget.h"
+
 
 class MainPanel : public QWidget {
   Q_OBJECT

@@ -1,22 +1,28 @@
 #pragma once
 
+// ui
 #include <qcheckbox.h>
 #include <qgridlayout.h>
+#include <qmainwindow.h>
+#include <ui_MainWindow.h>
+
+// local server
 #include <qlocalserver.h>
 #include <qlocalsocket.h>
-#include <qmainwindow.h>
+
+// network
+#include <qnetworkaccessmanager.h>
+#include <qnetworkreply.h>
+#include <qnetworkrequest.h>
+
+// undo framework
 #include <qundostack.h>
 #include <qundoview.h>
-#include <ui_MainWindow.h>
 
 #include "ClassData.h"
 
-class ChangeDataCommand;
-class ChangeConfigCommand;
-
 class MainWindow : public QMainWindow {
-  friend ChangeDataCommand;
-  friend ChangeConfigCommand;
+  friend class ChangeDataCommand;
 
   Q_OBJECT public : explicit MainWindow(QWidget *parent = nullptr);
 
@@ -79,6 +85,9 @@ class MainWindow : public QMainWindow {
   // local server
   void onReadyRead();
   void onNewConnection();
+
+  // check online updates
+  void checkAvailableUpdates();
 
  private:
   Ui::MainWindow ui;

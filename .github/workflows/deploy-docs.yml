@@ -1,11 +1,11 @@
-name: Build Docs
+name: Deploy Docs
 on:
   push:
     paths:
       - "docs/**"
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -14,5 +14,5 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3.8.1
 
-      - name: Build
+      - name: Build & Deploy
         run: sh deploy-docs.sh ${{ secrets.ACCESS_TOKEN }}

@@ -10,7 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt5 COMPONENTS Widgets Core Network WinExtras REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Core Network REQUIRED)
 
 configure_file(src/config.h.in config.h)
 
