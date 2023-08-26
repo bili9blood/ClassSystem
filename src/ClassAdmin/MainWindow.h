@@ -1,5 +1,6 @@
 #pragma once
 
+#include <qcheckbox.h>
 #include <qgridlayout.h>
 #include <qlocalserver.h>
 #include <qlocalsocket.h>
@@ -50,6 +51,19 @@ class MainWindow : public QMainWindow {
   void importLessons();
   void onLessonsChanged(const QModelIndex &idx, const QModelIndex &,
                         const QVector<int> &);
+
+  // notices
+  void addNotice();
+  void removeNotice();
+  void clearNotices();
+  void onNoticesEdited(const ClassNotice &notice, const int &row);
+
+  // events
+  void addEvent();
+  void removeEvent();
+  void clearEvents();
+  void onEventsEdited(const int &row);
+  void onEventsCheckBoxesClicked();
 
   // toolbar
   void resetPwd();

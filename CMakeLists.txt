@@ -20,7 +20,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(APP_CMD_TYPE)
 endif()
 
-include_directories(src ${CMAKE_BINARY_DIR} thirdparty thirdparty/QXlsx/header)
+include_directories(src ${CMAKE_BINARY_DIR} thirdparty)
 
 set(UTILS_SOURCES src/ClassData.h)
 
@@ -64,6 +64,7 @@ qt_wrap_ui(
     src/ClassAdmin/MainWindow.ui
     src/ClassAdmin/EditMealStuDialog.ui
     src/ClassAdmin/StuOnDutyCellWdiget.ui
+    src/ClassAdmin/NoticesCellWidget.ui
 )
 add_executable(ClassAdmin
 
@@ -80,9 +81,8 @@ add_executable(ClassAdmin
     src/ClassAdmin/EditMealStuDialog.cpp src/ClassAdmin/EditMealStuDialog.h
     src/ClassAdmin/StuOnDutyCellWidget.cpp src/ClassAdmin/StuOnDutyCellWidget.h
 
-    # 课程
-
     # 公告&事件
+    src/ClassAdmin/NoticesCellWidget.cpp src/ClassAdmin/NoticesCellWidget.h
 
     # 工具栏
     src/ClassAdmin/ResetPwdDialog.cpp src/ClassAdmin/ResetPwdDialog.h

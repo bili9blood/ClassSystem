@@ -45,7 +45,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <property name="usesScrollButtons">
        <bool>false</bool>
@@ -105,28 +105,28 @@
            <item row="1" column="1">
             <widget class="QPushButton" name="btnRemoveStudent">
              <property name="text">
-              <string>移除</string>
+              <string>移除学生</string>
              </property>
             </widget>
            </item>
            <item row="1" column="2">
             <widget class="QPushButton" name="btnClearStudents">
              <property name="text">
-              <string>清空</string>
+              <string>清空学生</string>
              </property>
             </widget>
            </item>
            <item row="2" column="0" colspan="3">
             <widget class="QPushButton" name="btnImportStudents">
              <property name="text">
-              <string>导入</string>
+              <string>导入学生</string>
              </property>
             </widget>
            </item>
            <item row="1" column="0">
             <widget class="QPushButton" name="btnAddStudent">
              <property name="text">
-              <string>添加</string>
+              <string>添加学生</string>
              </property>
             </widget>
            </item>
@@ -276,7 +276,7 @@
              <item>
               <widget class="QPushButton" name="btnClearStuOnDuty">
                <property name="text">
-                <string>清空</string>
+                <string>清空职位</string>
                </property>
               </widget>
              </item>
@@ -464,14 +464,14 @@
            <item row="1" column="0">
             <widget class="QPushButton" name="btnClearMealStu">
              <property name="text">
-              <string>清空</string>
+              <string>清空抬饭生</string>
              </property>
             </widget>
            </item>
            <item row="1" column="1">
             <widget class="QPushButton" name="btnImportMealStu">
              <property name="text">
-              <string>导入</string>
+              <string>导入抬饭生</string>
              </property>
             </widget>
            </item>
@@ -534,28 +534,28 @@
         <item row="1" column="0">
          <widget class="QPushButton" name="btnAddLesson">
           <property name="text">
-           <string>添加课节</string>
+           <string>添加课程</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
          <widget class="QPushButton" name="btnRemoveLesson">
           <property name="text">
-           <string>移除课节</string>
+           <string>移除课程</string>
           </property>
          </widget>
         </item>
         <item row="1" column="2">
          <widget class="QPushButton" name="btnClearLessons">
           <property name="text">
-           <string>清空</string>
+           <string>清空课程</string>
           </property>
          </widget>
         </item>
         <item row="1" column="3">
          <widget class="QPushButton" name="btnImportLessons">
           <property name="text">
-           <string>导入</string>
+           <string>导入课程</string>
           </property>
          </widget>
         </item>
@@ -565,6 +565,126 @@
        <attribute name="title">
         <string>公告&amp;&amp;事件</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QGroupBox" name="groupBoxNotices">
+          <property name="title">
+           <string>公告</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_6">
+           <item row="1" column="0">
+            <widget class="QPushButton" name="btnAddNotice">
+             <property name="text">
+              <string>添加公告</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="btnRemoveNotice">
+             <property name="text">
+              <string>移除公告</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="btnClearNotices">
+             <property name="text">
+              <string>清空公告</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <widget class="QTableWidget" name="noticesTable">
+             <property name="verticalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="horizontalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="columnCount">
+              <number>1</number>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderMinimumSectionSize">
+              <number>185</number>
+             </attribute>
+             <attribute name="verticalHeaderDefaultSectionSize">
+              <number>185</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBoxEvents">
+          <property name="title">
+           <string>事件倒计日</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0" colspan="3">
+            <widget class="QTableWidget" name="eventsTable">
+             <property name="rowCount">
+              <number>0</number>
+             </property>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>80</number>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>130</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>事件名称</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>事件日期</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>是否重要</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QPushButton" name="pushButton">
+             <property name="text">
+              <string>添加事件</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="text">
+              <string>移除事件</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="pushButton_3">
+             <property name="text">
+              <string>清空事件</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -1058,6 +1178,102 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnAddNotice</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addNotice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>167</x>
+     <y>377</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>108</x>
+     <y>1449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRemoveNotice</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeNotice()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>544</x>
+     <y>372</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>668</x>
+     <y>1279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnClearNotices</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearNotices()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>788</x>
+     <y>377</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>935</x>
+     <y>1069</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addEvent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>103</x>
+     <y>722</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>93</x>
+     <y>1188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>removeEvent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>522</x>
+     <y>723</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>603</x>
+     <y>1160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>clearEvents()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>716</x>
+     <y>715</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>758</x>
+     <y>1170</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>addStudent()</slot>
@@ -1079,5 +1295,11 @@
   <slot>removeLesson()</slot>
   <slot>clearLessons()</slot>
   <slot>importLessons()</slot>
+  <slot>addNotice()</slot>
+  <slot>removeNotice()</slot>
+  <slot>clearNotices()</slot>
+  <slot>addEvent()</slot>
+  <slot>removeEvent()</slot>
+  <slot>clearEvents()</slot>
  </slots>
 </ui>

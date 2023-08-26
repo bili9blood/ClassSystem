@@ -224,9 +224,14 @@ void MainPanel::reloadUi() {
 
   /* --------------------------- days left -------------------------- */
 
-  m_eventNameLabel->setText("离%1剩余天数:"_s.arg(m_data.events.top().name));
-  m_daysLeftDisplay->display(
-      (int)QDate::currentDate().daysTo(m_data.events.top().date));
+  if (m_data.events.size()) {
+    m_eventNameLabel->setText("离%1剩余天数:"_s.arg(m_data.events.top().name));
+    m_daysLeftDisplay->display(
+        (int)QDate::currentDate().daysTo(m_data.events.top().date));
+  } else {
+    m_eventNameLabel->setText("无事件");
+    m_daysLeftDisplay->display("");
+  }
 
   /* --------------------- students carry meals --------------------- */
 

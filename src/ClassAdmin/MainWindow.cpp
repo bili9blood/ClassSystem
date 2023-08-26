@@ -10,29 +10,50 @@
 #include "EditMealStuDialog.h"
 #include "ImportDialog.h"
 #include "ItemDelegates.h"
+#include "NoticesCellWidget.h"
 #include "ResetPwdDialog.h"
 #include "StuOnDutyCellWidget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   ui.setupUi(this);
 
+  // students
   ui.studentsTable->setColumnWidth(0, 80);
   connect(ui.studentsTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onStudentsChanged);
 
+  // students carry meals
   m_mealStuBtns << ui.btnMealStuMon << ui.btnMealStuTue << ui.btnMealStuWed
                 << ui.btnMealStuThur << ui.btnMealStuFri;
   m_mealStuLabels << ui.labelMealStuMon << ui.labelMealStuTue
                   << ui.labelMealStuWed << ui.labelMealStuThur
                   << ui.labelMealStuFri;
 
+  // studnts on duty
   connect(ui.stuOnDutyTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onDutyJobsEdited);
 
+  // lessons
   ui.lessonsTable->setItemDelegateForColumn(0, new TimeDelegate);
   connect(ui.lessonsTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onLessonsChanged);
 
+  // notices
+  ui.noticesTable->horizontalHeader()->setSectionResizeMode(
+      QHeaderView::Stretch);
+
+  // events
+  ui.eventsTable->horizontalHeader()->setSectionResizeMode(
+      QHeaderView::Stretch);
+  ui.eventsTable->setItemDelegateForColumn(1, new DateDelegate);
+  connect(ui.eventsTable->model(), &QAbstractItemModel::dataChanged,
+          [this](const QModelIndex &idx) {
+            if (m_loadingData) return;
+
+            onEventsEdited(idx.row());
+          });
+
+  // scroll area
   QPalette pa = ui.scrollAreaMealStu->palette();
   pa.setBrush(QPalette::Window, Qt::white);
   ui.scrollAreaMealStu->setPalette(pa);
@@ -70,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 /* ---------------------------------------------------------------- */
 
 void MainWindow::addStudent() {
-  ui.studentsTable->insertRow(ui.studentsTable->rowCount());
+  ui.studentsTable->setRowCount(ui.studentsTable->rowCount() + 1);
 }
 
 void MainWindow::removeStudent() {
@@ -335,7 +356,7 @@ void MainWindow::importMealStu() {
 
 void MainWindow::addDutyJob() {
   int row = ui.stuOnDutyTable->rowCount();
-  ui.stuOnDutyTable->insertRow(row);
+  ui.stuOnDutyTable->setRowCount(row + 1);
 
   ClassData::Data before = m_data;
 
@@ -374,6 +395,7 @@ void MainWindow::removeDutyJob() {
     m_data.stuOnDuty[i].removeAt(row);
   }
 
+  loadData();
   change(before, "移除值日职位");
 }
 
@@ -431,7 +453,7 @@ void MainWindow::addLesson() {
   int row = ui.lessonsTable->rowCount();
   if (int cRow = ui.lessonsTable->currentRow(); cRow != -1) row = cRow + 1;
 
-  ui.lessonsTable->insertRow(row);
+  ui.lessonsTable->setRowCount(row + 1);
 
   ui.lessonsTable->setItem(row, 0, new QTableWidgetItem);
 
@@ -518,8 +540,7 @@ void MainWindow::importLessons() {
   constexpr int kColumnCount = 6;  // 1 (时间) + 5 (周一 ~ 周五) == 6
   int rowCount = strLs.size() / kColumnCount;
 
-  for (int row = ui.lessonsTable->rowCount(); row < rowCount; ++row)
-    ui.lessonsTable->insertRow(row);
+  ui.lessonsTable->setRowCount(rowCount);
 
   while (m_data.lessonsTm.size() < rowCount) m_data.lessonsTm << QTime();
 
@@ -532,6 +553,8 @@ void MainWindow::importLessons() {
     QString tmStr = strLs[i * kColumnCount];
 
     QTime time;
+
+    QListWidget w;
 
     if (QRegExp(R"(\d{1,2}:\d{1,2})").exactMatch(tmStr)) {
       m_data.lessonsTm[i] = time = QTime::fromString(tmStr, "h:m");
@@ -569,6 +592,157 @@ void MainWindow::onLessonsChanged(const QModelIndex &idx, const QModelIndex &,
     m_data.lessons[col - 1][row] = ui.lessonsTable->item(row, col)->text();
 
     change(before, "编辑%1第%2节课"_s.arg(oneDayOfWeek(col - 1)).arg(row + 1));
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/*                          Notices Methods                         */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::addNotice() {
+  ClassData::Data before = m_data;
+
+  ClassNotice notice;
+  m_data.notices << notice;
+
+  int row = ui.noticesTable->rowCount();
+  ui.noticesTable->setRowCount(row + 1);
+
+  auto w = new NoticesCellWidget(notice, row, ui.noticesTable);
+  connect(w, &NoticesCellWidget::edited, this, &MainWindow::onNoticesEdited);
+  ui.noticesTable->setCellWidget(row, 0, w);
+
+  change(before, "添加公告");
+}
+
+void MainWindow::removeNotice() {
+  int row = ui.noticesTable->currentRow();
+  if (row == -1) return;
+
+  ui.noticesTable->removeRow(row);
+
+  ClassData::Data before = m_data;
+
+  m_data.notices.removeAt(row);
+
+  loadData();
+  change(before, "移除公告");
+}
+
+void MainWindow::clearNotices() {
+  if (!m_loadingData) {
+    int code = QMessageBox::warning(
+        this, "清空公告", "所有公告将被清空，是否继续？", "确认", "取消");
+    if (1 == code) return;
+  }
+
+  for (int i = ui.noticesTable->rowCount() - 1; i >= 0; --i) {
+    ui.noticesTable->removeRow(i);
+  }
+
+  if (!m_loadingData) {
+    ClassData::Data before = m_data;
+    m_data.notices.clear();
+    change(before, "清空公告");
+  }
+}
+
+void MainWindow::onNoticesEdited(const ClassNotice &notice, const int &row) {
+  if (m_loadingData) return;
+
+  ClassData::Data before;
+  m_data.notices[row] = notice;
+  change(before, "编辑公告");
+}
+
+/* ---------------------------------------------------------------- */
+/*                          Events Methods                          */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::addEvent() {
+  int row = ui.eventsTable->rowCount();
+  ui.eventsTable->setRowCount(row + 1);
+
+  ClassData::Data before = m_data;
+
+  m_data.events.push({});
+
+  loadData();
+  change(before, "添加事件");
+}
+
+void MainWindow::removeEvent() {
+  int row = ui.eventsTable->currentRow();
+  if (row == -1) return;
+
+  ClassData::Data before = m_data;
+
+  typeof(m_data.events) tmpQueue;
+
+  auto q = m_data.events;
+  auto size = q.size();
+
+  for (int i = 0; i < size; ++i) {
+    if (i == row) continue;
+    tmpQueue.push(q.top());
+    q.pop();
+  }
+  m_data.events = tmpQueue;
+
+  loadData();
+  change(before, "移除事件");
+}
+
+void MainWindow::clearEvents() {
+  if (!m_loadingData) {
+    int code = QMessageBox::warning(
+        this, "清空事件", "所有的事件将被清空，是否继续？", "确认", "取消");
+    if (1 == code) return;
+  }
+
+  for (int i = ui.eventsTable->rowCount(); i >= 0; --i) {
+    ui.eventsTable->removeRow(i);
+  }
+
+  if (m_loadingData) return;
+
+  ClassData::Data before = m_data;
+  while (m_data.events.size()) m_data.events.pop();
+  change(before, "清空事件");
+}
+
+void MainWindow::onEventsEdited(const int &row) {
+  ClassData::Data before = m_data;
+
+  typeof(m_data.events) tmpQueue;
+
+  auto q = m_data.events;
+  auto size = q.size();
+  for (int i = 0; i < size; ++i) {
+    if (i == row) {
+      tmpQueue.push(
+          {ui.eventsTable->item(row, 0)->text(),
+           ui.eventsTable->item(row, 1)->data(Qt::DisplayRole).toDate(),
+           qobject_cast<QCheckBox *>(ui.eventsTable->cellWidget(row, 2))
+               ->isChecked()});
+    } else
+      tmpQueue.push(q.top());
+    q.pop();
+  }
+  m_data.events = tmpQueue;
+
+  loadData();
+  change(before, "编辑事件");
+}
+
+void MainWindow::onEventsCheckBoxesClicked() {
+  if (m_loadingData) return;
+
+  for (int i = 0; i < ui.eventsTable->rowCount(); ++i) {
+    if (ui.eventsTable->cellWidget(i, 2) == sender()) {
+      onEventsEdited(i);
+      return;
+    }
   }
 }
 
@@ -694,9 +868,7 @@ void MainWindow::loadData() {
   }
 
   // students on duty
-  for (int row = ui.stuOnDutyTable->rowCount(); row < m_data.dutyJobs.size();
-       ++row)
-    ui.stuOnDutyTable->insertRow(row);
+  ui.stuOnDutyTable->setRowCount(m_data.dutyJobs.size());
 
   for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
     auto jobItem = new QTableWidgetItem(m_data.dutyJobs[i]);
@@ -715,10 +887,7 @@ void MainWindow::loadData() {
 
   // lessons
   clearLessons();
-  for (int row = ui.lessonsTable->rowCount(); row < m_data.lessonsTm.size();
-       ++row) {
-    ui.lessonsTable->insertRow(row);
-  }
+  ui.lessonsTable->setRowCount(m_data.lessonsTm.size());
 
   for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
     auto timeItem = new QTableWidgetItem;
@@ -729,6 +898,41 @@ void MainWindow::loadData() {
       ui.lessonsTable->setItem(i, j + 1,
                                new QTableWidgetItem(m_data.lessons[j][i]));
     }
+  }
+
+  // notices
+  clearNotices();
+  ui.noticesTable->setRowCount(m_data.notices.size());
+
+  for (int i = 0; i < m_data.notices.size(); ++i) {
+    auto w = new NoticesCellWidget(m_data.notices[i], i, ui.noticesTable);
+    connect(w, &NoticesCellWidget::edited, this, &MainWindow::onNoticesEdited);
+    ui.noticesTable->setCellWidget(i, 0, w);
+  }
+
+  // events
+  clearEvents();
+  ui.eventsTable->setRowCount(m_data.events.size());
+
+  auto q = m_data.events;
+
+  auto size = q.size();
+  for (int i = 0; i < size; ++i) {
+    auto ev = q.top();
+
+    ui.eventsTable->setItem(i, 0, new QTableWidgetItem(ev.name));
+
+    auto dateItem = new QTableWidgetItem;
+    dateItem->setData(Qt::DisplayRole, ev.date);
+    ui.eventsTable->setItem(i, 1, dateItem);
+
+    auto w = new QCheckBox(ui.eventsTable);
+    w->setChecked(ev.important);
+    connect(w, &QCheckBox::clicked, this,
+            &MainWindow::onEventsCheckBoxesClicked);
+    ui.eventsTable->setCellWidget(i, 2, w);
+
+    q.pop();
   }
 
   m_changed = false;
@@ -742,8 +946,10 @@ void MainWindow::loadData() {
 /* ---------------------------------------------------------------- */
 
 void MainWindow::openFile() {
-  m_file.setFileName(QFileDialog::getOpenFileName(
-      this, "打开文件", {}, "ClassData 数据文件 (*.stm)"));
+  QString fileName = QFileDialog::getOpenFileName(this, "打开文件", {},
+                                                  "ClassData 数据文件 (*.stm)");
+  if (fileName.isEmpty()) return;
+  m_file.setFileName(fileName);
 
   m_file.open(QFile::ReadWrite);
   ClassData::readFrom(&m_file, m_data);
@@ -758,8 +964,11 @@ void MainWindow::saveToFile() {
     m_file.open(QFile::WriteOnly | QFile::Truncate);
     ClassData::writeTo(m_data, &m_file);
   } else {  // !m_fileOpened
-    QFile saveFile = QFileDialog::getSaveFileName(
+    QString fileName = QFileDialog::getSaveFileName(
         this, "保存为文件", "data.stm", "ClassData 数据文件 (*.stm)");
+    if (fileName.isEmpty()) return;
+
+    QFile saveFile(fileName);
 
     saveFile.open(QFile::WriteOnly | QFile::Truncate);
     ClassData::writeTo(m_data, &saveFile);
