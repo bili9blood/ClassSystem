@@ -12,10 +12,5 @@ git config user.email "3501202786@qq.com"
 git add -A
 git commit -m 'deploy'
 
-if [-z "$1"]
-then
-  echo "Done."
-else
-  git push -f https://$1@gitee.com/class-system-docs/ClassSystem.git master
-  echo "Done."
-fi
+git push -f https://$1@gitee.com/class-system-docs/ClassSystem.git master
+echo "Done."
