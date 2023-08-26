@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
-project(ClassSystem LANGUAGES CXX VERSION 0.1.0)
+
+file(STRINGS version.txt VER)
+
+project(ClassSystem LANGUAGES CXX VERSION ${VER})
 set(CMAKE_CXX_FLAGS_MINSIZEREL "-ffast-math -O3")
 set(CMAKE_CXX_FLAGS_RELEASE "-ffast-math -O3")
 set(CMAKE_AUTOUIC ON)
@@ -9,7 +12,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets Core Network WinExtras REQUIRED)
 
-string(TIMESTAMP COMPILE_TIME "\"%Y-%m-%d %H:%M:%S\"")
 configure_file(src/config.h.in config.h)
 
 set(ClassSystemDir ${CMAKE_SOURCE_DIR}/src/ClassSystem)
