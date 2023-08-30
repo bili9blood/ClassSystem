@@ -966,6 +966,7 @@ bool MainWindow::isGtLocalVer(int major, int minor, int patch) {
 void MainWindow::copyUpdateFiles() {
   if (m_updated) return;
 
+  // 从共享内存读取 ClassSystem 程序路径
   QString path;
   QSharedMemory sm("CLASS-SYSTEM-PATH");
   sm.attach();

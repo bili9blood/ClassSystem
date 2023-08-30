@@ -6,7 +6,7 @@
 
 #define QT_NO_OPENGL
 
-void checkHasRunningApp() {
+void 利用共享内存实现单例以及存储程序路径() {
   auto sm = new QSharedMemory("CLASS-SYSTEM-PATH");
   if (sm->attach()) exit(0);
 
@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
   QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 
-  checkHasRunningApp();
+  利用共享内存实现单例以及存储程序路径();
 
   qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
