@@ -77,7 +77,6 @@ inline bool writeTo(const ClassData::Data &d, QIODevice *device,
                     bool shouldClose = true) {
   if (!device->isOpen() &&
       !device->open(QIODevice::ReadWrite | QIODevice::Truncate)) {
-    // qDebug() << device->errorString();
     return false;
   }
   QDataStream ds(device);
@@ -100,7 +99,6 @@ inline bool writeTo(const ClassData::Data &d, QIODevice *device,
 inline bool readFrom(QIODevice *device, ClassData::Data &data,
                      bool shouldClose = true) {
   if (!device->isOpen() && !device->open(QIODevice::ReadWrite)) {
-    // qDebug() << "ClassData::ReadFrom " << device->errorString();
     return false;
   }
   QDataStream ds(device);
