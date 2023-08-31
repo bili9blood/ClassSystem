@@ -1,4 +1,5 @@
 #include <qcryptographichash.h>
+#include <qdialogbuttonbox.h>
 #include <qinputdialog.h>
 #include <qmessagebox.h>
 #include <qsharedmemory.h>
@@ -20,15 +21,20 @@ void inputPwd() {
   }
 
   QInputDialog pwdDlg;
-  pwdDlg.setAttribute(Qt::WA_InputMethodEnabled, false);
   pwdDlg.setTextEchoMode(QLineEdit::Password);
   pwdDlg.setWindowTitle("ClassAdmin 密码");
   pwdDlg.setLabelText("请输入密码：");
-  int code;
-  for (int retryCnt = 0; (code = pwdDlg.exec()),
+
+  // 禁用输入法
+  if (auto lineEdit = pwdDlg.findChild<QLineEdit *>()) {
+    lineEdit->setAttribute(Qt::WA_InputMethodEnabled, false);
+  }
+
+  // 重复询问密码
+  for (int retryCnt = 0, code; (code = pwdDlg.exec()),
            pwd != QCryptographicHash::hash(pwdDlg.textValue().toUtf8(),
                                            QCryptographicHash::Md5)
-                                 .toHex();
+                                       .toHex();
        ++retryCnt) {
     if (code == QDialog::Rejected) exit(0);
     qDebug("pwderr");
@@ -59,5 +65,5 @@ int main(int argc, char **argv) {
   MainWindow w;
   w.show();
 
-  return a.exec();
+  return QApplication::exec();
 }
