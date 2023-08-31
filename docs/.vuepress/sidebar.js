@@ -1,19 +1,21 @@
 export default [
   "/",
   {
-    text: "ClassSystem",
+    text: "展示端",
     link: "/class-system",
-    collapsble: false,
+    collapsible: false,
     children: ["/class-system/main-panel", "/class-system/popup-menu"],
   },
   {
-    text: "ClassSystem 管理后台",
+    text: "管理后台",
     link: "/class-admin",
-    collapsble: false,
+    collapsible: false,
     children: [
+      "/class-admin/import",
       "/class-admin/students",
-      "/class-admin/meal-stu",
-      "/class-admin/stu-on-duty",
+      "/class-admin/lessons",
+      "/class-admin/notices-and-events",
+      "/class-admin/password",
     ],
   },
   "/class-data",

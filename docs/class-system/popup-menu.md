@@ -2,12 +2,7 @@
 
 悬停在屏幕右侧，点击展开/收起。
 
-<style>
-    .img-div > p{
-        display: inline;
-    }
-</style>
-<div class="img-div">
+<div class="inline-img">
 
 ![收起状态的悬停菜单](/img/popup-menu.png)
 

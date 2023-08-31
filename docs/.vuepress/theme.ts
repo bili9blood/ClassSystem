@@ -10,4 +10,11 @@ export default hopeTheme({
       card: true,
     },
   },
+
+  logo: "img/logo.png",
+
+  contributors: false,
+
+  prevLink: false,
+  nextLink: false,
 });
