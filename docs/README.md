@@ -12,6 +12,12 @@ logo: /img/yu-chong.png
 
 ```card
 title: 陈梓畅
-desc: 创意、图标
+desc: 创意、协调
 logo: /img/zi-chang.png
+```
+
+```card
+title: 黄梓骞
+desc: 图标、设计
+logo: /img/zi-qian.png
 ```
