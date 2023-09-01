@@ -1,8 +1,9 @@
 #include "ImgPaster.h"
 
 ImgPaster::ImgPaster(QWidget *parent, QPixmap pixmap)
-    : QWidget{parent, Qt::FramelessWindowHint}, m_pixmap(pixmap) {
-  setParentToDesktop(this);
+    : QWidget{parent,
+              Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::ToolTip},
+      m_pixmap(pixmap) {
   setWindowTitle("贴图");
 
   // init layout
