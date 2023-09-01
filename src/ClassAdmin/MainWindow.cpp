@@ -669,12 +669,24 @@ void MainWindow::onNoticesEdited(const ClassNotice &notice, const int &row) {
 /* ---------------------------------------------------------------- */
 
 void MainWindow::addEvent() {
-  int row = ui.eventsTable->rowCount();
-  ui.eventsTable->setRowCount(row + 1);
+  int cnt = ui.eventsTable->rowCount();
+  ui.eventsTable->setRowCount(cnt + 1);
+
+  m_loadingData = true;
+
+  ui.eventsTable->setItem(cnt, 0, new QTableWidgetItem);
+
+  auto dateItem = new QTableWidgetItem;
+  dateItem->setData(Qt::DisplayRole, QDate());
+  ui.eventsTable->setItem(cnt, 1, dateItem);
+
+  ui.eventsTable->setCellWidget(cnt, 2, new QCheckBox);
+
+  m_loadingData = false;
 
   ClassData::Data before = m_data;
 
-  m_data.events.push({});
+  m_data.events.push_back({});
 
   loadData();
   change(before, "添加事件");
@@ -683,22 +695,12 @@ void MainWindow::addEvent() {
 void MainWindow::removeEvent() {
   int row = ui.eventsTable->currentRow();
   if (row == -1) return;
+  ui.eventsTable->removeRow(row);
 
   ClassData::Data before = m_data;
 
-  typeof(m_data.events) tmpQueue;
+  m_data.events.removeAt(row);
 
-  auto q = m_data.events;
-  auto size = q.size();
-
-  for (int i = 0; i < size; ++i) {
-    if (i == row) continue;
-    tmpQueue.push(q.top());
-    q.pop();
-  }
-  m_data.events = tmpQueue;
-
-  loadData();
   change(before, "移除事件");
 }
 
@@ -716,31 +718,20 @@ void MainWindow::clearEvents() {
   if (m_loadingData) return;
 
   ClassData::Data before = m_data;
-  while (m_data.events.size()) m_data.events.pop();
+  m_data.events.clear();
   change(before, "清空事件");
 }
 
 void MainWindow::onEventsEdited(const int &row) {
+  if (m_loadingData) return;
+
   ClassData::Data before = m_data;
+  m_data.events[row] = {
+      ui.eventsTable->item(row, 0)->text(),
+      ui.eventsTable->item(row, 1)->data(Qt::DisplayRole).toDate(),
+      qobject_cast<QCheckBox *>(ui.eventsTable->cellWidget(row, 2))
+          ->isChecked()};
 
-  typeof(m_data.events) tmpQueue;
-
-  auto q = m_data.events;
-  auto size = q.size();
-  for (int i = 0; i < size; ++i) {
-    if (i == row) {
-      tmpQueue.push(
-          {ui.eventsTable->item(row, 0)->text(),
-           ui.eventsTable->item(row, 1)->data(Qt::DisplayRole).toDate(),
-           qobject_cast<QCheckBox *>(ui.eventsTable->cellWidget(row, 2))
-               ->isChecked()});
-    } else
-      tmpQueue.push(q.top());
-    q.pop();
-  }
-  m_data.events = tmpQueue;
-
-  loadData();
   change(before, "编辑事件");
 }
 
@@ -1111,11 +1102,8 @@ void MainWindow::loadData() {
   clearEvents();
   ui.eventsTable->setRowCount(m_data.events.size());
 
-  auto q = m_data.events;
-
-  auto size = q.size();
-  for (int i = 0; i < size; ++i) {
-    auto ev = q.top();
+  for (int i = 0; i < m_data.events.size(); ++i) {
+    auto ev = m_data.events[i];
 
     ui.eventsTable->setItem(i, 0, new QTableWidgetItem(ev.name));
 
@@ -1128,8 +1116,6 @@ void MainWindow::loadData() {
     connect(w, &QCheckBox::clicked, this,
             &MainWindow::onEventsCheckBoxesClicked);
     ui.eventsTable->setCellWidget(i, 2, w);
-
-    q.pop();
   }
 
   m_changed = false;

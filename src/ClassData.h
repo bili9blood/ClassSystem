@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <format>
-#include <queue>
 #include <utility>
 
 struct ClassNotice {
@@ -31,9 +30,9 @@ struct ClassEvent {
   QDate date;
   bool important;
 
-  bool operator<(const ClassEvent &other) const {
-    if (important != other.important) return other.important;
-    return date > other.date;
+  bool operator>(const ClassEvent &other) const {
+    if (important != other.important) return important;
+    return date < other.date;
   }
 };
 
@@ -65,7 +64,7 @@ struct Data {
   QList<QList<QList<uint>>> stuOnDuty;
   QList<QString> dutyJobs;
   QList<ClassNotice> notices;
-  std::priority_queue<ClassEvent> events;
+  QList<ClassEvent> events;
   inline QString idAndName(const uint &id) {
     if (!id) return {};
     return QString::fromStdString(
@@ -84,14 +83,12 @@ inline bool writeTo(const ClassData::Data &d, QIODevice *device,
   ds << d.students << d.lessons << d.lessonsTm << d.mealStu << d.stuOnDuty
      << d.dutyJobs;
   ds << (int)d.notices.size();
-  auto q = d.events;
-  ds << (int)q.size();
+  auto ls = d.events;
+  ds << (int)ls.size();
   for (const auto &n : d.notices) ds << QVariant::fromValue(n);
 
-  while (q.size()) {
-    ds << QVariant::fromValue(q.top());
-    q.pop();
-  }
+  std::sort(ls.begin(), ls.end(), std::greater<>());
+  for (const auto &n : ls) ds << QVariant::fromValue(n);
   if (shouldClose) device->close();
   return true;
 }
@@ -119,8 +116,9 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data,
     QVariant v;
     ds >> v;
     if (v.value<ClassEvent>().date >= QDate::currentDate())
-      d.events.push(v.value<ClassEvent>());
+      d.events.push_back(v.value<ClassEvent>());
   }
+  std::sort(d.events.begin(), d.events.end(), std::greater<>());
   if (!ClassData::writeTo(d, device, shouldClose)) return false;
 
   data = d;

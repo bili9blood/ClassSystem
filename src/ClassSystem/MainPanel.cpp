@@ -225,9 +225,10 @@ void MainPanel::reloadUi() {
   /* --------------------------- days left -------------------------- */
 
   if (m_data.events.size()) {
-    m_eventNameLabel->setText("离%1剩余天数:"_s.arg(m_data.events.top().name));
+    m_eventNameLabel->setText(
+        "离%1剩余天数:"_s.arg(m_data.events.front().name));
     m_daysLeftDisplay->display(
-        (int)QDate::currentDate().daysTo(m_data.events.top().date));
+        (int)QDate::currentDate().daysTo(m_data.events.front().date));
   } else {
     m_eventNameLabel->setText("无事件");
     m_daysLeftDisplay->display("");
