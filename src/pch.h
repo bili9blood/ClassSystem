@@ -6,8 +6,11 @@
 #include <qdebug.h>
 #include <qdir.h>
 #include <qwidget.h>
+
+#ifdef _WIN32
 #include <windows.h>
 #include <windowsx.h>
+#endif
 
 const QDate kForever = QDate(1970, 1, 1);
 
@@ -15,6 +18,7 @@ inline QColor invertColor(const QColor &color) {
   return {255 - color.red(), 255 - color.green(), 255 - color.blue()};
 }
 
+#ifdef _WIN32
 inline void setParentToDesktop(QWidget *pWidget) {
   HWND resultHwnd = nullptr;
   ::EnumWindows(
@@ -48,6 +52,10 @@ inline void setParentToDesktop(QWidget *pWidget) {
     ::SetParent((HWND)pWidget->winId(), resultHwnd);
   }
 }
+
+#else
+inline void setParentToDesktop(QWidget *) {}
+#endif
 
 inline void setWidgetTransparent(QWidget *widget) {
   widget->setAttribute(Qt::WA_TranslucentBackground);
