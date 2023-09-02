@@ -6,13 +6,13 @@ ClassSystem 是一个展示 [班级信息](/class-data) 的工具，它分为 [�
 
 ```card
 title: 文昱翀
-desc: 理念、程序
+desc: 创意、程序
 logo: /img/yu-chong.png
 ```
 
 ```card
 title: 陈梓畅
-desc: 创意、协调
+desc: 文档、协调
 logo: /img/zi-chang.png
 ```
 
