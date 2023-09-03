@@ -378,6 +378,7 @@ void MainWindow::addDutyJob() {
 
   auto jobItem = new QTableWidgetItem;
   jobItem->setBackground(kDutyJobsColor);
+  jobItem->setForeground(Qt::black);
   jobItem->setFlags(jobItem->flags() | Qt::ItemIsEditable);
   ui.stuOnDutyTable->setItem(row, 0, jobItem);
 
@@ -1022,9 +1023,18 @@ void MainWindow::onNewConnection() {
 
 void MainWindow::initServer() {
   if (!m_server->listen(kServerName)) {
-    QMessageBox::critical(this, "ClassAdmin", "无法监听 Socket ！");
-    QApplication::quit();
+    if (m_server->serverError() == QAbstractSocket::AddressInUseError) {
+      QLocalServer::removeServer(kServerName);
+      m_server->listen(kServerName);
+    } else {
+      QMessageBox::critical(
+          this, "ClassAdmin",
+          "<h2>无法监听 Socket ！</h2><br/>" + m_server->errorString());
+      QApplication::quit();
+    }
   }
+  qDebug() << m_server->isListening();
+
   m_server->setMaxPendingConnections(1);
   connect(m_server, &QLocalServer::newConnection, this,
           &MainWindow::onNewConnection);
@@ -1061,6 +1071,7 @@ void MainWindow::loadData() {
   for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
     auto jobItem = new QTableWidgetItem(m_data.dutyJobs[i]);
     jobItem->setBackground(kDutyJobsColor);
+    jobItem->setForeground(Qt::black);
     jobItem->setFlags(jobItem->flags() | Qt::ItemIsEditable);
     ui.stuOnDutyTable->setItem(i, 0, jobItem);
 
@@ -1164,10 +1175,6 @@ void MainWindow::paintEvent(QPaintEvent *) {
     else
       ui.lessonsTable->setVerticalHeaderItem(i, new QTableWidgetItem(text));
   }
-
-  // toolbar
-  ui.actSync->setEnabled(m_changed);
-  ui.actDrop->setEnabled(m_changed);
 
   // title
   if (windowTitle() != kWindowTitle[m_changed])

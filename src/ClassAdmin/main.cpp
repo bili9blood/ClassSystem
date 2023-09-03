@@ -1,10 +1,24 @@
 #include <qcryptographichash.h>
 #include <qdialogbuttonbox.h>
 #include <qinputdialog.h>
+#include <qlockfile.h>
 #include <qmessagebox.h>
-#include <qsharedmemory.h>
 
 #include "MainWindow.h"
+
+// 程序单例化
+void singleApp() {
+  // 本测试程序id取名为SingleApp
+  QString path = QDir::temp().absoluteFilePath("ClassAdmin.lock");
+  auto lockFile = new QLockFile(path);
+
+  // tryLock尝试创建锁定文件。此函数如果获得锁，则返回true; 否则返回false。
+  // 如果另一个进程（或另一个线程）已经创建了锁文件，则此函数将最多等待timeout毫秒
+  if (!lockFile->tryLock(100)) {
+    qDebug() << "Already Running!";
+    exit(0);
+  }
+}
 
 void inputPwd() {
   QByteArray pwd;
@@ -48,17 +62,15 @@ void inputPwd() {
 }
 
 int main(int argc, char **argv) {
-  // single application
-  QSharedMemory sm("CLASS-ADMIN-SINGLE-KEY");
-  if (sm.attach()) return 0;
-  sm.create(1);
-
   QApplication a(argc, argv);
   QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+  QApplication::setWindowIcon(QIcon(":/img/logo.png"));
 
   qRegisterMetaType<ClassData::Data>("ClassData::Data");
   qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
+
+  singleApp();
 
   inputPwd();
 

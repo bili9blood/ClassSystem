@@ -1,5 +1,6 @@
 <RCC>
   <qresource>
+    <file>img/logo.png</file>
     <file>img/sync.png</file>
     <file>img/subtract.png</file>
     <file>img/redo.png</file>

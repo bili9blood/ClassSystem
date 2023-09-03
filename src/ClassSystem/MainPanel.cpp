@@ -51,7 +51,7 @@ QFrame {
   m_sentenceLabel->setStyleSheet("color: #e5c07b;");
   m_sentenceLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
                                  QSizePolicy::Preferred);
-  QFile sentenceFile(":/other/sentences.txt");
+  QFile sentenceFile(":/text/sentences.txt");
   if (sentenceFile.open(QFile::ReadOnly | QFile::Text)) {
     QStringList lines =
         QString::fromUtf8(sentenceFile.readAll()).remove('\r').split('\n');
@@ -266,19 +266,20 @@ void MainPanel::reloadUi() {
 void MainPanel::initLocalSocket() {
   m_socket->setServerName(kServerName);
   auto reconnectLater = [this]() {
-    QTimer::singleShot(1000, [this] { m_socket->connectToServer(); });
+    QTimer::singleShot(1000,
+                       [this] { m_socket->connectToServer(kServerName); });
   };
   connect(m_socket, &QLocalSocket::readyRead, this, &MainPanel::onReadyRead);
   connect(m_socket, &QLocalSocket::connected, this, &MainPanel::onConnected);
   connect(m_socket, &QLocalSocket::errorOccurred,
           [this, reconnectLater](const QLocalSocket::LocalSocketError &err) {
-            if (err != QLocalSocket::ServerNotFoundError) {
+            if (err != QLocalSocket::ServerNotFoundError ||
+                err != QLocalSocket::ConnectionRefusedError) {
               qDebug() << m_socket->errorString();
             }
-            reconnectLater();
           });
   connect(m_socket, &QLocalSocket::disconnected, reconnectLater);
-  m_socket->connectToServer();
+  m_socket->connectToServer(kServerName);
 }
 
 void MainPanel::onReadyRead() {
@@ -310,6 +311,7 @@ void MainPanel::onReadyRead() {
 void MainPanel::onConnected() {}
 
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
+#ifdef _WIN32
   auto msg = static_cast<MSG *>(message);
   if (msg->message == WM_NCHITTEST) {  // resize
     if (!m_resizable) return false;
@@ -337,6 +339,8 @@ bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
       return false;
     return true;
   }
+#endif  //_WIN32
+
   return false;
 }
 
