@@ -14,6 +14,7 @@ export default hopeTheme({
   logo: "img/logo.png",
 
   contributors: false,
+  lastUpdated: false,
 
   prevLink: false,
   nextLink: false,
