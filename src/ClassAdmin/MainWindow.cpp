@@ -910,7 +910,7 @@ void MainWindow::onRequestFinished(QNetworkReply *reply) {
 
   int major, minor, patch;
 
-  sscanf(remoteVer, "v%d.%d.%d", &major, &minor, &patch);
+  sscanf_s(remoteVer, "v%d.%d.%d", &major, &minor, &patch);
 
   if (!isGtLocalVer(major, minor, patch)) {
     // everything is up-to-date
@@ -1022,6 +1022,18 @@ void MainWindow::onNewConnection() {
 }
 
 void MainWindow::initServer() {
+#ifdef _WIN32
+  qDebug() << m_server;
+  if (!m_server->listen(kServerName)) {
+    QMessageBox::critical(
+        this, "ClassAdmin",
+        "<h2>无法监听 Socket ！</h2><br/>" + m_server->errorString());
+    QApplication::quit();
+  }
+  m_server->setMaxPendingConnections(1);
+  connect(m_server, &QLocalServer::newConnection, this,
+          &MainWindow::onNewConnection);
+#else
   if (!m_server->listen(kServerName)) {
     if (m_server->serverError() == QAbstractSocket::AddressInUseError) {
       QLocalServer::removeServer(kServerName);
@@ -1033,11 +1045,11 @@ void MainWindow::initServer() {
       QApplication::quit();
     }
   }
-  qDebug() << m_server->isListening();
 
   m_server->setMaxPendingConnections(1);
   connect(m_server, &QLocalServer::newConnection, this,
           &MainWindow::onNewConnection);
+#endif
 }
 
 void MainWindow::loadData() {

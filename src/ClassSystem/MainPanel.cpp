@@ -264,6 +264,23 @@ void MainPanel::reloadUi() {
 }
 
 void MainPanel::initLocalSocket() {
+#ifdef _WIN32
+  m_socket->setServerName(kServerName);
+  auto reconnectLater = [this]() {
+    QTimer::singleShot(1000, [this] { m_socket->connectToServer(); });
+  };
+  connect(m_socket, &QLocalSocket::readyRead, this, &MainPanel::onReadyRead);
+  connect(m_socket, &QLocalSocket::connected, this, &MainPanel::onConnected);
+  connect(m_socket, &QLocalSocket::errorOccurred,
+          [this, reconnectLater](const QLocalSocket::LocalSocketError &err) {
+            if (err != QLocalSocket::ServerNotFoundError) {
+              qDebug() << m_socket->errorString();
+            }
+            reconnectLater();
+          });
+  connect(m_socket, &QLocalSocket::disconnected, reconnectLater);
+  m_socket->connectToServer();
+#else
   m_socket->setServerName(kServerName);
   auto reconnectLater = [this]() {
     QTimer::singleShot(1000,
@@ -280,6 +297,7 @@ void MainPanel::initLocalSocket() {
           });
   connect(m_socket, &QLocalSocket::disconnected, reconnectLater);
   m_socket->connectToServer(kServerName);
+#endif
 }
 
 void MainPanel::onReadyRead() {
