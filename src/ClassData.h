@@ -52,6 +52,10 @@ struct Data {
     lessons << QStringList() << QStringList() << QStringList() << QStringList()
             << QStringList();
 
+    using MealStuEachDay = QList<uint>;
+    mealStu << MealStuEachDay() << MealStuEachDay() << MealStuEachDay()
+            << MealStuEachDay() << MealStuEachDay();
+
     using StuOnDutyEachDay = QList<QList<uint>>;
     stuOnDuty << StuOnDutyEachDay() << StuOnDutyEachDay() << StuOnDutyEachDay()
               << StuOnDutyEachDay() << StuOnDutyEachDay();
