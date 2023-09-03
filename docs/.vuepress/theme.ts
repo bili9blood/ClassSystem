@@ -18,5 +18,5 @@ export default hopeTheme({
   prevLink: false,
   nextLink: false,
 
-  pageInfo: ["Date", "Word", "ReadingTime"],
+  pageInfo: ["Word", "ReadingTime"],
 });
