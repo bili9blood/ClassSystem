@@ -6,7 +6,7 @@ ClassSystem 是一个展示 [班级信息](/class-data) ，帮助班干和老�
 
 ```card
 title: 文昱翀
-desc: 创意、程序
+desc: 程序、文档
 logo: /img/yu-chong.png
 ```
 
