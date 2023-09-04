@@ -7,7 +7,7 @@
 ScreenCapturer::ScreenCapturer(QWidget *parent)
     : QWidget(parent,
               Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint) {
-  move(0, 0);
+  move({});
   setWidgetTransparent(this);
   setWidgetTransparent(m_btnBox);
   setStyleSheet(".titleText{color: white;}");
@@ -34,10 +34,10 @@ void ScreenCapturer::capture() {
 
 QRect ScreenCapturer::absRect(const QRect &r) {
   // clang-format off
-      int top    = std::min(m_captureRect.top(), m_captureRect.bottom()),
-          bottom = std::max(m_captureRect.top(), m_captureRect.bottom()),
-          left   = std::min(m_captureRect.left(), m_captureRect.right()),
-          right  = std::max(m_captureRect.left(), m_captureRect.right());
+      int top    = qMin(m_captureRect.top(), m_captureRect.bottom()),
+          bottom = qMax(m_captureRect.top(), m_captureRect.bottom()),
+          left   = qMin(m_captureRect.left(), m_captureRect.right()),
+          right  = qMax(m_captureRect.left(), m_captureRect.right());
   // clang-format on
   return QRect(left, top, std::abs(r.width()), std::abs(r.height()));
 }
@@ -68,7 +68,7 @@ void ScreenCapturer::paintEvent(QPaintEvent *) {
     painter.eraseRect(rect());
     return;
   }
-  painter.drawPixmap(0, 0, m_capturedImg);
+  painter.drawPixmap(QPoint(), m_capturedImg);
   if (m_status == Status::Preparing) {
     painter.fillRect(rect(), kUnSelBgColor);
     return;
@@ -100,7 +100,8 @@ void ScreenCapturer::paintEvent(QPaintEvent *) {
 void ScreenCapturer::closeEvent(QCloseEvent *) {
   repaint();
   m_status = Status::Finish;
-  m_captureRect = {0, 0, 0, 0};  // reset
+  m_captureRect = {};  // reset
+  m_title->move({});
   m_btnBox->close();
 }
 
@@ -115,7 +116,6 @@ void ScreenCapturer::mousePressEvent(QMouseEvent *ev) {
   m_btnBox->close();
   m_captureRect.setTopLeft(ev->pos());
   m_captureRect.setBottomRight(ev->pos());
-  m_title->move(0, 0);
 }
 void ScreenCapturer::mouseMoveEvent(QMouseEvent *ev) {
   m_status = Status::Selecting;
@@ -124,10 +124,10 @@ void ScreenCapturer::mouseMoveEvent(QMouseEvent *ev) {
   auto r = absRect(m_captureRect);
   m_btnBox->show();
   m_btnBox->move(
-      std::max(r.right() - m_btnBox->width(), 0),
-      std::min(r.bottom() + 5, kScreenSize.height() - m_btnBox->height()));
+      qMax(r.right() - m_btnBox->width(), 0),
+      qMin(r.bottom() + 5, kScreenSize.height() - m_btnBox->height()));
 
-  m_title->move(r.left(), std::max(0, r.top() - m_title->height()));
+  m_title->move(r.left(), qMax(0, r.top() - m_title->height()));
 }
 void ScreenCapturer::mouseReleaseEvent(QMouseEvent *) {
   repaint();
