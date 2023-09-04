@@ -8,10 +8,61 @@
 #include <qsettings.h>
 #include <qwidget.h>
 
+#include <format>
+
 #ifdef _WIN32
 #include <windows.h>
 #include <windowsx.h>
 #endif
+
+inline void messageHandler(QtMsgType type, const QMessageLogContext &context,
+                           const QString &msg) {
+  QString typeStr;
+  switch (type) {
+#define PER_LOG_TYPE(x) \
+  case Qt##x##Msg:      \
+    typeStr = #x;       \
+    break;
+
+    PER_LOG_TYPE(Debug)
+    PER_LOG_TYPE(Info)
+    PER_LOG_TYPE(Warning)
+    PER_LOG_TYPE(Critical)
+    PER_LOG_TYPE(Fatal)
+
+#undef PER_LOG_TYPE
+  }
+  QString text =
+      QString::asprintf("[%s] [%s] %s\n",
+                        QDateTime::currentDateTime()
+                            .toString("yyyy-MM-dd hh:mm:ss.zzz")
+                            .toUtf8()
+                            .constData(),
+                        typeStr.toUtf8().constData(), msg.toUtf8().constData());
+
+  QFile logFile("logs.txt");
+  if (!logFile.open(QFile::WriteOnly | QFile::Append)) return;
+  logFile.write(text.toUtf8());
+  logFile.close();
+}
+
+inline void initLogger() {
+  QFileInfo logFileInfo(QApplication::applicationDirPath() + "/logs.txt");
+  if (logFileInfo.exists() && logFileInfo.size() > 5242880 /*5Mb*/)
+    QFile::remove(logFileInfo.filePath());
+
+  QFile logFile(logFileInfo.filePath());
+  logFile.open(QFile::WriteOnly | QFile::Append);
+  logFile.write(R"(
+
+------------------
+ Program Started.
+------------------
+)");
+  logFile.close();
+
+  qInstallMessageHandler(messageHandler);
+}
 
 namespace settings {
 inline QSettings ini("settings.ini", QSettings::IniFormat);

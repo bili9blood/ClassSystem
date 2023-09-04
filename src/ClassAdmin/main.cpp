@@ -14,20 +14,17 @@ void singleApp() {
 
   // tryLock尝试创建锁定文件。此函数如果获得锁，则返回true; 否则返回false。
   // 如果另一个进程（或另一个线程）已经创建了锁文件，则此函数将最多等待timeout毫秒
-  if (!lockFile->tryLock(100)) {
-    qDebug() << "Already Running!";
-    exit(0);
-  }
+  if (!lockFile->tryLock(100)) exit(0);
 }
 
 void inputPwd() {
   QByteArray pwd;
   QFile pwdFile("PWD");
   if (!pwdFile.exists()) {
-    QMessageBox::warning(nullptr, "密码", "密码文件丢失，密码重置为初始密码！");
-    if (!pwdFile.isOpen()) pwdFile.open(QFile::WriteOnly);
-    pwdFile.write(pwd = "e10adc3949ba59abbe56e057f20f883e");
-    pwdFile.close();
+    QMessageBox::critical(nullptr, "ClassAdmin.exe",
+                          "Unable to Start due to Missing file.");
+    qFatal("Missing password file.");
+    exit(0);
   } else {
     if (!pwdFile.isOpen()) pwdFile.open(QFile::ReadOnly);
     pwd = pwdFile.readAll();
@@ -51,9 +48,10 @@ void inputPwd() {
                                        .toHex();
        ++retryCnt) {
     if (code == QDialog::Rejected) exit(0);
-    qDebug("pwderr");
+    qWarning("Input a wrong password.");
     if (retryCnt == 5) {
       QMessageBox::critical(nullptr, "密码", "尝试次数过多！");
+      qFatal("Password wrong 5 times.");
       exit(0);
     }
     QMessageBox::warning(nullptr, "密码",
@@ -71,6 +69,8 @@ int main(int argc, char **argv) {
   qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
 
   singleApp();
+
+  initLogger();
 
   inputPwd();
 
