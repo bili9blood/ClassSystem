@@ -5,12 +5,58 @@
 #include <qdatetime.h>
 #include <qdebug.h>
 #include <qdir.h>
+#include <qsettings.h>
 #include <qwidget.h>
 
 #ifdef _WIN32
 #include <windows.h>
 #include <windowsx.h>
 #endif
+
+namespace settings {
+inline QSettings ini("settings.ini", QSettings::IniFormat);
+
+inline int smallFontSize;
+inline int mediumFontSize;
+inline int largeFontSize;
+inline int superFontSize;
+
+inline QSize popupMenuSize;
+inline int menuButtonWidth;
+
+inline void loadIni() {
+  bool ok;
+  /* ---------------------------- General --------------------------- */
+  if (QSize tmp = ini.value("popupMenuSize").toSize(); !tmp.isEmpty())
+    popupMenuSize = tmp;
+  else
+    popupMenuSize = {40, 100};
+
+  if (int tmp = ini.value("menuButtonWidth").toInt(&ok); ok && tmp > 0)
+    menuButtonWidth = tmp;
+  else
+    menuButtonWidth = 120;
+
+  /* ------------------------- FontPointSize ------------------------ */
+  std::tie(smallFontSize, mediumFontSize, largeFontSize, superFontSize) =
+      std::tuple(16, 20, 28, 36);
+
+  ini.beginGroup("FontPointSize");
+
+#define PER_FONT_SIZE(x) \
+  if (int tmp = ini.value(#x).toInt(&ok); ok && tmp > 0) x##FontSize = tmp;
+
+  PER_FONT_SIZE(small)
+  PER_FONT_SIZE(medium)
+  PER_FONT_SIZE(large)
+  PER_FONT_SIZE(super)
+
+#undef PER_FONT_SIZE
+
+  ini.endGroup();
+}
+
+}  // namespace settings
 
 const QDate kForever = QDate(1970, 1, 1);
 

@@ -66,6 +66,7 @@ int main(int argc, char **argv) {
 
   createDirs();
 
+  settings::loadIni();
   // 显示主面板
   MainPanel panel;
   panel.show();

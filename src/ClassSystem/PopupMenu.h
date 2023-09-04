@@ -42,9 +42,13 @@ class PopupMenu : public QWidget {
   bool m_shouldUpdateBtnsVisible = true;
 
   QPixmap m_iconClosed =
-      QPixmap(":/img/menu.png").scaled(40, 100, Qt::KeepAspectRatio);
+      QPixmap(":/img/menu.png")
+          .scaled(settings::popupMenuSize, Qt::KeepAspectRatio,
+                  Qt::SmoothTransformation);
   QPixmap m_iconOpened =
-      QPixmap(":/img/menu-opened.png").scaled(40, 100, Qt::KeepAspectRatio);
+      QPixmap(":/img/menu-opened.png")
+          .scaled(settings::popupMenuSize, Qt::KeepAspectRatio,
+                  Qt::SmoothTransformation);
 
   QColor m_bgColor = {31, 33, 34, 185};
 

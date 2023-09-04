@@ -27,7 +27,6 @@
 #include "PopupMenu.h"
 #include "TitleWidget.h"
 
-
 class MainPanel : public QWidget {
   Q_OBJECT
 
@@ -82,11 +81,6 @@ class MainPanel : public QWidget {
   // students on duty
   QLabel *m_stuOnDutyTitle = new QLabel("值日生", this);
   QLabel *m_stuOnDutyLabel = new QLabel(this);
-
-  // settings
-  QSettings m_settings = QSettings("settings.ini", QSettings::IniFormat, this);
-  bool m_resizable;
-  void loadFromIni();
 
   // timers
   int m_clockTimerId = 0;

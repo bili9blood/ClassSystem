@@ -6,14 +6,14 @@
 
 MenuButton::MenuButton(QPixmap icon, QString text, QWidget *parent)
     : QWidget(parent) {
-  setFixedSize(120, 110);
+  setFixedWidth(settings::menuButtonWidth);
   // init labels
   m_iconLabel->setAlignment(Qt::AlignCenter);
   m_iconLabel->setPixmap(
       icon.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
   m_textLabel->setStyleSheet("color: white");
   m_textLabel->setText(text);
-  m_textLabel->setFont(qFont{.pointSize = 14}());
+  m_textLabel->setFont(qFont{.pointSize = settings::smallFontSize}());
   m_textLabel->setAlignment(Qt::AlignCenter);
 
   // install event filter
@@ -33,12 +33,12 @@ bool MenuButton::event(QEvent *ev) {
   if (ev->type() == QEvent::Paint) {
     QPainter painter(this);
     if (m_state == State::Clicked) {
-      painter.setBrush(QColor(65, 66, 68, 80));
+      painter.setBrush(QColor(65, 66, 68, 245));
       painter.setPen(Qt::transparent);
       painter.drawRoundedRect(rect(), 10, 10);
     }
     if (m_state == State::Hovered) {
-      painter.setBrush(QColor(43, 44, 46, 80));
+      painter.setBrush(QColor(43, 44, 46, 245));
       painter.setPen(Qt::transparent);
       painter.drawRoundedRect(rect(), 10, 10);
     }

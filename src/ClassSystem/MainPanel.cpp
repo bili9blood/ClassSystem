@@ -42,11 +42,11 @@ QFrame {
   m_labelTime->setObjectName("labelTime");
   m_labelDDDD->setText(QDate::currentDate().toString("dddd"));
   m_labelDate->setText(QDate::currentDate().toString("MM-dd"));
-  m_labelDate->setFont(qFont{.pointSize = 16}());
-  m_labelDDDD->setFont(qFont{.pointSize = 16}());
-  m_labelTime->setFont(qFont{"华文中宋", 36, QFont::Bold}());
-  m_labelDate->setFont(qFont{.pointSize = 16}());
-  m_labelDDDD->setFont(qFont{.pointSize = 16}());
+  m_labelDate->setFont(qFont{.pointSize = settings::smallFontSize}());
+  m_labelDDDD->setFont(qFont{.pointSize = settings::smallFontSize}());
+  m_labelTime->setFont(QFont("华文中宋", settings::superFontSize, QFont::Bold));
+  m_labelDate->setFont(qFont{.pointSize = settings::smallFontSize}());
+  m_labelDDDD->setFont(qFont{.pointSize = settings::smallFontSize}());
 
   m_sentenceLabel->setStyleSheet("color: #e5c07b;");
   m_sentenceLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -59,7 +59,8 @@ QFrame {
         lines.at(QRandomGenerator::global()->bounded(0, lines.size())));
   }
   m_sentenceLabel->setWordWrap(true);
-  m_sentenceLabel->setFont(qFont{.family = "仿宋", .pointSize = 19}());
+  m_sentenceLabel->setFont(
+      qFont{.family = "仿宋", .pointSize = settings::mediumFontSize}());
 
   // init lessons
   m_lessons->setObjectName("lessons");
@@ -74,7 +75,8 @@ QFrame {
   m_lessons->setSizePolicy(QSizePolicy::MinimumExpanding,
                            QSizePolicy::MinimumExpanding);
   m_lessons->setFixedWidth(370);
-  m_lessons->setFont(qFont{.family = "华文中宋", .pointSize = 20}());
+  m_lessons->setFont(
+      qFont{.family = "华文中宋", .pointSize = settings::mediumFontSize}());
   m_lessons->setTextElideMode(Qt::ElideNone);
 
   // init notices
@@ -86,33 +88,36 @@ QFrame {
   m_noticesWid->setAnimationDuration(500);
 
   m_noticesTitle->setObjectName("noticesTitle");
-  m_noticesTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
+  m_noticesTitle->setFont(
+      qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
   m_noticesTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   // init days left
   m_eventNameLabel->setObjectName("eventNameLabel");
-  m_eventNameLabel->setFont(qFont{.pointSize = 20}());
+  m_eventNameLabel->setFont(qFont{.pointSize = settings::mediumFontSize}());
   m_daysLeftDisplay->setFrameShape(QFrame::NoFrame);
   m_daysLeftDisplay->setSegmentStyle(QLCDNumber::Flat);
 
   // init students carry meals
   m_mealStuLabel->setObjectName("mealStuLabel");
-  m_mealStuLabel->setFont(
-      qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
+  m_mealStuLabel->setFont(qFont{.family = "'Consolas', 'MiSans'",
+                                .pointSize = settings::mediumFontSize}());
 
   m_mealStuTitle->setObjectName("mealStuTitle");
-  m_mealStuTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
+  m_mealStuTitle->setFont(
+      qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
 
   // init students on duty
   m_stuOnDutyLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
                                   QSizePolicy::MinimumExpanding);
   m_stuOnDutyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_stuOnDutyLabel->setObjectName("stuOnDutyLabel");
-  m_stuOnDutyLabel->setFont(
-      qFont{.family = "'Consolas', 'MiSans'", .pointSize = 22}());
+  m_stuOnDutyLabel->setFont(qFont{.family = "'Consolas', 'MiSans'",
+                                  .pointSize = settings::mediumFontSize}());
 
   m_stuOnDutyTitle->setObjectName("stuOnDutyTitle");
-  m_stuOnDutyTitle->setFont(qFont{.pointSize = 28, .weight = QFont::Bold}());
+  m_stuOnDutyTitle->setFont(
+      qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
 
   // init lines
   m_sentenceLine->setFrameShape(QFrame::VLine);
@@ -171,7 +176,6 @@ QFrame {
   file.close();
 
   reloadUi();
-  loadFromIni();
   initLocalSocket();
 }
 
@@ -332,7 +336,6 @@ bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
 #ifdef _WIN32
   auto msg = static_cast<MSG *>(message);
   if (msg->message == WM_NCHITTEST) {  // resize
-    if (!m_resizable) return false;
 
     int xPos = GET_X_LPARAM(msg->lParam) - frameGeometry().x();
     int yPos = GET_Y_LPARAM(msg->lParam) - frameGeometry().y();
@@ -366,7 +369,7 @@ void MainPanel::paintEvent(QPaintEvent *) {
   if (m_init) {
     m_menu->show();
     // init geometry
-    setGeometry(m_settings.value("geometry").toRect());
+    setGeometry(settings::ini.value("geometry").toRect());
     m_init = false;
   }
   QPainter painter(this);
@@ -379,10 +382,6 @@ void MainPanel::paintEvent(QPaintEvent *) {
   painter.drawRoundedRect(rect(), 20, 20);
 }
 
-void MainPanel::loadFromIni() {
-  m_resizable = m_settings.value("resizable").toBool();
-}
-
 void MainPanel::mousePressEvent(QMouseEvent *ev) {
   m_mouseStartPoint = pos() - ev->globalPos();
 }
@@ -392,11 +391,11 @@ void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MainPanel::resizeEvent(QResizeEvent *) {
-  if (!m_init) m_settings.setValue("geometry", geometry());
+  if (!m_init) settings::ini.setValue("geometry", geometry());
 }
 
 void MainPanel::moveEvent(QMoveEvent *) {
-  if (!m_init) m_settings.setValue("geometry", geometry());
+  if (!m_init) settings::ini.setValue("geometry", geometry());
 }
 
 void MainPanel::timerEvent(QTimerEvent *ev) {
