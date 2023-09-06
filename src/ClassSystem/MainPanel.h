@@ -76,7 +76,7 @@ class MainPanel : public QWidget {
 
   // students carry meals
   QLabel *m_mealStuTitle = new QLabel("抬饭生", this);
-  QLabel *m_mealStuLabel = new QLabel(this);
+  QTableWidget *m_mealStuTable = new QTableWidget(this);
 
   // students on duty
   QLabel *m_stuOnDutyTitle = new QLabel("值日生", this);

@@ -15,7 +15,7 @@ MainPanel::MainPanel(QWidget *parent)
 
   setStyleSheet(R"(
 
-#labelDDDD, #labelDate, #mealStuLabel, #stuOnDutyLabel {
+#labelDDDD, #labelDate, #mealStuTable, #stuOnDutyLabel {
   color: #d2d0ce;
 }
 
@@ -27,7 +27,7 @@ QFrame {
   color: #edebe9;
 }
 
-#mealStuLabel, #stuOnDutyLabel, #noticesWid, #lessons {
+#mealStuTable, #stuOnDutyLabel, #noticesWid, #lessons {
   background-color: transparent;
 }
 
@@ -68,8 +68,7 @@ QFrame {
   m_lessons->setFocusPolicy(Qt::NoFocus);
   m_lessons->horizontalHeader()->setVisible(false);
   m_lessons->verticalHeader()->setVisible(false);
-  m_lessons->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-  m_lessons->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  tableViewStretch(m_lessons);
   m_lessons->setFrameShape(QFrame::NoFrame);
   m_lessons->setShowGrid(false);
   m_lessons->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -99,8 +98,17 @@ QFrame {
   m_daysLeftDisplay->setSegmentStyle(QLCDNumber::Flat);
 
   // init students carry meals
-  m_mealStuLabel->setObjectName("mealStuLabel");
-  m_mealStuLabel->setFont(qFont{.family = "'Consolas', 'MiSans'",
+  m_mealStuTable->setObjectName("mealStuTable");
+
+  m_mealStuTable->setFrameShape(QFrame::NoFrame);
+  m_mealStuTable->setShowGrid(false);
+  m_mealStuTable->horizontalHeader()->setVisible(false);
+  m_mealStuTable->verticalHeader()->setVisible(false);
+  m_mealStuTable->setAttribute(Qt::WA_TransparentForMouseEvents);
+  m_mealStuTable->setFocusPolicy(Qt::NoFocus);
+
+  tableViewStretch(m_mealStuTable);
+  m_mealStuTable->setFont(qFont{.family = "'Consolas', 'MiSans'",
                                 .pointSize = settings::mediumFontSize}());
 
   m_mealStuTitle->setObjectName("mealStuTitle");
@@ -160,7 +168,7 @@ QFrame {
 
   m_mealStuLayout->setAlignment(Qt::AlignTop);
   m_mealStuLayout->addWidget(m_mealStuTitle);
-  m_mealStuLayout->addWidget(m_mealStuLabel, 0, Qt::AlignTop);
+  m_mealStuLayout->addWidget(m_mealStuTable, 0);
 
   m_stuOnDutyLayout->setAlignment(Qt::AlignTop);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
@@ -240,12 +248,15 @@ void MainPanel::reloadUi() {
 
   /* --------------------- students carry meals --------------------- */
 
-  auto mealStuToday = m_data.mealStu[dayToday()];
-  QString mealStuStr;
-  for (const uint &id : mealStuToday) {
-    mealStuStr += "\n" + m_data.idAndName(id);
+  m_mealStuTable->clear();
+  m_mealStuTable->setColumnCount(1);
+
+  const auto mealStuToday = m_data.mealStu[dayToday()];
+  m_mealStuTable->setRowCount(mealStuToday.size());
+  for (int i = 0; i < mealStuToday.size(); ++i) {
+    m_mealStuTable->setItem(
+        i, 0, new QTableWidgetItem(m_data.idAndName(mealStuToday[i])));
   }
-  m_mealStuLabel->setText(mealStuStr.mid(1));
 
   /* ----------------------- students on duty ----------------------- */
 
