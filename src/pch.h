@@ -8,6 +8,7 @@
 #include <qsettings.h>
 #include <qwidget.h>
 
+#include <algorithm>
 #include <format>
 
 #ifdef _WIN32
@@ -19,16 +20,19 @@ inline void messageHandler(QtMsgType type, const QMessageLogContext &context,
                            const QString &msg) {
   QString typeStr;
   switch (type) {
+    case QtDebugMsg:
+      printf("%s\n", msg.toUtf8().constData());
+      return;
+
 #define PER_LOG_TYPE(x) \
   case Qt##x##Msg:      \
     typeStr = #x;       \
     break;
 
-    PER_LOG_TYPE(Debug)
-    PER_LOG_TYPE(Info)
-    PER_LOG_TYPE(Warning)
-    PER_LOG_TYPE(Critical)
-    PER_LOG_TYPE(Fatal)
+      PER_LOG_TYPE(Info)
+      PER_LOG_TYPE(Warning)
+      PER_LOG_TYPE(Critical)
+      PER_LOG_TYPE(Fatal)
 
 #undef PER_LOG_TYPE
   }

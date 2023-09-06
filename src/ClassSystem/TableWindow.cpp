@@ -91,9 +91,9 @@ void TableWindow::reloadUi() {
   }
 
   // students carry meals
-  int mx = std::max({m_data.mealStu[0].size(), m_data.mealStu[1].size(),
-                     m_data.mealStu[2].size(), m_data.mealStu[3].size(),
-                     m_data.mealStu[4].size()});
+  int mx = std::max<int>({m_data.mealStu[0].size(), m_data.mealStu[1].size(),
+                          m_data.mealStu[2].size(), m_data.mealStu[3].size(),
+                          m_data.mealStu[4].size()});
 
   m_mealStuTable->clear();
   m_mealStuTable->setRowCount(mx);
