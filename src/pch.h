@@ -5,7 +5,9 @@
 #include <qdatetime.h>
 #include <qdebug.h>
 #include <qdir.h>
+#include <qheaderview.h>
 #include <qsettings.h>
+#include <qtableview.h>
 #include <qwidget.h>
 
 #include <algorithm>
@@ -15,6 +17,11 @@
 #include <windows.h>
 #include <windowsx.h>
 #endif
+
+inline void tableViewStretch(QTableView *view) {
+  view->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  view->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+}
 
 inline void messageHandler(QtMsgType type, const QMessageLogContext &context,
                            const QString &msg) {

@@ -27,9 +27,7 @@ QTabBar::tab:selected {
   m_lessonsTable->setFrameShape(QFrame::NoFrame);
   m_lessonsTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_lessonsTable->setFocusPolicy(Qt::NoFocus);
-  m_lessonsTable->horizontalHeader()->setSectionResizeMode(
-      QHeaderView::Stretch);
-  m_lessonsTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  tableViewStretch(m_lessonsTable);
   m_lessonsTable->setColumnCount(5);
   m_lessonsTable->setRowCount(8);
   m_lessonsTable->setWordWrap(false);
@@ -37,9 +35,7 @@ QTabBar::tab:selected {
   m_mealStuTable->setFrameShape(QFrame::NoFrame);
   m_mealStuTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_mealStuTable->setFocusPolicy(Qt::NoFocus);
-  m_mealStuTable->horizontalHeader()->setSectionResizeMode(
-      QHeaderView::Stretch);
-  m_mealStuTable->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+  tableViewStretch(m_mealStuTable);
   m_mealStuTable->setColumnCount(5);
   m_mealStuTable->verticalHeader()->setVisible(false);
   m_mealStuTable->setWordWrap(false);
@@ -47,10 +43,7 @@ QTabBar::tab:selected {
   m_stuOnDutyTable->setFrameShape(QFrame::NoFrame);
   m_stuOnDutyTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_stuOnDutyTable->setFocusPolicy(Qt::NoFocus);
-  m_stuOnDutyTable->horizontalHeader()->setSectionResizeMode(
-      QHeaderView::Stretch);
-  m_stuOnDutyTable->verticalHeader()->setSectionResizeMode(
-      QHeaderView::Stretch);
+  tableViewStretch(m_stuOnDutyTable);
   m_stuOnDutyTable->setColumnCount(5);
   m_stuOnDutyTable->setWordWrap(false);
 
