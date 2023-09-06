@@ -463,6 +463,8 @@ void MainWindow::addLesson() {
   int row = ui.lessonsTable->rowCount();
   if (int cRow = ui.lessonsTable->currentRow(); cRow != -1) row = cRow + 1;
 
+  m_loadingData = true;
+
   ui.lessonsTable->setRowCount(row + 1);
 
   ui.lessonsTable->setItem(row, 0, new QTableWidgetItem);
@@ -477,6 +479,7 @@ void MainWindow::addLesson() {
     while (ls.size() <= row) ls << QString();
   }
 
+  m_loadingData = false;
   change(before, "添加课节");
 }
 
@@ -906,7 +909,6 @@ void MainWindow::onRequestFinished(QNetworkReply *reply) {
   QTextStream ts(reply);
   auto remoteVer = ts.readLine().toUtf8();
   QUrl downloadUrl(ts.readLine());
-  // qDebug() << ts.readAll();
 
   int major, minor, patch;
 
@@ -1023,7 +1025,6 @@ void MainWindow::onNewConnection() {
 
 void MainWindow::initServer() {
 #ifdef _WIN32
-  qDebug() << m_server;
   if (!m_server->listen(kServerName)) {
     QMessageBox::critical(
         this, "ClassAdmin",
