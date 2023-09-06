@@ -12,7 +12,7 @@ logo: /img/yu-chong.png
 
 ```card
 title: 陈梓畅
-desc: 文档、协调
+desc: 文档、测试
 logo: /img/zi-chang.png
 ```
 
