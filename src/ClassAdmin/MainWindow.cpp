@@ -915,11 +915,13 @@ void MainWindow::onRequestFinished(QNetworkReply *reply) {
   sscanf_s(remoteVer, "v%d.%d.%d", &major, &minor, &patch);
 
   if (!isGtLocalVer(major, minor, patch)) {
-    // everything is up-to-date
+    qInfo("Update: Everything up-to-date.");
     return;
   }
 
-  // 有新版本可供更新
+  qInfo("Update: New version found. Local: v%d.%d.%d Remote: %s",
+        PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH,
+        remoteVer.constData());
   QFile file(":/text/update-info-msg.md");
   file.open(QFile::ReadOnly);
 
@@ -967,6 +969,9 @@ void MainWindow::copyUpdateFiles() {
   path = QString::fromUtf8(QByteArray((char *)sm.data(), sm.size()));
   sm.detach();
 
+  qInfo("Copy Update Files: Get ClassSystem path: %s",
+        path.toUtf8().constData());
+
   QDir updatesDir(QApplication::applicationDirPath() + "/class-system-update/");
 
   QProcess process;
@@ -975,6 +980,8 @@ void MainWindow::copyUpdateFiles() {
   process.start();
   process.waitForFinished();
 
+  qInfo("Copy Update Files: Killed `ClassSystem.exe`.");
+
   if (!copyDir(updatesDir.path(), path)) {
     QMessageBox::critical(this, "更新 ClassSystem", "无法更新 ClassSystem。");
   }
@@ -982,6 +989,8 @@ void MainWindow::copyUpdateFiles() {
   updatesDir.removeRecursively();
 
   QProcess::startDetached(path + "/ClassSystem.exe", {});
+
+  qInfo("Copy Update Files: Reopened ClasssSystem.");
 
   m_updated = true;
 }
@@ -997,6 +1006,8 @@ void MainWindow::onReadyRead() {
 }
 
 void MainWindow::onNewConnection() {
+  qInfo("Local Socket: Connected.");
+
   m_connected = true;
   m_socket = m_server->nextPendingConnection();
   QDataStream ds(m_socket);
@@ -1029,6 +1040,8 @@ void MainWindow::initServer() {
     QMessageBox::critical(
         this, "ClassAdmin",
         "<h2>无法监听 Socket ！</h2><br/>" + m_server->errorString());
+    qFatal("Local Socket: Unable to listen: %s",
+           m_server->errorString().toUtf8().constData());
     QApplication::quit();
   }
   m_server->setMaxPendingConnections(1);
