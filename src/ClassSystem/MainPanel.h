@@ -40,6 +40,7 @@ class MainPanel : public QWidget {
   QGridLayout *m_mainLayout = new QGridLayout(this);
   QGridLayout *m_headerLayout = new QGridLayout();
   QGridLayout *m_noticesLayout = new QGridLayout();
+  QHBoxLayout *m_studentsLayout = new QHBoxLayout();
   QVBoxLayout *m_mealStuLayout = new QVBoxLayout();
   QVBoxLayout *m_stuOnDutyLayout = new QVBoxLayout();
 
@@ -80,7 +81,7 @@ class MainPanel : public QWidget {
 
   // students on duty
   QLabel *m_stuOnDutyTitle = new QLabel("值日生", this);
-  QLabel *m_stuOnDutyLabel = new QLabel(this);
+  QTableWidget *m_stuOnDutyTable = new QTableWidget(this);
 
   // timers
   int m_clockTimerId = 0;

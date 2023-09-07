@@ -15,7 +15,7 @@ MainPanel::MainPanel(QWidget *parent)
 
   setStyleSheet(R"(
 
-#labelDDDD, #labelDate, #mealStuTable, #stuOnDutyLabel {
+#labelDDDD, #labelDate, #mealStuTable, #stuOnDutyTable {
   color: #d2d0ce;
 }
 
@@ -27,7 +27,7 @@ QFrame {
   color: #edebe9;
 }
 
-#mealStuTable, #stuOnDutyLabel, #noticesWid, #lessons {
+#mealStuTable, #stuOnDutyTable, #noticesWid, #lessons {
   background-color: transparent;
 }
 
@@ -99,6 +99,8 @@ QFrame {
 
   // init students carry meals
   m_mealStuTable->setObjectName("mealStuTable");
+  m_mealStuTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_mealStuTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   m_mealStuTable->setFrameShape(QFrame::NoFrame);
   m_mealStuTable->setShowGrid(false);
@@ -116,11 +118,25 @@ QFrame {
       qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
 
   // init students on duty
-  m_stuOnDutyLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
+  m_stuOnDutyTable->setSizePolicy(QSizePolicy::MinimumExpanding,
                                   QSizePolicy::MinimumExpanding);
-  m_stuOnDutyLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-  m_stuOnDutyLabel->setObjectName("stuOnDutyLabel");
-  m_stuOnDutyLabel->setFont(qFont{.family = "'Consolas', 'MiSans'",
+  m_stuOnDutyTable->setObjectName("stuOnDutyTable");
+  m_stuOnDutyTable->horizontalHeader()->setSectionResizeMode(
+      QHeaderView::ResizeToContents);
+  m_stuOnDutyTable->verticalHeader()->setSectionResizeMode(
+      QHeaderView::Stretch);
+  m_stuOnDutyTable->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_stuOnDutyTable->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  m_stuOnDutyTable->setFrameShape(QFrame::NoFrame);
+  m_stuOnDutyTable->setTextElideMode(Qt::ElideNone);
+  m_stuOnDutyTable->setShowGrid(false);
+  m_stuOnDutyTable->horizontalHeader()->setVisible(false);
+  m_stuOnDutyTable->verticalHeader()->setVisible(false);
+  m_stuOnDutyTable->setAttribute(Qt::WA_TransparentForMouseEvents);
+  m_stuOnDutyTable->setFocusPolicy(Qt::NoFocus);
+
+  m_stuOnDutyTable->setFont(qFont{.family = "'Consolas', 'MiSans'",
                                   .pointSize = settings::mediumFontSize}());
 
   m_stuOnDutyTitle->setObjectName("stuOnDutyTitle");
@@ -146,9 +162,7 @@ QFrame {
   m_mainLayout->addWidget(m_lessons, 2, 5, 6, 1);
   m_mainLayout->addLayout(m_noticesLayout, 3, 0, 1, 4, Qt::AlignTop);
   m_mainLayout->addWidget(m_bottomNoticeLine, 4, 0, 1, 4);
-  m_mainLayout->addLayout(m_mealStuLayout, 5, 0);
-  m_mainLayout->addWidget(m_stuLine, 5, 1);
-  m_mainLayout->addLayout(m_stuOnDutyLayout, 5, 2);
+  m_mainLayout->addLayout(m_studentsLayout, 5, 0, 1, 4);
 
   m_headerLayout->addWidget(m_labelTime, 0, 0, 2, 1, Qt::AlignVCenter);
   m_headerLayout->addWidget(m_labelDate, 0, 1, Qt::AlignBottom);
@@ -166,13 +180,18 @@ QFrame {
   m_noticesLayout->addWidget(m_daysLeftDisplay, 1, 2, 2, 1);
   m_noticesLayout->addWidget(m_noticesWid, 1, 0, 2, 1);
 
+  m_studentsLayout->setSizeConstraint(QLayout::SetMinimumSize);
+  m_studentsLayout->addLayout(m_mealStuLayout, 1);
+  m_studentsLayout->addWidget(m_stuLine);
+  m_studentsLayout->addLayout(m_stuOnDutyLayout, 3);
+
   m_mealStuLayout->setAlignment(Qt::AlignTop);
   m_mealStuLayout->addWidget(m_mealStuTitle);
   m_mealStuLayout->addWidget(m_mealStuTable, 0);
 
   m_stuOnDutyLayout->setAlignment(Qt::AlignTop);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
-  m_stuOnDutyLayout->addWidget(m_stuOnDutyLabel, 0, Qt::AlignTop);
+  m_stuOnDutyLayout->addWidget(m_stuOnDutyTable, 0);
 
   QFile file("data.stm");
 
@@ -260,22 +279,28 @@ void MainPanel::reloadUi() {
 
   /* ----------------------- students on duty ----------------------- */
 
-  auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
-  QString stuOnDutyStr;
-  for (int i = 0; i < stuOnDutyToday.size(); ++i) {
-    QList<uint> l = stuOnDutyToday[i];
-    if (l.empty()) continue;
-    QString displayStr =
-        QString(
-            R"(<font style="font-weight: 1000; font-size: 25pt; display: inline;">%1:</font>)")
-            .arg(m_data.dutyJobs[i]);
-    for (const uint &id : l) {
-      if (!id) continue;
-      displayStr += " " + m_data.idAndName(id);
-    }
-    stuOnDutyStr += "<br></br>" + displayStr;
+  m_stuOnDutyTable->clear();
+  m_stuOnDutyTable->setRowCount(m_data.dutyJobs.size());
+
+  const auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
+  m_stuOnDutyTable->setColumnCount(
+      std::max_element(
+          stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
+          [](const auto &a, const auto &b) { return a.size() > b.size(); })
+          ->size() +
+      1);
+
+  for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
+    auto dutyJobItem = new QTableWidgetItem(m_data.dutyJobs[i] + "：");
+    dutyJobItem->setFont(qFont{.pointSize = settings::mediumFontSize + 2,
+                               .weight = QFont::Bold}());
+    m_stuOnDutyTable->setItem(i, 0, dutyJobItem);
+
+    for (int j = 0; j < stuOnDutyToday[i].size(); ++j)
+      m_stuOnDutyTable->setItem(
+          i, j + 1,
+          new QTableWidgetItem(m_data.idAndName(stuOnDutyToday[i][j])));
   }
-  m_stuOnDutyLabel->setText(stuOnDutyStr.mid(9));  // 移除第一个 `<br></br>`
 }
 
 void MainPanel::initLocalSocket() {
