@@ -63,6 +63,9 @@ int main(int argc, char **argv) {
     QApplication::setFont(
         QFontDatabase::applicationFontFamilies(fontId).first());
 
+  // 添加标题字体
+  QFontDatabase::addApplicationFont(":/font/title.ttf");
+
   createDirs();
 
   settings::loadIni();

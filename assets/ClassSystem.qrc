@@ -2,6 +2,7 @@
 <RCC version="1.0">
     <qresource>
         <file>font/MiSans-Regular.ttf</file>
+        <file>font/title.ttf</file>
 
         <file>img/logo.png</file>
         <file>img/menu.png</file>
