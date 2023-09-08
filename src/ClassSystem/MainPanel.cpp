@@ -71,9 +71,7 @@ QFrame {
   tableViewStretch(m_lessons);
   m_lessons->setFrameShape(QFrame::NoFrame);
   m_lessons->setShowGrid(false);
-  m_lessons->setSizePolicy(QSizePolicy::MinimumExpanding,
-                           QSizePolicy::MinimumExpanding);
-  m_lessons->setFixedWidth(370);
+  m_lessons->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
   m_lessons->setFont(
       qFont{.family = "华文中宋", .pointSize = settings::mediumFontSize}());
   m_lessons->setTextElideMode(Qt::ElideNone);
@@ -222,6 +220,7 @@ void MainPanel::reloadUi() {
   m_lessons->clear();
 
   auto lessonsToday = m_data.lessons[dayToday()];
+  m_lessons->setRowCount(lessonsToday.size());
   for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
     m_lessons->setItem(
         i, 0,
@@ -229,6 +228,17 @@ void MainPanel::reloadUi() {
             lessonsToday[i], m_data.lessonsTm[i].toString("hh:mm"),
             m_data.lessonsTm[i].addSecs(2400).toString("hh:mm"))));
   }
+
+  m_lessons->setMinimumWidth([this] {
+    int mx = 0;
+    for (int i = 0; i < m_lessons->rowCount(); ++i) {
+      auto item = m_lessons->item(i, 0);
+      if (!item) continue;
+
+      mx = qMax(mx, m_lessons->fontMetrics().horizontalAdvance(item->text()));
+    }
+    return mx + 10;
+  }());
 
   /* ---------------------------- notices --------------------------- */
 
@@ -277,6 +287,9 @@ void MainPanel::reloadUi() {
         i, 0, new QTableWidgetItem(m_data.idAndName(mealStuToday[i])));
   }
 
+  m_mealStuTable->setMinimumHeight(
+      mealStuToday.size() * (m_mealStuTable->fontMetrics().height() + 2));
+
   /* ----------------------- students on duty ----------------------- */
 
   m_stuOnDutyTable->clear();
@@ -286,21 +299,49 @@ void MainPanel::reloadUi() {
   m_stuOnDutyTable->setColumnCount(
       std::max_element(
           stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
-          [](const auto &a, const auto &b) { return a.size() > b.size(); })
+          [](const auto &a, const auto &b) { return a.size() < b.size(); })
           ->size() +
       1);
 
+  const QFont dutyJobFont =
+      qFont{.pointSize = settings::mediumFontSize + 2, .weight = QFont::Bold}();
+
   for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
-    auto dutyJobItem = new QTableWidgetItem(m_data.dutyJobs[i] + "：");
-    dutyJobItem->setFont(qFont{.pointSize = settings::mediumFontSize + 2,
-                               .weight = QFont::Bold}());
+    auto dutyJobItem = new QTableWidgetItem(m_data.dutyJobs[i] + " ");
+    dutyJobItem->setFont(dutyJobFont);
     m_stuOnDutyTable->setItem(i, 0, dutyJobItem);
 
     for (int j = 0; j < stuOnDutyToday[i].size(); ++j)
       m_stuOnDutyTable->setItem(
           i, j + 1,
-          new QTableWidgetItem(m_data.idAndName(stuOnDutyToday[i][j])));
+          new QTableWidgetItem(m_data.idAndName(stuOnDutyToday[i][j]) + " "));
   }
+
+  m_stuOnDutyTable->setMinimumHeight(m_data.dutyJobs.size() *
+                                     (QFontMetrics(dutyJobFont).height() + 2));
+  m_stuOnDutyTable->setMinimumWidth([this, dutyJobFont, stuOnDutyToday] {
+    int width = 0;
+    QFontMetrics dutyJobMetrics(dutyJobFont);
+    QFontMetrics stuMetrics(m_stuOnDutyTable->fontMetrics());
+
+    for (int i = 0; i < m_stuOnDutyTable->rowCount(); ++i) {
+      int w = dutyJobMetrics.horizontalAdvance(m_data.dutyJobs[i] + " ");
+      width = qMax(width, w);
+    }
+
+    for (int j = 1; j < m_stuOnDutyTable->columnCount(); ++j) {
+      int mx = 0;
+      for (int i = 0; i < m_stuOnDutyTable->rowCount(); ++i) {
+        auto item = m_stuOnDutyTable->item(i, j);
+        if (!item) continue;
+
+        mx = qMax(mx, stuMetrics.horizontalAdvance(item->text()));
+      }
+      width += mx;
+    }
+
+    return width + 10;
+  }());
 }
 
 void MainPanel::initLocalSocket() {
