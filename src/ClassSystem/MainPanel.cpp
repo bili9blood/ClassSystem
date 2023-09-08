@@ -440,6 +440,8 @@ void MainPanel::timerEvent(QTimerEvent *ev) {
         kTimeFormat[m_formatWithColons = !m_formatWithColons]));
   }
   if (ev->timerId() == m_noticeTimerId) {
+    if (m_noticesTextBrowsers.empty()) return;
+
     m_noticesWid->StartStackedWidgetAnimation(
         m_noticesWid->currentIndex(),
         (m_noticesWid->currentIndex() + 1) % m_noticesWid->count());
