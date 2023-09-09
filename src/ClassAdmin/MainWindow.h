@@ -126,6 +126,8 @@ class MainWindow : public QMainWindow {
   // 正在运行 `change()`
   bool m_doingChange = false;
 
+  QMap<QObject *, std::function<void()>> m_tablesRemoveFuncMap;
+
   // undo & redo
   QUndoStack *m_undoStk = new QUndoStack(this);
   QAction *m_actUndo;
@@ -138,4 +140,5 @@ class MainWindow : public QMainWindow {
  protected:
   void paintEvent(QPaintEvent *ev) override;
   void closeEvent(QCloseEvent *ev) override;
+  bool eventFilter(QObject *obj, QEvent *ev) override;
 };

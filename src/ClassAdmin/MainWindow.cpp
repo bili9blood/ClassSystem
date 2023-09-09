@@ -93,6 +93,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   });
 
   checkAvailableUpdates();
+
+  // 注册按下 Delete 键删除的功能
+#define PER_TABLE(x, y)                  \
+  ui.x##Table->installEventFilter(this); \
+  m_tablesRemoveFuncMap[ui.x##Table] = std::bind(&MainWindow::remove##y, this);
+
+  PER_TABLE(students, Student)
+  PER_TABLE(stuOnDuty, DutyJob)
+  PER_TABLE(lessons, Lesson)
+
+#undef PER_TABLE
 }
 
 /* ---------------------------------------------------------------- */
@@ -1221,4 +1232,16 @@ void MainWindow::closeEvent(QCloseEvent *ev) {
   } else {
     ev->accept();
   }
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *ev) {
+  if (ev->type() == QEvent::KeyPress) {
+    auto keyEv = static_cast<QKeyEvent *>(ev);
+    if (keyEv->key() == Qt::Key_Delete && m_tablesRemoveFuncMap.contains(obj)) {
+      // 在表格中按下 Delete 键删除
+      m_tablesRemoveFuncMap[obj]();
+      return true;
+    }
+  }
+  return false;
 }
