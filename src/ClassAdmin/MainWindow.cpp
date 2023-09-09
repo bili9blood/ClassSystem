@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
   // students
   ui.studentsTable->setColumnWidth(0, 80);
+  ui.studentsTable->setItemDelegateForColumn(0, new IntDelegate);
   connect(ui.studentsTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onStudentsChanged);
 
