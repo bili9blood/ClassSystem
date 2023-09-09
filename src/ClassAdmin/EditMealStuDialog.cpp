@@ -1,5 +1,7 @@
 #include "EditMealStuDialog.h"
 
+#include <qevent.h>
+
 #include "ItemDelegates.h"
 
 EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
@@ -28,7 +30,7 @@ EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
 }
 
 std::pair<ClassData::Data, QString> EditMealStuDialog::getResult() {
-  return std::make_pair(m_data, ui.labelPreview->text());
+  return {m_data, ui.labelPreview->text()};
 }
 
 void EditMealStuDialog::addMealStu() {
@@ -74,4 +76,8 @@ void EditMealStuDialog::paintEvent(QPaintEvent *) {
     if (i + 1 < ui.listWidget->count()) previewStr += ' ';
   }
   ui.labelPreview->setText(previewStr);
+}
+
+void EditMealStuDialog::keyPressEvent(QKeyEvent *ev) {
+  if (ev->key() == Qt::Key_Delete) removeMealStu();
 }

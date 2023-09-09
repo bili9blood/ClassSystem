@@ -32,4 +32,5 @@ class EditMealStuDialog : public QDialog {
 
  protected:
   void paintEvent(QPaintEvent *ev) override;
+  void keyPressEvent(QKeyEvent *ev) override;
 };

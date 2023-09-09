@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
   // students
   ui.studentsTable->setColumnWidth(0, 80);
+  ui.studentsTable->setItemDelegateForColumn(0, new IntDelegate);
   connect(ui.studentsTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onStudentsChanged);
 
@@ -102,6 +103,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   PER_TABLE(students, Student)
   PER_TABLE(stuOnDuty, DutyJob)
   PER_TABLE(lessons, Lesson)
+  PER_TABLE(notices, Notice)
+  PER_TABLE(events, Event)
 
 #undef PER_TABLE
 }
