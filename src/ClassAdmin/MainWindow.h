@@ -71,6 +71,14 @@ class MainWindow : public QMainWindow {
   void onEventsEdited(const int &row);
   void onEventsCheckBoxesClicked();
 
+  // temp
+  void addTemp();
+  void removeTemp(QTableWidget *table);
+  void clearTemps();
+
+  //! overload only for signals&slots
+  void removeTemp();
+
   // toolbar
   void resetPwd();
 

@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                   << ui.labelMealStuFri;
 
   // studnts on duty
+  ui.stuOnDutyTable->horizontalHeader()->setSectionResizeMode(
+      QHeaderView::Stretch);
   connect(ui.stuOnDutyTable->model(), &QAbstractItemModel::dataChanged, this,
           &MainWindow::onDutyJobsEdited);
 
@@ -60,12 +62,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
             onEventsEdited(idx.row());
           });
-
-  // scroll area
-  QPalette pa = ui.scrollAreaMealStu->palette();
-  pa.setBrush(QPalette::Window, Qt::white);
-  ui.scrollAreaMealStu->setPalette(pa);
-  ui.scrollAreaStuOnDuty->setPalette(pa);
 
   initServer();
 
@@ -210,12 +206,11 @@ void MainWindow::editMealStu() {
   ClassData::Data before = m_data;
   auto btn = qobject_cast<QPushButton *>(sender());
   int idx = m_mealStuBtns.indexOf(btn);
-  QString strBefore = m_mealStuLabels[idx]->text();
   EditMealStuDialog dlg(idx, m_data, this);
   if (QDialog::Rejected == dlg.exec()) return;
   QString str;
   std::tie(m_data, str) = dlg.getResult();
-  m_mealStuLabels[idx]->setText("%1：%2"_s.arg(oneDayOfWeek(idx)).arg(str));
+  m_mealStuLabels[idx]->setText("%1：%2"_s.arg(oneDayOfWeek(idx), str));
   change(before, "编辑抬饭生");
 }
 
@@ -247,7 +242,6 @@ void MainWindow::importMealStu() {
       "\n\n<u>共5纵列，代表周一至周五；每一列代表当日的抬饭生。</u>";
 
   const std::function<void(const QString &)> kFuncs[] = {
-
       // 学号模式
       [this](QString str) {
         bool changed = false;
@@ -763,6 +757,39 @@ void MainWindow::onEventsCheckBoxesClicked() {
     }
   }
 }
+
+/* ---------------------------------------------------------------- */
+/*                           Temp Methods                           */
+/* ---------------------------------------------------------------- */
+
+void MainWindow::addTemp() {}
+
+void MainWindow::removeTemp(QTableWidget *table) {}
+
+void MainWindow::removeTemp() {
+  auto ptr = sender();
+
+#define PER_TEMP(x)                 \
+  if (ptr == ui.btnRemoveTemp##x) { \
+    removeTemp(ui.temp##x##Table);  \
+    return;                         \
+  }
+
+#define PER_TEMP_2ND(x, y)          \
+  if (ptr == ui.btnRemoveTemp##x) { \
+    removeTemp(ui.temp##y##Table);  \
+    return;                         \
+  }
+
+  PER_TEMP(MealStu)
+  PER_TEMP(StuOnDuty)
+  PER_TEMP_2ND(Lesson, Lessons)
+
+#undef PER_TEMP
+#undef PER_TEMP_2ND
+}
+
+void MainWindow::clearTemps() {}
 
 /* ---------------------------------------------------------------- */
 /*                          ToolBar Methods                         */

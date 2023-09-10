@@ -17,7 +17,6 @@ void createDirs() {
 
 // 程序单例化
 void singleApp() {
-  // 本测试程序id取名为SingleApp
   QString path = QDir::temp().absoluteFilePath("ClassSystem.lock");
   auto lockFile = new QLockFile(path);
 

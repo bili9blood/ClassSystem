@@ -4,7 +4,7 @@
 
 StuOnDutyCellWidget::StuOnDutyCellWidget(int row, int column,
                                          QList<uint> stuOnDuty, QWidget *parent)
-    : m_row(row), m_col(column), m_stuOnDuty(stuOnDuty), QWidget(parent) {
+    : QWidget(parent), m_stuOnDuty(stuOnDuty), m_row(row), m_col(column) {
   ui.setupUi(this);
 
   ui.listWidget->setItemDelegate(new IntDelegate);
