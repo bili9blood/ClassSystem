@@ -12,10 +12,10 @@ class ChangeDataCommand : public QUndoCommand {
   explicit ChangeDataCommand(ClassData::Data before, MainWindow *window,
                              const QString &_text,
                              QUndoCommand *parent = nullptr)
-      : m_before(before),
+      : QUndoCommand(parent),
+        m_before(before),
         m_after(window->m_data),
-        m_window(window),
-        QUndoCommand(parent) {
+        m_window(window) {
     setText(_text);
   }
 

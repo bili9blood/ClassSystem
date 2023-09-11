@@ -2,7 +2,7 @@
 
 NoticesCellWidget::NoticesCellWidget(const ClassNotice &notice, int row,
                                      QWidget *parent)
-    : m_notice(notice), m_row(row), QFrame(parent) {
+    : QFrame(parent), m_row(row), m_notice(notice) {
   ui.setupUi(this);
 
   // frame

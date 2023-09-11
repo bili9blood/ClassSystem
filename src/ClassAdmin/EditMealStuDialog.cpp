@@ -7,8 +7,8 @@
 EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
                                      QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint),
-      m_data(data),
-      m_dayOfWeek(dayOfWeek) {
+      m_dayOfWeek(dayOfWeek),
+      m_data(data) {
   ui.setupUi(this);
 
   auto mealStu = data.mealStu[dayOfWeek];
