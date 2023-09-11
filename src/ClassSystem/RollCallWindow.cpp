@@ -78,6 +78,6 @@ void RollCallWindow::moveToAnother() {
 }
 
 void RollCallWindow::onTimeout() {
-  std::uniform_int_distribution<> distrib(0, ui.nameList->count());
+  std::uniform_int_distribution<> distrib(0, ui.nameList->count() - 1);
   ui.label->setText(ui.nameList->item(m_calledIndex = distrib(m_rng))->text());
 }
