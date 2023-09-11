@@ -13,7 +13,7 @@ class TableWindow : public QWidget {
  public:
   explicit TableWindow(QWidget *parent = nullptr);
 
-  void reloadUi();
+  void loadData();
 
  private:
   QVBoxLayout *m_mainLayout = new QVBoxLayout(this);

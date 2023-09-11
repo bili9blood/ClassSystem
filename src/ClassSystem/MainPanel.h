@@ -33,7 +33,7 @@ class MainPanel : public QWidget {
  public:
   explicit MainPanel(QWidget *parent = nullptr);
 
-  void reloadUi();
+  void loadData();
 
  private:
   // layouts

@@ -10,10 +10,9 @@
 #include <qtimer.h>
 
 #include "MenuButton.h"
+#include "RollCallWindow.h"
 #include "ScreenCapturer.h"
 #include "TableWindow.h"
-
-class MainPanel;
 
 class PopupMenu : public QWidget {
   friend class MainPanel;
@@ -54,6 +53,7 @@ class PopupMenu : public QWidget {
 
   ScreenCapturer m_capturer;
   TableWindow m_tableWindow;
+  RollCallWindow m_rollCallWindow;
 
   // functions
   void updateBtnsPosition();

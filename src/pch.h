@@ -97,7 +97,7 @@ inline void loadIni() {
   if (int tmp = ini.value("menuButtonWidth").toInt(&ok); ok && tmp > 0)
     menuButtonWidth = tmp;
   else
-    menuButtonWidth = 120;
+    menuButtonWidth = 140;
 
   /* ------------------------- FontPointSize ------------------------ */
   std::tie(smallFontSize, mediumFontSize, largeFontSize, superFontSize) =

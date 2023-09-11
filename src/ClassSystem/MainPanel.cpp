@@ -200,11 +200,11 @@ QFrame {
   }
   file.close();
 
-  reloadUi();
+  loadData();
   initLocalSocket();
 }
 
-void MainPanel::reloadUi() {
+void MainPanel::loadData() {
   /* ---------------------------- timers ---------------------------- */
   if (m_clockTimerId) killTimer(m_clockTimerId);
   m_clockTimerId = startTimer(500);
@@ -400,8 +400,8 @@ void MainPanel::onReadyRead() {
       ClassData::readFrom(&b, m_data);
       QFile file("data.stm");
       ClassData::writeTo(m_data, &file);
-      reloadUi();
-      m_menu->m_tableWindow.reloadUi();
+      loadData();
+      m_menu->m_tableWindow.loadData();
       break;
     }
   }

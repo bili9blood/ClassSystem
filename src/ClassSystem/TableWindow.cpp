@@ -52,10 +52,10 @@ QTabBar::tab:selected {
   QFontDatabase s;
   m_mainLayout->addWidget(m_tabWidget);
 
-  reloadUi();
+  loadData();
 }
 
-void TableWindow::reloadUi() {
+void TableWindow::loadData() {
   QFile file("data.stm");
   if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
     QMessageBox::critical(this, "ClassSystem",
@@ -131,5 +131,5 @@ void TableWindow::wheelEvent(QWheelEvent *ev) {
   m_pointSizeIndex +=
       ev->angleDelta().y() > 0 && m_pointSizeIndex + 1 != kPointSizeList.size();
   m_pointSizeIndex -= ev->angleDelta().y() < 0 && m_pointSizeIndex != 0;
-  reloadUi();
+  loadData();
 }

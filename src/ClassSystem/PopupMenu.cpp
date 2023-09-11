@@ -12,6 +12,8 @@ PopupMenu::PopupMenu(QWidget *parent)
   // append buttons
   m_btnsList << new MenuButton({":/img/capture.png"}, "截图", &m_btnsWidget)
              << new MenuButton({":img/table.png"}, "表格", &m_btnsWidget)
+             << new MenuButton({":/img/roll-call.png"}, "随机点名",
+                               &m_btnsWidget)
              << new MenuButton({":/img/help.png"}, "帮助", &m_btnsWidget);
   setWidgetTransparent(&m_btnsWidget);
   m_btnsLayout.setMargin(0);
@@ -52,14 +54,21 @@ void PopupMenu::onBtnClicked() {
   for (int i = 0; i < m_btnsList.size(); ++i) {
     if (btn == m_btnsList.at(i)) {
       switch (i) {
-        case 0:  // capture screen
+        case 0:  // 截图
           m_capturer.capture();
           break;
-        case 1:  // show tables
+
+        case 1:  // 表格
           m_tableWindow.show();
           QApplication::setActiveWindow(&m_tableWindow);
           break;
-        case 2:  // show help
+
+        case 2:  // 随机点名
+          m_rollCallWindow.show();
+          QApplication::setActiveWindow(&m_rollCallWindow);
+          break;
+
+        case 3:  // 帮助
           QDesktopServices::openUrl({"https://class-system-docs.gitee.io/"});
           break;
       }

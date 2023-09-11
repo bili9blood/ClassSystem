@@ -31,6 +31,11 @@ set(UTILS_SOURCES src/ClassData.h)
 # ----------------------------------------------------------------
 # ClassSystem 前台展示端
 # ----------------------------------------------------------------
+qt_wrap_ui(
+    CLASSSYSTEM_UI_SOURCES
+
+    src/ClassSystem/RollCallWindow.ui
+)
 add_executable(ClassSystem
 
     ${_RELEASE_WIN32}
@@ -58,21 +63,31 @@ add_executable(ClassSystem
     # 表格
     src/ClassSystem/TableWindow.cpp src/ClassSystem/TableWindow.h
 
+    # 随机点名
+    src/ClassSystem/RollCallWindow.cpp src/ClassSystem/RollCallWindow.h
+
     # 滑动 Stacked Widget
     thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.cpp
     thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.h
 
+    ${CLASSSYSTEM_UI_SOURCES}
     ${UTILS_SOURCES}
 )
 target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 
+if(${MSVC})
+    set_target_properties(ClassSystem PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
+endif()
+
 # ----------------------------------------------------------------
 # ClassAdmin 后台管理端
 # ----------------------------------------------------------------
 qt_wrap_ui(
-    UI_SOURCES
+    CLASSADMIN_UI_SOURCES
 
     src/ClassAdmin/MainWindow.ui # 主窗口
     src/ClassAdmin/EditMealStuDialog.ui # 编辑抬饭生
@@ -107,10 +122,15 @@ add_executable(ClassAdmin
     # 自定义代理
     src/ClassAdmin/ItemDelegates.h
 
-    ${UI_SOURCES}
-
+    ${CLASSADMIN_UI_SOURCES}
     ${UTILS_SOURCES}
 )
 target_include_directories(ClassAdmin PUBLIC src/ClassAdmin)
 target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassAdmin PUBLIC src/pch.h)
+
+if(${MSVC})
+    set_target_properties(ClassAdmin PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
+endif()
