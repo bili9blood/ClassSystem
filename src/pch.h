@@ -200,8 +200,12 @@ inline bool copyDir(QString src, QString dst) {
     if (info.isDir()) {
       if (!copyDir(info.filePath(), dst + "/" + info.fileName())) return false;
     } else {  // info.isFile()
-      QFile file(info.filePath());
-      if (!file.copy(dst + "/" + info.fileName())) return false;
+      QFile file(info.filePath()), dstFile(dst + "/" + info.fileName());
+      if (dstFile.exists()) dstFile.remove();
+      if (!file.copy(dstFile.fileName())) {
+        qCritical() << "Copying Files:" << file.errorString();
+        return false;
+      }
     }
   }
 

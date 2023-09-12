@@ -1021,6 +1021,10 @@ void MainWindow::copyUpdateFiles() {
   process.start();
   process.waitForFinished();
 
+#ifdef _WIN32
+  Sleep(500);
+#endif
+
   qInfo("Copy Update Files: Killed `ClassSystem.exe`.");
 
   if (!copyDir(updatesDir.path(), path)) {
