@@ -21,6 +21,8 @@ class PopupMenu : public QWidget {
  public:
   explicit PopupMenu(bool isOnLeft = false, QWidget *parent = nullptr);
 
+  ~PopupMenu();
+
  public slots:
   void onBtnClicked();
 
