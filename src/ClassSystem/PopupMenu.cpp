@@ -37,11 +37,11 @@ PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
 
   // 左侧
   if (isOnLeft) {
-    // 镜像
-    m_iconClosed =
-        QPixmap::fromImage(m_iconClosed.toImage().mirrored(true, false));
-    m_iconOpened =
-        QPixmap::fromImage(m_iconOpened.toImage().mirrored(true, false));
+    // 旋转
+    QTransform trans;
+    trans.rotate(180);
+    m_iconClosed = m_iconClosed.transformed(trans, Qt::SmoothTransformation);
+    m_iconOpened = m_iconOpened.transformed(trans, Qt::SmoothTransformation);
   } else {  // 右侧
     rightMenu = this;
     leftMenu = new PopupMenu(true);
