@@ -1,11 +1,23 @@
 cmake_minimum_required(VERSION 3.5)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-D_Debug)
+else()
+    set(__DECL_RELEASE_WIN32 WIN32)
+endif()
+
+include_directories(src ${CMAKE_BINARY_DIR} thirdparty)
+
+set(UTILS_SOURCES src/ClassData.h)
+
 # 从 version.txt 中读取版本
 file(STRINGS version.txt VER LIMIT_COUNT 1)
 string(LENGTH ${VER} VER_LENGTH)
 string(SUBSTRING ${VER} 1 ${VER_LENGTH}-1 VER)
 
 project(ClassSystem LANGUAGES CXX VERSION ${VER})
+
+configure_file(src/config.h.in config.h)
 
 # 配置 Qt
 set(CMAKE_AUTOUIC ON)
@@ -14,19 +26,6 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets Core Network REQUIRED)
-
-configure_file(src/config.h.in config.h)
-
-set(_RELEASE_WIN32 WIN32)
-
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-D_Debug)
-    set(_RELEASE_WIN32)
-endif()
-
-include_directories(src ${CMAKE_BINARY_DIR} thirdparty)
-
-set(UTILS_SOURCES src/ClassData.h)
 
 # ----------------------------------------------------------------
 # ClassSystem 前台展示端
@@ -38,7 +37,7 @@ qt_wrap_ui(
 )
 add_executable(ClassSystem
 
-    ${_RELEASE_WIN32}
+    ${__DECL_RELEASE_WIN32}
 
     # 资源
     assets/ICON.RC # Windows Only
@@ -77,12 +76,6 @@ target_include_directories(ClassSystem PUBLIC src/ClassSystem)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 
-if(${MSVC})
-    set_target_properties(ClassSystem PROPERTIES
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-    )
-endif()
-
 # ----------------------------------------------------------------
 # ClassAdmin 后台管理端
 # ----------------------------------------------------------------
@@ -96,7 +89,7 @@ qt_wrap_ui(
 )
 add_executable(ClassAdmin
 
-    ${_RELEASE_WIN32}
+    ${__DECL_RELEASE_WIN32}
 
     # 资源
     assets/ICON.RC # Windows Only
@@ -128,9 +121,3 @@ add_executable(ClassAdmin
 target_include_directories(ClassAdmin PUBLIC src/ClassAdmin)
 target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassAdmin PUBLIC src/pch.h)
-
-if(${MSVC})
-    set_target_properties(ClassAdmin PROPERTIES
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-    )
-endif()
