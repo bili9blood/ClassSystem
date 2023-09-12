@@ -19,19 +19,21 @@ class PopupMenu : public QWidget {
 
   Q_OBJECT
  public:
-  explicit PopupMenu(QWidget *parent = nullptr);
+  explicit PopupMenu(bool isOnLeft = false, QWidget *parent = nullptr);
 
  public slots:
   void onBtnClicked();
 
  private:
+  const bool m_isLeftSide;
+
   // buttons
   QWidget m_btnsWidget = QWidget(
       nullptr, Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint);
   QVBoxLayout m_btnsLayout = QVBoxLayout(&m_btnsWidget);
   QList<MenuButton *> m_btnsList;
 
-  // pop menu
+  // popup menu
   QLabel *m_popMenuLabel = new QLabel(this);
 
   QHBoxLayout *m_mainLayout = new QHBoxLayout(this);
@@ -68,4 +70,5 @@ class PopupMenu : public QWidget {
   void enterEvent(QEvent *ev) override;
   void leaveEvent(QEvent *ev) override;
   void moveEvent(QMoveEvent *ev) override;
+  void showEvent(QShowEvent *ev) override;
 };

@@ -4,9 +4,13 @@
 #include <qpainter.h>
 #include <qtextbrowser.h>
 
-PopupMenu::PopupMenu(QWidget *parent)
-    : QWidget{parent,
-              Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint} {
+inline PopupMenu *leftMenu;
+inline PopupMenu *rightMenu;
+
+PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
+    : QWidget(parent,
+              Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint),
+      m_isLeftSide(isOnLeft) {
   setWidgetTransparent(this);
 
   // append buttons
@@ -30,14 +34,35 @@ PopupMenu::PopupMenu(QWidget *parent)
 
   m_mainLayout->setMargin(5);
   setBtnsVisible(true);
+
+  // 左侧
+  if (isOnLeft) {
+    // 镜像
+    m_iconClosed =
+        QPixmap::fromImage(m_iconClosed.toImage().mirrored(true, false));
+    m_iconOpened =
+        QPixmap::fromImage(m_iconOpened.toImage().mirrored(true, false));
+  } else {  // 右侧
+    rightMenu = this;
+    leftMenu = new PopupMenu(true);
+  }
 }
 
 void PopupMenu::updateBtnsPosition() {
-  m_btnsWidget.move(x() - 10 - m_btnsWidget.width(),
-                    qBound(0, y() - m_btnsWidget.height() / 2 + height() / 2,
-                           QApplication::primaryScreen()->size().height() -
-                               m_btnsWidget.height()));
+  const int btnsYPos = [this](int y) {
+    // bound y-pos in screen
+    int maxHeight =
+        QApplication::primaryScreen()->size().height() - m_btnsWidget.height();
+    return qBound(0, y, maxHeight);
+  }(y() - m_btnsWidget.height() / 2 + height() / 2);
+
+  if (m_isLeftSide) {
+    m_btnsWidget.move(x() + width() + 10, btnsYPos);
+  } else {
+    m_btnsWidget.move(x() - 10 - m_btnsWidget.width(), btnsYPos);
+  }
 }
+
 void PopupMenu::setBtnsVisible(bool visible) {
   if (visible) {
     QApplication::setActiveWindow(&m_btnsWidget);
@@ -59,13 +84,13 @@ void PopupMenu::onBtnClicked() {
           break;
 
         case 1:  // 表格
-          m_tableWindow.show();
-          QApplication::setActiveWindow(&m_tableWindow);
+          m_tableWindow.showNormal();
+          m_tableWindow.activateWindow();
           break;
 
         case 2:  // 随机点名
-          m_rollCallWindow.show();
-          QApplication::setActiveWindow(&m_rollCallWindow);
+          m_rollCallWindow.showNormal();
+          m_rollCallWindow.activateWindow();
           break;
 
         case 3:  // 帮助
@@ -96,7 +121,10 @@ bool PopupMenu::eventFilter(QObject *obj, QEvent *ev) {
 
 void PopupMenu::paintEvent(QPaintEvent *) {
   if (m_init) {
-    move(QApplication::primaryScreen()->size().width() - width(), y());
+    const int xPos =
+        m_isLeftSide ? 0
+                     : QApplication::primaryScreen()->size().width() - width();
+    move(xPos, y());
     setBtnsVisible(false);
     m_init = false;
   }
@@ -104,8 +132,14 @@ void PopupMenu::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.setBrush(m_bgColor);
   painter.setPen(Qt::transparent);
-  painter.drawRoundedRect(QRect(rect().topLeft(), rect().size() + QSize(10, 0)),
-                          10, 10);
+  if (m_isLeftSide) {
+    painter.drawRoundedRect(
+        QRect(rect().topLeft() - QPoint(10, 0), rect().size() + QSize(10, 0)),
+        10, 10);
+  } else {
+    painter.drawRoundedRect(
+        QRect(rect().topLeft(), rect().size() + QSize(10, 0)), 10, 10);
+  }
 }
 void PopupMenu::mousePressEvent(QMouseEvent *ev) {
   m_shouldUpdateBtnsVisible = true;
@@ -130,4 +164,17 @@ void PopupMenu::leaveEvent(QEvent *ev) {
   update();
 }
 
-void PopupMenu::moveEvent(QMoveEvent *ev) { updateBtnsPosition(); }
+void PopupMenu::moveEvent(QMoveEvent *ev) {
+  updateBtnsPosition();
+  if (m_isLeftSide) {
+    rightMenu->move(rightMenu->x(), y());
+  } else {
+    leftMenu->move(leftMenu->x(), y());
+  }
+}
+
+void PopupMenu::showEvent(QShowEvent *ev) {
+  if (!m_isLeftSide) {
+    leftMenu->show();
+  }
+}
