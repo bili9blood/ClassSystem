@@ -59,6 +59,12 @@ void inputPwd() {
 }
 
 int main(int argc, char **argv) {
+  if (argc == 2 && strcmp(argv[1], "-v") == 0) {
+    printf("v%d.%d.%d", PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR,
+           PROJECT_VERSION_PATCH);
+    return 0;
+  }
+
   QApplication a(argc, argv);
   QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
   QApplication::setWindowIcon(QIcon(":/img/logo.png"));
