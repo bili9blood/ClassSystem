@@ -23,7 +23,7 @@ class RollCallWindow : public QWidget {
   // only for signal-slots
   void moveToAnother();
 
-  void onTimeout();
+  void pick();
 
  private:
   Ui::RollCallWindow ui;

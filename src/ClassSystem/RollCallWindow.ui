@@ -36,13 +36,13 @@
      <item row="1" column="1">
       <widget class="QSpinBox" name="spinBoxInterval">
        <property name="minimum">
-        <number>80</number>
+        <number>40</number>
        </property>
        <property name="maximum">
         <number>800</number>
        </property>
        <property name="singleStep">
-        <number>10</number>
+        <number>5</number>
        </property>
        <property name="value">
         <number>300</number>

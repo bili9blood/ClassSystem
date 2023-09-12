@@ -15,7 +15,8 @@ RollCallWindow::RollCallWindow(QWidget *parent) : QWidget(parent) {
   }
 
   // init timer
-  connect(&m_timer, &QTimer::timeout, this, &RollCallWindow::onTimeout);
+  m_timer.setTimerType(Qt::PreciseTimer);
+  connect(&m_timer, &QTimer::timeout, this, &RollCallWindow::pick);
 
   // init rng
   m_rng = std::mt19937(std::random_device()());
@@ -52,6 +53,7 @@ void RollCallWindow::toggleStartStop(bool checked) {
     m_timer.start(ui.spinBoxInterval->value());
   } else {
     m_timer.stop();
+    pick();
     moveToAnother(ui.nameList, m_calledIndex, ui.calledList);
   }
 }
@@ -77,7 +79,7 @@ void RollCallWindow::moveToAnother() {
   moveToAnother(src, curRow, dst);
 }
 
-void RollCallWindow::onTimeout() {
+void RollCallWindow::pick() {
   std::uniform_int_distribution<> distrib(0, ui.nameList->count() - 1);
   ui.label->setText(ui.nameList->item(m_calledIndex = distrib(m_rng))->text());
 }
