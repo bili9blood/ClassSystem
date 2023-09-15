@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 
+cmake_policy(SET CMP0091 NEW)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_definitions(-D_Debug)
 else()
     set(__DECL_RELEASE_WIN32 WIN32)
 endif()
 
-include_directories(src ${CMAKE_BINARY_DIR} thirdparty)
+include_directories(src ${CMAKE_BINARY_DIR} include)
 
 set(UTILS_SOURCES src/ClassData.h)
 
@@ -66,8 +68,8 @@ add_executable(ClassSystem
     src/ClassSystem/RollCallWindow.cpp src/ClassSystem/RollCallWindow.h
 
     # 滑动 Stacked Widget
-    thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.cpp
-    thirdparty/QAnimationStackedWidget/QAnimationStackedWidget.h
+    include/QAnimationStackedWidget/QAnimationStackedWidget.cpp
+    include/QAnimationStackedWidget/QAnimationStackedWidget.h
 
     ${CLASSSYSTEM_UI_SOURCES}
     ${UTILS_SOURCES}
@@ -118,6 +120,9 @@ add_executable(ClassAdmin
     ${CLASSADMIN_UI_SOURCES}
     ${UTILS_SOURCES}
 )
+target_link_directories(ClassAdmin PUBLIC lib)
+target_link_libraries(ClassAdmin PUBLIC "quazip1-qt5$<$<CONFIG:Debug>:d>.lib")
+
 target_include_directories(ClassAdmin PUBLIC src/ClassAdmin)
 target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassAdmin PUBLIC src/pch.h)
