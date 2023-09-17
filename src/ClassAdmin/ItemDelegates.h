@@ -1,59 +1,65 @@
 #pragma once
 
 #include <qcheckbox.h>
+#include <qcombobox.h>
 #include <qdatetimeedit.h>
 #include <qitemdelegate.h>
 #include <qlineedit.h>
 
-class IntDelegate : public QItemDelegate {
- public:
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &,
-                        const QModelIndex &) const override {
-    auto lineEdit = new QLineEdit(parent);
-    lineEdit->setValidator(new QIntValidator(0, INT_MAX, lineEdit));
-    return lineEdit;
-  }
+#define ITEM_DELEGATE(name, create, setData)                             \
+  class name : public QItemDelegate {                                    \
+   public:                                                               \
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, \
+                          const QModelIndex &) const override {          \
+      create                                                             \
+    }                                                                    \
+                                                                         \
+    void updateEditorGeometry(QWidget *editor,                           \
+                              const QStyleOptionViewItem &option,        \
+                              const QModelIndex &) const override {      \
+      editor->setGeometry(option.rect);                                  \
+    }                                                                    \
+                                                                         \
+    void setModelData(QWidget *editor, QAbstractItemModel *model,        \
+                      const QModelIndex &index) const override {         \
+      setData                                                            \
+    }                                                                    \
+  };
 
-  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                            const QModelIndex &) const override {
-    editor->setGeometry(option.rect);
-  }
-};
+// clang-format off
 
-class TimeDelegate : public QItemDelegate {
- public:
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &,
-                        const QModelIndex &) const override {
-    return new QTimeEdit(parent);
-  }
+ITEM_DELEGATE(
+              IntDelegate,
+              auto lineEdit = new QLineEdit(parent);
+              lineEdit->setValidator(new QIntValidator(0, INT_MAX, lineEdit));
+              return lineEdit;
+              ,
+             )
 
-  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                            const QModelIndex &) const override {
-    editor->setGeometry(option.rect);
-  }
+ITEM_DELEGATE(
+              TimeDelegate,
+              return new QTimeEdit(parent);
+              ,
+              auto timeEdit = qobject_cast<QTimeEdit *>(editor);
+              model->setData(index, timeEdit->time());
+             )
 
-  void setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index) const override {
-    auto timeEdit = qobject_cast<QTimeEdit *>(editor);
-    model->setData(index, timeEdit->time());
-  }
-};
+ITEM_DELEGATE(
+              DateDelegate,
+              return new QDateEdit(parent);
+              ,
+              auto dateEdit = qobject_cast<QDateEdit *>(editor);
+              model->setData(index, dateEdit->date());
+             )
 
-class DateDelegate : public QItemDelegate {
- public:
-  QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &,
-                        const QModelIndex &) const override {
-    return new QDateEdit(parent);
-  }
+ITEM_DELEGATE(
+              DayInWeekDelegate,
+              auto comboBox = new QComboBox(parent);
+              comboBox->addItems({"周一", "周二", "周三", "周四", "周五"});
+              return comboBox;
+              ,
+              auto comboBox = qobject_cast<QComboBox *>(editor);
+              model->setData(index, comboBox->currentIndex());
+             )
 
-  void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                            const QModelIndex &) const override {
-    editor->setGeometry(option.rect);
-  }
-
-  void setModelData(QWidget *editor, QAbstractItemModel *model,
-                    const QModelIndex &index) const override {
-    auto dateEdit = qobject_cast<QDateEdit *>(editor);
-    model->setData(index, dateEdit->date());
-  }
-};
+#undef ITEM_DELEGATE
