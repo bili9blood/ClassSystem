@@ -120,8 +120,7 @@ add_executable(ClassAdmin
     ${CLASSADMIN_UI_SOURCES}
     ${UTILS_SOURCES}
 )
-target_link_directories(ClassAdmin PUBLIC lib)
-target_link_libraries(ClassAdmin PUBLIC "quazip1-qt5$<$<CONFIG:Debug>:d>.lib")
+target_link_libraries(ClassAdmin PUBLIC "quazip1-qt5$<$<CONFIG:Debug>:d>")
 
 target_include_directories(ClassAdmin PUBLIC src/ClassAdmin)
 target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
