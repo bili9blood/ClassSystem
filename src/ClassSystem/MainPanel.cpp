@@ -396,7 +396,6 @@ void MainPanel::onReadyRead() {
       ClassData::writeTo(classData, &file);
       loadData();
       m_menu->m_tableWindow.loadData();
-      m_menu->m_rollCallWindow.loadData();
       break;
     }
   }

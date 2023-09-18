@@ -10,7 +10,6 @@ class RollCallWindow : public QWidget {
   Q_OBJECT
  public:
   explicit RollCallWindow(QWidget *parent = nullptr);
-  void loadData();
 
  private slots:
   void reset();

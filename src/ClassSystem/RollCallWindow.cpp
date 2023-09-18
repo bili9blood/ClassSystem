@@ -4,10 +4,8 @@
 
 #include "ClassData.h"
 
-
 RollCallWindow::RollCallWindow(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);
-  loadData();
   reset();
 
   // init font-size combobox
@@ -23,16 +21,6 @@ RollCallWindow::RollCallWindow(QWidget *parent) : QWidget(parent) {
 
   // init rng
   m_rng = std::mt19937(std::random_device()());
-}
-
-void RollCallWindow::loadData() {
-  QFile file("data.stm");
-  if (!file.exists() || !ClassData::readFrom(&file, classData)) {
-    QMessageBox::critical(this, "ClassSystem",
-                          "无法读取数据！<br/>程序将关闭。");
-    exit(0);
-  }
-  file.close();
 }
 
 void RollCallWindow::reset() {
