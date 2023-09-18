@@ -4,6 +4,8 @@
 #include <qpainter.h>
 #include <qtextbrowser.h>
 
+#include "ClassData.h"
+
 inline PopupMenu *leftMenu;
 inline PopupMenu *rightMenu;
 
@@ -91,9 +93,17 @@ void PopupMenu::onBtnClicked() {
           break;
 
         case 2:  // 随机点名
+        {
+          auto iter =
+              std::ranges::find_if(classData.lessonsTm, [](const QTime &time) {
+                const auto cur = QTime::currentTime();
+                return cur >= time && cur <= time.addSecs(2400);
+              });
+          if (iter == classData.lessonsTm.cend()) break;
           m_rollCallWindow.showNormal();
           m_rollCallWindow.activateWindow();
           break;
+        }
 
         case 3:  // 帮助
           QDesktopServices::openUrl({"https://class-system-docs.gitee.io/"});
