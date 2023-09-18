@@ -7,8 +7,7 @@
 EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
                                      QWidget *parent)
     : QDialog(parent, Qt::MSWindowsFixedSizeDialogHint),
-      m_dayOfWeek(dayOfWeek),
-      m_data(data) {
+      m_dayOfWeek(dayOfWeek) {
   ui.setupUi(this);
 
   auto mealStu = data.mealStu[dayOfWeek];
@@ -30,7 +29,7 @@ EditMealStuDialog::EditMealStuDialog(int dayOfWeek, ClassData::Data data,
 }
 
 std::pair<ClassData::Data, QString> EditMealStuDialog::getResult() {
-  return {m_data, ui.labelPreview->text()};
+  return {classData, ui.labelPreview->text()};
 }
 
 void EditMealStuDialog::addMealStu() {
@@ -51,14 +50,14 @@ void EditMealStuDialog::removeMealStu() {
     item = nullptr;
   }
 
-  m_data.mealStu[m_dayOfWeek].removeAt(ui.listWidget->currentRow());
+  classData.mealStu[m_dayOfWeek].removeAt(ui.listWidget->currentRow());
   m_changed = true;
 }
 
 void EditMealStuDialog::onDataChanged(const QModelIndex &idx,
                                       const QModelIndex &,
                                       const QVector<int> &) {
-  QList<uint> &ls = m_data.mealStu[m_dayOfWeek];
+  QList<uint> &ls = classData.mealStu[m_dayOfWeek];
   while (idx.row() >= ls.size()) ls << 0;
   ls[idx.row()] = idx.data().toUInt();
   m_changed = true;
@@ -72,7 +71,7 @@ void EditMealStuDialog::paintEvent(QPaintEvent *) {
   // gen preview
   QString previewStr;
   for (int i = 0; i < ui.listWidget->count(); ++i) {
-    previewStr += m_data.idAndName(ui.listWidget->item(i)->text().toUInt());
+    previewStr += classData.idAndName(ui.listWidget->item(i)->text().toUInt());
     if (i + 1 < ui.listWidget->count()) previewStr += ' ';
   }
   ui.labelPreview->setText(previewStr);

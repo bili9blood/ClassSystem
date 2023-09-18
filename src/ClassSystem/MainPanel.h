@@ -23,7 +23,6 @@
 #include <qsettings.h>
 #include <qtimer.h>
 
-#include "ClassData.h"
 #include "PopupMenu.h"
 #include "TitleWidget.h"
 
@@ -59,8 +58,6 @@ class MainPanel : public QWidget {
   QLabel *m_labelDDDD = new QLabel("星期八", this);
   QLabel *m_sentenceLabel = new QLabel(this);
   TitleWidget *m_title = new TitleWidget("ClassSystem", this);
-
-  ClassData::Data m_data;
 
   // lessons
   QTableWidget *m_lessons = new QTableWidget(9, 1, this);
@@ -114,4 +111,5 @@ class MainPanel : public QWidget {
   void resizeEvent(QResizeEvent *ev) override;
   void moveEvent(QMoveEvent *ev) override;
   void timerEvent(QTimerEvent *ev) override;
+  void closeEvent(QCloseEvent *ev) override;
 };

@@ -8,6 +8,8 @@
 #include <qrandom.h>
 #include <qsizepolicy.h>
 
+#include "ClassData.h"
+
 MainPanel::MainPanel(QWidget *parent)
     : QWidget(parent, Qt::FramelessWindowHint) {
   setWidgetTransparent(this);
@@ -191,15 +193,6 @@ QFrame {
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTable, 0);
 
-  QFile file("data.stm");
-
-  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
-    QMessageBox::critical(this, "ClassSystem",
-                          "无法读取数据！<br/>程序将关闭。");
-    exit(0);
-  }
-  file.close();
-
   loadData();
   initLocalSocket();
 }
@@ -219,14 +212,14 @@ void MainPanel::loadData() {
 
   m_lessons->clear();
 
-  auto lessonsToday = m_data.lessons[dayToday()];
+  auto lessonsToday = classData.lessons[dayToday()];
   m_lessons->setRowCount(lessonsToday.size());
-  for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
+  for (int i = 0; i < classData.lessonsTm.size(); ++i) {
     m_lessons->setItem(
         i, 0,
         new QTableWidgetItem("%1(%2-%3)"_s.arg(
-            lessonsToday[i], m_data.lessonsTm[i].toString("hh:mm"),
-            m_data.lessonsTm[i].addSecs(2400).toString("hh:mm"))));
+            lessonsToday[i], classData.lessonsTm[i].toString("hh:mm"),
+            classData.lessonsTm[i].addSecs(2400).toString("hh:mm"))));
   }
 
   m_lessons->setMinimumWidth([this] {
@@ -249,7 +242,7 @@ void MainPanel::loadData() {
     b->deleteLater();
   }
 
-  for (const auto &[date, str, fontPtSize] : m_data.notices) {
+  for (const auto &[date, str, fontPtSize] : classData.notices) {
     auto b = new QTextBrowser(this);
     b->setText(str);
     b->setStyleSheet("color: #d2d0ce;background-color: transparent");
@@ -265,11 +258,11 @@ void MainPanel::loadData() {
 
   /* --------------------------- days left -------------------------- */
 
-  if (m_data.events.size()) {
+  if (classData.events.size()) {
     m_eventNameLabel->setText(
-        "离%1剩余天数:"_s.arg(m_data.events.front().name));
+        "离%1剩余天数:"_s.arg(classData.events.front().name));
     m_daysLeftDisplay->display(
-        (int)QDate::currentDate().daysTo(m_data.events.front().date));
+        (int)QDate::currentDate().daysTo(classData.events.front().date));
   } else {
     m_eventNameLabel->setText("无事件");
     m_daysLeftDisplay->display("");
@@ -280,11 +273,11 @@ void MainPanel::loadData() {
   m_mealStuTable->clear();
   m_mealStuTable->setColumnCount(1);
 
-  const auto mealStuToday = m_data.mealStu[dayToday()];
+  const auto mealStuToday = classData.mealStu[dayToday()];
   m_mealStuTable->setRowCount(mealStuToday.size());
   for (int i = 0; i < mealStuToday.size(); ++i) {
     m_mealStuTable->setItem(
-        i, 0, new QTableWidgetItem(m_data.idAndName(mealStuToday[i])));
+        i, 0, new QTableWidgetItem(classData.idAndName(mealStuToday[i])));
   }
 
   m_mealStuTable->setMinimumHeight(
@@ -293,9 +286,9 @@ void MainPanel::loadData() {
   /* ----------------------- students on duty ----------------------- */
 
   m_stuOnDutyTable->clear();
-  m_stuOnDutyTable->setRowCount(m_data.dutyJobs.size());
+  m_stuOnDutyTable->setRowCount(classData.dutyJobs.size());
 
-  const auto stuOnDutyToday = m_data.stuOnDuty[dayToday()];
+  const auto stuOnDutyToday = classData.stuOnDuty[dayToday()];
   m_stuOnDutyTable->setColumnCount(
       std::max_element(
           stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
@@ -306,18 +299,19 @@ void MainPanel::loadData() {
   const QFont dutyJobFont =
       qFont{.pointSize = settings::mediumFontSize + 2, .weight = QFont::Bold}();
 
-  for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
-    auto dutyJobItem = new QTableWidgetItem(m_data.dutyJobs[i] + " ");
+  for (int i = 0; i < classData.dutyJobs.size(); ++i) {
+    auto dutyJobItem = new QTableWidgetItem(classData.dutyJobs[i] + " ");
     dutyJobItem->setFont(dutyJobFont);
     m_stuOnDutyTable->setItem(i, 0, dutyJobItem);
 
     for (int j = 0; j < stuOnDutyToday[i].size(); ++j)
       m_stuOnDutyTable->setItem(
           i, j + 1,
-          new QTableWidgetItem(m_data.idAndName(stuOnDutyToday[i][j]) + " "));
+          new QTableWidgetItem(classData.idAndName(stuOnDutyToday[i][j]) +
+                               " "));
   }
 
-  m_stuOnDutyTable->setMinimumHeight(m_data.dutyJobs.size() *
+  m_stuOnDutyTable->setMinimumHeight(classData.dutyJobs.size() *
                                      (QFontMetrics(dutyJobFont).height() + 2));
   m_stuOnDutyTable->setMinimumWidth([this, dutyJobFont, stuOnDutyToday] {
     int width = 0;
@@ -325,7 +319,7 @@ void MainPanel::loadData() {
     QFontMetrics stuMetrics(m_stuOnDutyTable->fontMetrics());
 
     for (int i = 0; i < m_stuOnDutyTable->rowCount(); ++i) {
-      int w = dutyJobMetrics.horizontalAdvance(m_data.dutyJobs[i] + " ");
+      int w = dutyJobMetrics.horizontalAdvance(classData.dutyJobs[i] + " ");
       width = qMax(width, w);
     }
 
@@ -392,16 +386,17 @@ void MainPanel::onReadyRead() {
     case MsgType::Request: {
       QBuffer writeBuf;
       writeBuf.open(QBuffer::WriteOnly);
-      ClassData::writeTo(m_data, &writeBuf);
+      ClassData::writeTo(classData, &writeBuf);
       m_socket->write(writeBuf.data());
       break;
     }
     case MsgType::Save: {
-      ClassData::readFrom(&b, m_data);
+      ClassData::readFrom(&b, classData);
       QFile file("data.stm");
-      ClassData::writeTo(m_data, &file);
+      ClassData::writeTo(classData, &file);
       loadData();
       m_menu->m_tableWindow.loadData();
+      m_menu->m_rollCallWindow.loadData();
       break;
     }
   }
@@ -493,10 +488,12 @@ void MainPanel::timerEvent(QTimerEvent *ev) {
       return b ? QColor(229, 192, 123) : QColor(206, 210, 206);
     };
 
-    for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
-      auto tm = m_data.lessonsTm[i];
+    for (int i = 0; i < classData.lessonsTm.size(); ++i) {
+      auto tm = classData.lessonsTm[i];
       m_lessons->item(i, 0)->setForeground(
           color(kCur >= tm.addSecs(-600) && kCur <= tm.addSecs(2400)));
     }
   }
 }
+
+void MainPanel::closeEvent(QCloseEvent *ev) { QApplication::quit(); }

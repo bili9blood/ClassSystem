@@ -18,7 +18,6 @@ class EditMealStuDialog : public QDialog {
   Ui::EditMealStuDialog ui;
 
   int m_dayOfWeek;
-  ClassData::Data m_data;
 
   bool m_changed = false;
 

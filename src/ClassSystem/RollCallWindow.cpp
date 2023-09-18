@@ -2,6 +2,9 @@
 
 #include <qmessagebox.h>
 
+#include "ClassData.h"
+
+
 RollCallWindow::RollCallWindow(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);
   loadData();
@@ -24,7 +27,7 @@ RollCallWindow::RollCallWindow(QWidget *parent) : QWidget(parent) {
 
 void RollCallWindow::loadData() {
   QFile file("data.stm");
-  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
+  if (!file.exists() || !ClassData::readFrom(&file, classData)) {
     QMessageBox::critical(this, "ClassSystem",
                           "无法读取数据！<br/>程序将关闭。");
     exit(0);
@@ -39,7 +42,7 @@ void RollCallWindow::reset() {
   ui.nameList->clear();
   ui.calledList->clear();
 
-  ui.nameList->addItems(m_data.students.values());
+  ui.nameList->addItems(classData.students.values());
 }
 
 void RollCallWindow::toggleStartStop(bool checked) {

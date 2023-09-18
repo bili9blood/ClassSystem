@@ -56,25 +56,17 @@ QTabBar::tab:selected {
 }
 
 void TableWindow::loadData() {
-  QFile file("data.stm");
-  if (!file.exists() || !ClassData::readFrom(&file, m_data)) {
-    QMessageBox::critical(this, "ClassSystem",
-                          "无法读取数据！<br/>程序将关闭。");
-    exit(0);
-  }
-  file.close();
-
   // lessons
   m_lessonsTable->clear();
   for (int i = 0; i < 5; ++i) {
     m_lessonsTable->setHorizontalHeaderItem(
         i, new QTableWidgetItem(oneDayOfWeek(i)));
-    for (int j = 0; j < m_data.lessons[i].size(); ++j) {
+    for (int j = 0; j < classData.lessons[i].size(); ++j) {
       m_lessonsTable->setVerticalHeaderItem(
           j, new QTableWidgetItem("第%1节"_s.arg(j + 1)));
       auto item = new QTableWidgetItem("%1\n(%2-%3)"_s.arg(
-          m_data.lessons[i][j], m_data.lessonsTm[j].toString("hh:mm"),
-          m_data.lessonsTm[j].addSecs(2400).toString("hh:mm")));
+          classData.lessons[i][j], classData.lessonsTm[j].toString("hh:mm"),
+          classData.lessonsTm[j].addSecs(2400).toString("hh:mm")));
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(qFont{.family = "华文中宋",
                           .pointSize = kPointSizeList[m_pointSizeIndex]}());
@@ -84,17 +76,19 @@ void TableWindow::loadData() {
   }
 
   // students carry meals
-  int mx = std::max<int>({m_data.mealStu[0].size(), m_data.mealStu[1].size(),
-                          m_data.mealStu[2].size(), m_data.mealStu[3].size(),
-                          m_data.mealStu[4].size()});
+  int mx =
+      std::max<int>({classData.mealStu[0].size(), classData.mealStu[1].size(),
+                     classData.mealStu[2].size(), classData.mealStu[3].size(),
+                     classData.mealStu[4].size()});
 
   m_mealStuTable->clear();
   m_mealStuTable->setRowCount(mx);
   for (int i = 0; i < 5; ++i) {
     m_mealStuTable->setHorizontalHeaderItem(
         i, new QTableWidgetItem(oneDayOfWeek(i)));
-    for (int j = 0; j < m_data.mealStu[i].size(); ++j) {
-      auto item = new QTableWidgetItem(m_data.idAndName(m_data.mealStu[i][j]));
+    for (int j = 0; j < classData.mealStu[i].size(); ++j) {
+      auto item =
+          new QTableWidgetItem(classData.idAndName(classData.mealStu[i][j]));
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(qFont{.family = "华文中宋",
                           .pointSize = kPointSizeList[m_pointSizeIndex]}());
@@ -105,17 +99,17 @@ void TableWindow::loadData() {
 
   // students on duty
   m_stuOnDutyTable->clear();
-  m_stuOnDutyTable->setRowCount(m_data.dutyJobs.size());
+  m_stuOnDutyTable->setRowCount(classData.dutyJobs.size());
   for (int i = 0; i < 5; ++i) {
     m_stuOnDutyTable->setHorizontalHeaderItem(
         i, new QTableWidgetItem(oneDayOfWeek(i)));
-    for (int j = 0; j < m_data.dutyJobs.size(); ++j) {
+    for (int j = 0; j < classData.dutyJobs.size(); ++j) {
       m_stuOnDutyTable->setVerticalHeaderItem(
-          j, new QTableWidgetItem(m_data.dutyJobs[j]));
+          j, new QTableWidgetItem(classData.dutyJobs[j]));
       QString str;
-      for (const uint &id : m_data.stuOnDuty[i][j]) {
+      for (const uint &id : classData.stuOnDuty[i][j]) {
         if (str.size()) str += '\n';
-        str += m_data.idAndName(id);
+        str += classData.idAndName(id);
       }
       auto item = new QTableWidgetItem(str);
       item->setTextAlignment(Qt::AlignCenter);

@@ -48,7 +48,9 @@ PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
   }
 }
 
-PopupMenu::~PopupMenu() { delete leftMenu; }
+PopupMenu::~PopupMenu() {
+  if (this == rightMenu) delete leftMenu;
+}
 
 void PopupMenu::updateBtnsPosition() {
   const int btnsYPos = [this](int y) {

@@ -24,8 +24,8 @@ class NoticesCellWidget : public QFrame {
 
   int m_row;
 
-  QFontDatabase m_dataBase;
-  const QList<int> kPointSizeList = m_dataBase.pointSizes("微软雅黑");
+  QFontDatabase m_fontDb;
+  const QList<int> kPointSizeList = m_fontDb.pointSizes("微软雅黑");
 
   ClassNotice m_notice;
 };

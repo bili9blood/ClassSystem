@@ -14,7 +14,7 @@ class ChangeDataCommand : public QUndoCommand {
                              QUndoCommand *parent = nullptr)
       : QUndoCommand(parent),
         m_before(before),
-        m_after(window->m_data),
+        m_after(classData),
         m_window(window) {
     setText(_text);
   }
@@ -22,7 +22,7 @@ class ChangeDataCommand : public QUndoCommand {
   void undo() override {
     if (m_window->m_doingChange) return;
 
-    m_window->m_data = m_before;
+    classData = m_before;
     m_window->loadData();
     m_window->update();
     m_window->m_changed = true;
@@ -31,7 +31,7 @@ class ChangeDataCommand : public QUndoCommand {
   void redo() override {
     if (m_window->m_doingChange) return;
 
-    m_window->m_data = m_after;
+    classData = m_after;
     m_window->loadData();
     m_window->update();
     m_window->m_changed = true;
