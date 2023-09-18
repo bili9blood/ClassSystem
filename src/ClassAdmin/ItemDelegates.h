@@ -6,12 +6,12 @@
 #include <qitemdelegate.h>
 #include <qlineedit.h>
 
-#define ITEM_DELEGATE(name, create, setData)                             \
+#define ITEM_DELEGATE(name, onCreate, setData)                           \
   class name : public QItemDelegate {                                    \
    public:                                                               \
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, \
                           const QModelIndex &) const override {          \
-      create                                                             \
+      onCreate                                                           \
     }                                                                    \
                                                                          \
     void updateEditorGeometry(QWidget *editor,                           \
