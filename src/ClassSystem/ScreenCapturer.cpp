@@ -35,9 +35,7 @@ void ScreenCapturer::capture() {
 QRect ScreenCapturer::absRect(const QRect &r) {
   // clang-format off
       int top    = qMin(m_captureRect.top(), m_captureRect.bottom()),
-          bottom = qMax(m_captureRect.top(), m_captureRect.bottom()),
-          left   = qMin(m_captureRect.left(), m_captureRect.right()),
-          right  = qMax(m_captureRect.left(), m_captureRect.right());
+          left   = qMin(m_captureRect.left(), m_captureRect.right());
   // clang-format on
   return QRect(left, top, std::abs(r.width()), std::abs(r.height()));
 }
