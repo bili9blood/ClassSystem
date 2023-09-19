@@ -8,8 +8,7 @@
 class StuOnDutyCellWidget : public QWidget {
   Q_OBJECT
  public:
-  explicit StuOnDutyCellWidget(int row, int column, QList<uint> stuOnDuty,
-                               QWidget *parent = nullptr);
+  explicit StuOnDutyCellWidget(int row, int column, QWidget *parent = nullptr);
 
  signals:
   void edited(QList<uint>, int row, int col);
@@ -23,7 +22,7 @@ class StuOnDutyCellWidget : public QWidget {
                      const QVector<int> &);
 
  private:
-  QList<uint> m_stuOnDuty;
+  QList<uint> &m_stuOnDuty;
   int m_row;
   int m_col;
 

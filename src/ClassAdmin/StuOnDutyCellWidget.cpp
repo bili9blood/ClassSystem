@@ -1,15 +1,23 @@
 #include "StuOnDutyCellWidget.h"
 
+#include <qelapsedtimer.h>
+
+#include "ClassData.h"
 #include "ItemDelegates.h"
 
-StuOnDutyCellWidget::StuOnDutyCellWidget(int row, int column,
-                                         QList<uint> stuOnDuty, QWidget *parent)
-    : QWidget(parent), m_stuOnDuty(stuOnDuty), m_row(row), m_col(column) {
+StuOnDutyCellWidget::StuOnDutyCellWidget(int row, int column, QWidget *parent)
+    : QWidget(parent),
+      m_stuOnDuty(classData.stuOnDuty[column - 1][row]),
+      m_row(row),
+      m_col(column) {
+  QElapsedTimer t;
+  t.start();
   ui.setupUi(this);
+  qDebug() << t.elapsed();
 
   ui.listWidget->setItemDelegate(new IntDelegate);
 
-  for (const uint &id : stuOnDuty) {
+  for (const uint &id : m_stuOnDuty) {
     if (!id) continue;
     auto item = new QListWidgetItem(QString::number(id));
     item->setFlags(item->flags() | Qt::ItemIsEditable);
@@ -27,6 +35,7 @@ StuOnDutyCellWidget::StuOnDutyCellWidget(int row, int column,
   policy.setRetainSizeWhenHidden(true);
   ui.btnAdd->setSizePolicy(policy);
   ui.btnRemove->setSizePolicy(policy);
+  // qDebug() << t.elapsed();
 }
 
 void StuOnDutyCellWidget::onAdd() {
