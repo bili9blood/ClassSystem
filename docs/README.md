@@ -6,18 +6,26 @@ ClassSystem 是一个展示 [班级信息](/class-data) ，帮助班干和老�
 
 ```card
 title: 文昱翀
-desc: 程序、文档
+desc: 程序、创意、文档
 logo: /img/yu-chong.png
 ```
 
 ```card
 title: 陈梓畅
-desc: 文档、测试
+desc: 文档、测试、创意
 logo: /img/zi-chang.png
 ```
 
 ```card
 title: 黄梓骞
-desc: 图标、设计
+desc: 图标设计
 logo: /img/zi-qian.png
 ```
+
+# 反馈
+
+若在使用过程中遇到问题，可通过以下方式反馈：
+
+- QQ: 3501202786（文昱翀）、1405596214（陈梓畅）
+- [Github Issues(需要 Github 账号)](https://github.com/bili9blood/ClassSystem/issues/new)
+- 找文昱翀或陈梓畅本人
