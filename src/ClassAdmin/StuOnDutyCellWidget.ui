@@ -13,11 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="spacing">
-    <number>0</number>
-   </property>
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="3">
     <widget class="QListWidget" name="listWidget">
      <property name="verticalScrollMode">
       <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -27,47 +24,27 @@
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>0</number>
+   <item row="1" column="1">
+    <widget class="QToolButton" name="btnAdd">
+     <property name="text">
+      <string>...</string>
      </property>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btnAdd">
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../assets/ClassAdmin.qrc">
-         <normaloff>:/img/add.png</normaloff>:/img/add.png</iconset>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btnRemove">
-       <property name="text">
-        <string>...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../assets/ClassAdmin.qrc">
-         <normaloff>:/img/subtract.png</normaloff>:/img/subtract.png</iconset>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="icon">
+      <iconset resource="../../assets/ClassAdmin.qrc">
+       <normaloff>:/img/add.png</normaloff>:/img/add.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QToolButton" name="btnRemove">
+     <property name="text">
+      <string>...</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../assets/ClassAdmin.qrc">
+       <normaloff>:/img/subtract.png</normaloff>:/img/subtract.png</iconset>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
