@@ -391,8 +391,7 @@ void MainWindow::addDutyJob() {
   ui.stuOnDutyTable->setItem(row, 0, jobItem);
 
   for (int i = 0; i < 5; ++i) {
-    auto widget = new StuOnDutyCellWidget(
-        row, i + 1, classData.stuOnDuty[i][row], ui.stuOnDutyTable);
+    auto widget = new StuOnDutyCellWidget(row, i + 1, ui.stuOnDutyTable);
     connect(widget, &StuOnDutyCellWidget::edited, this,
             &MainWindow::onStuOnDutyEdited);
     ui.stuOnDutyTable->setCellWidget(row, i + 1, widget);
@@ -1147,8 +1146,7 @@ void MainWindow::loadData() {
     ui.stuOnDutyTable->setItem(i, 0, jobItem);
 
     for (int j = 0; j < 5; ++j) {
-      auto widget = new StuOnDutyCellWidget(i, j + 1, classData.stuOnDuty[j][i],
-                                            ui.stuOnDutyTable);
+      auto widget = new StuOnDutyCellWidget(i, j + 1, ui.stuOnDutyTable);
       connect(widget, &StuOnDutyCellWidget::edited, this,
               &MainWindow::onStuOnDutyEdited);
       ui.stuOnDutyTable->setCellWidget(i, j + 1, widget);
