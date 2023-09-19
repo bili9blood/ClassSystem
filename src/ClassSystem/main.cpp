@@ -74,6 +74,17 @@ int main(int argc, char **argv) {
   createDirs();
 
   settings::loadIni();
+
+  QFile dataFile("data.stm");
+  if (!dataFile.exists() || !ClassData::readFrom(&dataFile, classData)) {
+    QMessageBox::critical(nullptr, "ClassSystem",
+                          "无法读取数据！<br/>程序将关闭。");
+    return 0;
+  }
+  dataFile.close();
+
+  QApplication::setQuitOnLastWindowClosed(false);
+
   // 显示主面板
   MainPanel panel;
   panel.show();

@@ -129,3 +129,5 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data,
   return true;
 }
 }  // namespace ClassData
+
+inline ClassData::Data classData;

@@ -24,11 +24,9 @@ class TableWindow : public QWidget {
   QTableWidget *m_mealStuTable = new QTableWidget(this);
   QTableWidget *m_stuOnDutyTable = new QTableWidget(this);
 
-  QFontDatabase m_dataBase;
-  const QList<int> kPointSizeList = m_dataBase.pointSizes("华文中宋");
+  QFontDatabase m_fontDb;
+  const QList<int> kPointSizeList = m_fontDb.pointSizes("华文中宋");
   int m_pointSizeIndex = kPointSizeList.indexOf(16);
-
-  ClassData::Data m_data;
 
  protected:
   void wheelEvent(QWheelEvent *ev) override;

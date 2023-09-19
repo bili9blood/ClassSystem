@@ -115,11 +115,11 @@ void MainWindow::addStudent() {
 
 void MainWindow::removeStudent() {
   bool changed = false;
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
   for (const auto &r : ui.studentsTable->selectedRanges()) {
     for (int i = r.bottomRow(); i >= r.topRow(); --i) {
       if (auto item = ui.studentsTable->item(i, 0))
-        m_data.students.remove(item->text().toUInt());
+        classData.students.remove(item->text().toUInt());
       ui.studentsTable->removeRow(i);
       changed = true;
     }
@@ -130,7 +130,7 @@ void MainWindow::removeStudent() {
 }
 
 void MainWindow::clearStudents() {
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
   if (!ui.studentsTable->rowCount()) return;
   if (!m_loadingData &&
       QMessageBox::warning(this, "清除学生", "所有的学生将被清除，确认继续？",
@@ -138,14 +138,14 @@ void MainWindow::clearStudents() {
     return;
   while (ui.studentsTable->rowCount()) ui.studentsTable->removeRow(0);
   if (!m_loadingData) {
-    m_data.students.clear();
+    classData.students.clear();
     change(before, "清除学生");
   }
 }
 
 void MainWindow::importStudents() {
   bool changed = false;
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
   ImportDialog dlg("1\t张三<br/>2\t李四<br/>3\t王五<br/>", this);
   if (QDialog::Rejected == dlg.exec()) return;
   QStringList students = dlg.getData().remove('\r').split('\n');
@@ -170,7 +170,7 @@ void MainWindow::importStudents() {
     ui.studentsTable->insertRow(row);
     ui.studentsTable->setItem(row, 0, new QTableWidgetItem(id));
     ui.studentsTable->setItem(row, 1, new QTableWidgetItem(name));
-    m_data.students[idNum] = name;
+    classData.students[idNum] = name;
     changed = true;
   }
   if (changed) {
@@ -180,7 +180,7 @@ void MainWindow::importStudents() {
 
 void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
                                    const QVector<int> &) {
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
   if (m_loadingData) return;
   int row = idx.row();
 
@@ -193,7 +193,7 @@ void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
   if (ui.studentsTable->item(row, 1))
     name = ui.studentsTable->item(row, 1)->text();
 
-  m_data.students[id] = name;
+  classData.students[id] = name;
 
   change(before, "编辑学生");
 }
@@ -203,25 +203,25 @@ void MainWindow::onStudentsChanged(const QModelIndex &idx, const QModelIndex &,
 /* ---------------------------------------------------------------- */
 
 void MainWindow::editMealStu() {
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
   auto btn = qobject_cast<QPushButton *>(sender());
   int idx = m_mealStuBtns.indexOf(btn);
-  EditMealStuDialog dlg(idx, m_data, this);
+  EditMealStuDialog dlg(idx, classData, this);
   if (QDialog::Rejected == dlg.exec()) return;
   QString str;
-  std::tie(m_data, str) = dlg.getResult();
+  std::tie(classData, str) = dlg.getResult();
   m_mealStuLabels[idx]->setText("%1：%2"_s.arg(oneDayOfWeek(idx), str));
   change(before, "编辑抬饭生");
 }
 
 void MainWindow::clearMealStu() {
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
   int code = QMessageBox::warning(
       this, "清除抬饭生", "所有的抬饭生将被清除，确认继续？", "确认", "取消");
   if (1 == code) return;
 
   for (int i = 0; i < 5; ++i) {
-    m_data.mealStu[i].clear();
+    classData.mealStu[i].clear();
     m_mealStuLabels[i]->setText(oneDayOfWeek(i) + "：");
   }
 
@@ -245,7 +245,7 @@ void MainWindow::importMealStu() {
       // 学号模式
       [this](QString str) {
         bool changed = false;
-        ClassData::Data before = m_data;
+        ClassData::Data before = classData;
         auto lines = str.remove('\r').split('\n');
         if (lines.empty()) return;
         if (!QRegExp(R"(((\d*\t){4}\d*\t*\n*)+)").exactMatch(str)) {
@@ -260,11 +260,11 @@ void MainWindow::importMealStu() {
             if (ch == '\t') {
               ++i;
               if (!tmp) continue;
-              m_data.mealStu[i] << tmp;
+              classData.mealStu[i] << tmp;
 
               QString text = m_mealStuLabels[i]->text();
               if (text.size()) text += ' ';
-              text += m_data.idAndName(tmp);
+              text += classData.idAndName(tmp);
               m_mealStuLabels[i]->setText(text);
 
               tmp = 0;
@@ -275,11 +275,11 @@ void MainWindow::importMealStu() {
             tmp = tmp * 10 + (ch.toLatin1() ^ 48);
           }
           if (tmp) {
-            m_data.mealStu[4] << tmp;
+            classData.mealStu[4] << tmp;
 
             QString text = m_mealStuLabels[4]->text();
             if (text.size()) text += ' ';
-            text += m_data.idAndName(tmp);
+            text += classData.idAndName(tmp);
             m_mealStuLabels[4]->setText(text);
 
             tmp = 0;
@@ -294,7 +294,7 @@ void MainWindow::importMealStu() {
       // 姓名模式
       [this](QString str) {
         bool changed = false;
-        ClassData::Data before = m_data;
+        ClassData::Data before = classData;
         auto lines = str.remove('\r').split('\n');
         if (lines.empty()) return;
         if (!QRegExp(R"(((\S*\t){4}\S*\t*\n*)+)").exactMatch(str)) {
@@ -310,12 +310,12 @@ void MainWindow::importMealStu() {
               ++i;
               tmp = tmp.trimmed();
               if (tmp.isEmpty()) continue;
-              uint id = m_data.students.key(tmp);
-              m_data.mealStu[i] << id;
+              uint id = classData.students.key(tmp);
+              classData.mealStu[i] << id;
 
               QString text = m_mealStuLabels[i]->text();
               if (text.size()) text += ' ';
-              text += m_data.idAndName(id);
+              text += classData.idAndName(id);
               m_mealStuLabels[i]->setText(text);
 
               tmp.clear();
@@ -327,12 +327,12 @@ void MainWindow::importMealStu() {
           }
           tmp = tmp.trimmed();
           if (tmp.size()) {
-            uint id = m_data.students.key(tmp);
-            m_data.mealStu[4] << id;
+            uint id = classData.students.key(tmp);
+            classData.mealStu[4] << id;
 
             QString text = m_mealStuLabels[4]->text();
             if (text.size()) text += ' ';
-            text += m_data.idAndName(id);
+            text += classData.idAndName(id);
             m_mealStuLabels[4]->setText(text);
 
             changed = true;
@@ -346,7 +346,7 @@ void MainWindow::importMealStu() {
   /* ------------------------- constants end ------------------------ */
 
   bool empty = true;
-  for (const auto &ls : m_data.mealStu) {
+  for (const auto &ls : classData.mealStu) {
     if (ls.size()) {
       empty = false;
       break;
@@ -375,12 +375,12 @@ void MainWindow::addDutyJob() {
   int row = ui.stuOnDutyTable->rowCount();
   ui.stuOnDutyTable->setRowCount(row + 1);
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  auto &jobs = m_data.dutyJobs;
+  auto &jobs = classData.dutyJobs;
   while (jobs.size() <= row) jobs << "";
   for (int i = 0; i < 5; ++i) {
-    auto &ls = m_data.stuOnDuty[i];
+    auto &ls = classData.stuOnDuty[i];
     while (ls.size() <= row) ls << QList<uint>();
   }
 
@@ -391,8 +391,8 @@ void MainWindow::addDutyJob() {
   ui.stuOnDutyTable->setItem(row, 0, jobItem);
 
   for (int i = 0; i < 5; ++i) {
-    auto widget = new StuOnDutyCellWidget(row, i + 1, m_data.stuOnDuty[i][row],
-                                          ui.stuOnDutyTable);
+    auto widget = new StuOnDutyCellWidget(
+        row, i + 1, classData.stuOnDuty[i][row], ui.stuOnDutyTable);
     connect(widget, &StuOnDutyCellWidget::edited, this,
             &MainWindow::onStuOnDutyEdited);
     ui.stuOnDutyTable->setCellWidget(row, i + 1, widget);
@@ -404,13 +404,13 @@ void MainWindow::removeDutyJob() {
   int row = ui.stuOnDutyTable->currentRow();
   if (-1 == row) return;
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
   ui.stuOnDutyTable->removeRow(row);
 
-  m_data.dutyJobs.removeAt(row);
+  classData.dutyJobs.removeAt(row);
   for (int i = 0; i < 5; ++i) {
-    m_data.stuOnDuty[i].removeAt(row);
+    classData.stuOnDuty[i].removeAt(row);
   }
 
   loadData();
@@ -418,7 +418,7 @@ void MainWindow::removeDutyJob() {
 }
 
 void MainWindow::clearStuOnDuty() {
-  if (m_data.dutyJobs.empty()) return;
+  if (classData.dutyJobs.empty()) return;
 
   if (!m_loadingData) {
     int code = QMessageBox::warning(
@@ -426,14 +426,14 @@ void MainWindow::clearStuOnDuty() {
     if (code) return;
   }
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
   // clear table
   while (ui.stuOnDutyTable->rowCount()) ui.stuOnDutyTable->removeRow(0);
 
   // clear data
-  m_data.dutyJobs.clear();
-  for (int i = 0; i < 5; ++i) m_data.stuOnDuty[i].clear();
+  classData.dutyJobs.clear();
+  for (int i = 0; i < 5; ++i) classData.stuOnDuty[i].clear();
 
   change(before, "清除值日生");
 }
@@ -441,25 +441,25 @@ void MainWindow::clearStuOnDuty() {
 void MainWindow::onDutyJobsEdited(const QModelIndex &idx, const QModelIndex &,
                                   const QVector<int> &) {
   if (idx.column() || m_loadingData) return;
-  ClassData::Data before = m_data;
-  auto &jobs = m_data.dutyJobs;
+  ClassData::Data before = classData;
+  auto &jobs = classData.dutyJobs;
   int row = idx.row();
 
   while (jobs.size() <= row) jobs << "";
   for (int i = 0; i < 5; ++i) {
-    auto &ls = m_data.stuOnDuty[i];
+    auto &ls = classData.stuOnDuty[i];
     while (ls.size() <= row) ls << QList<uint>();
   }
 
   if (auto item = ui.stuOnDutyTable->item(row, 0))
-    m_data.dutyJobs[row] = item->text();
+    classData.dutyJobs[row] = item->text();
   change(before, "编辑值日职位");
 }
 
 void MainWindow::onStuOnDutyEdited(const QList<uint> &ls, const int &row,
                                    const int &column) {
-  ClassData::Data before = m_data;
-  m_data.stuOnDuty[column - 1 /* 星期几 */][row] = ls;
+  ClassData::Data before = classData;
+  classData.stuOnDuty[column - 1 /* 星期几 */][row] = ls;
   change(before, "编辑值日生");
 }
 
@@ -477,13 +477,13 @@ void MainWindow::addLesson() {
 
   ui.lessonsTable->setItem(row, 0, new QTableWidgetItem);
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  while (m_data.lessonsTm.size() <= row) m_data.lessonsTm << QTime();
+  while (classData.lessonsTm.size() <= row) classData.lessonsTm << QTime();
   for (int i = 0; i < 5; ++i) {
     ui.lessonsTable->setItem(row, i, new QTableWidgetItem);
 
-    auto &ls = m_data.lessons[i];
+    auto &ls = classData.lessons[i];
     while (ls.size() <= row) ls << QString();
   }
 
@@ -497,10 +497,10 @@ void MainWindow::removeLesson() {
 
   ui.lessonsTable->removeRow(row);
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  m_data.lessonsTm.removeAt(row);
-  auto &ls = m_data.lessons;
+  classData.lessonsTm.removeAt(row);
+  auto &ls = classData.lessons;
   for (int i = 0; i < 5; ++i) {
     ls[i].removeAt(row);
   }
@@ -515,16 +515,16 @@ void MainWindow::clearLessons() {
     if (1 == code) return;
   }
 
-  for (int i = m_data.lessonsTm.size() - 1; i >= 0; --i)
+  for (int i = classData.lessonsTm.size() - 1; i >= 0; --i)
     ui.lessonsTable->removeRow(i);
 
   if (m_loadingData) return;
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  m_data.lessonsTm.clear();
+  classData.lessonsTm.clear();
   for (int i = 0; i < 5; ++i) {
-    m_data.lessons[i].clear();
+    classData.lessons[i].clear();
   }
 
   if (!m_loadingData) change(before, "清空课程");
@@ -554,7 +554,7 @@ void MainWindow::importLessons() {
 
   m_loadingData = true;
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
   QStringList strLs = str.simplified().split(' ');
 
@@ -563,10 +563,10 @@ void MainWindow::importLessons() {
 
   ui.lessonsTable->setRowCount(rowCount);
 
-  while (m_data.lessonsTm.size() < rowCount) m_data.lessonsTm << QTime();
+  while (classData.lessonsTm.size() < rowCount) classData.lessonsTm << QTime();
 
   for (int i = 0; i < 5; ++i) {
-    auto &ls = m_data.lessons[i];
+    auto &ls = classData.lessons[i];
     while (ls.size() < rowCount) ls << QString();
   }
 
@@ -578,9 +578,9 @@ void MainWindow::importLessons() {
     QListWidget w;
 
     if (QRegExp(R"(\d{1,2}:\d{1,2})").exactMatch(tmStr)) {
-      m_data.lessonsTm[i] = time = QTime::fromString(tmStr, "h:m");
+      classData.lessonsTm[i] = time = QTime::fromString(tmStr, "h:m");
     } else {  // 中文冒号
-      m_data.lessonsTm[i] = time = QTime::fromString(tmStr, "h：m");
+      classData.lessonsTm[i] = time = QTime::fromString(tmStr, "h：m");
     }
 
     auto timeItem = new QTableWidgetItem;
@@ -589,7 +589,7 @@ void MainWindow::importLessons() {
 
     for (int j = 1; j < kColumnCount; ++j) {
       QString lesson = strLs[i * kColumnCount + j];
-      m_data.lessons[j - 1][i] = lesson;
+      classData.lessons[j - 1][i] = lesson;
       ui.lessonsTable->setItem(i, j, new QTableWidgetItem(lesson));
       changed = true;
     }
@@ -605,12 +605,12 @@ void MainWindow::onLessonsChanged(const QModelIndex &idx, const QModelIndex &,
   int row = idx.row(), col = idx.column();
   ClassData::Data before;
   if (row == 0) {  // lessonsTm changed
-    m_data.lessonsTm[row] =
+    classData.lessonsTm[row] =
         ui.lessonsTable->item(row, 0)->data(Qt::DisplayRole).toTime();
 
     change(before, "编辑第%1节课时间"_s.arg(row + 1));
   } else {  // lessons changed
-    m_data.lessons[col - 1][row] = ui.lessonsTable->item(row, col)->text();
+    classData.lessons[col - 1][row] = ui.lessonsTable->item(row, col)->text();
 
     change(before, "编辑%1第%2节课"_s.arg(oneDayOfWeek(col - 1)).arg(row + 1));
   }
@@ -621,10 +621,10 @@ void MainWindow::onLessonsChanged(const QModelIndex &idx, const QModelIndex &,
 /* ---------------------------------------------------------------- */
 
 void MainWindow::addNotice() {
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
   ClassNotice notice;
-  m_data.notices << notice;
+  classData.notices << notice;
 
   int row = ui.noticesTable->rowCount();
   ui.noticesTable->setRowCount(row + 1);
@@ -642,9 +642,9 @@ void MainWindow::removeNotice() {
 
   ui.noticesTable->removeRow(row);
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  m_data.notices.removeAt(row);
+  classData.notices.removeAt(row);
 
   loadData();
   change(before, "移除公告");
@@ -662,8 +662,8 @@ void MainWindow::clearNotices() {
   }
 
   if (!m_loadingData) {
-    ClassData::Data before = m_data;
-    m_data.notices.clear();
+    ClassData::Data before = classData;
+    classData.notices.clear();
     change(before, "清空公告");
   }
 }
@@ -672,7 +672,7 @@ void MainWindow::onNoticesEdited(const ClassNotice &notice, const int &row) {
   if (m_loadingData) return;
 
   ClassData::Data before;
-  m_data.notices[row] = notice;
+  classData.notices[row] = notice;
   change(before, "编辑公告");
 }
 
@@ -696,9 +696,9 @@ void MainWindow::addEvent() {
 
   m_loadingData = false;
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  m_data.events.push_back({});
+  classData.events.push_back({});
 
   loadData();
   change(before, "添加事件");
@@ -709,9 +709,9 @@ void MainWindow::removeEvent() {
   if (row == -1) return;
   ui.eventsTable->removeRow(row);
 
-  ClassData::Data before = m_data;
+  ClassData::Data before = classData;
 
-  m_data.events.removeAt(row);
+  classData.events.removeAt(row);
 
   change(before, "移除事件");
 }
@@ -729,16 +729,16 @@ void MainWindow::clearEvents() {
 
   if (m_loadingData) return;
 
-  ClassData::Data before = m_data;
-  m_data.events.clear();
+  ClassData::Data before = classData;
+  classData.events.clear();
   change(before, "清空事件");
 }
 
 void MainWindow::onEventsEdited(const int &row) {
   if (m_loadingData) return;
 
-  ClassData::Data before = m_data;
-  m_data.events[row] = {
+  ClassData::Data before = classData;
+  classData.events[row] = {
       ui.eventsTable->item(row, 0)->text(),
       ui.eventsTable->item(row, 1)->data(Qt::DisplayRole).toDate(),
       qobject_cast<QCheckBox *>(ui.eventsTable->cellWidget(row, 2))
@@ -828,7 +828,7 @@ void MainWindow::sync() {
   QDataStream ds(&b);
   ds << MsgType::Save;
 
-  ClassData::writeTo(m_data, &b);
+  ClassData::writeTo(classData, &b);
 
   m_socket->open(QLocalSocket::ReadWrite);
   m_socket->write(b.data());
@@ -857,7 +857,7 @@ void MainWindow::drop() {
 
     m_undoStk->clear();
     m_file.open(QFile::ReadWrite);
-    ClassData::readFrom(&m_file, m_data);
+    ClassData::readFrom(&m_file, classData);
     m_file.close();
     loadData();
   };
@@ -868,7 +868,7 @@ void MainWindow::drop() {
     if (1 == code) return;
 
     m_undoStk->clear();
-    m_data = ClassData::Data();
+    classData = ClassData::Data();
     loadData();
   };
 
@@ -897,7 +897,7 @@ void MainWindow::openFile() {
   m_file.setFileName(fileName);
 
   m_file.open(QFile::ReadWrite);
-  ClassData::readFrom(&m_file, m_data);
+  ClassData::readFrom(&m_file, classData);
   m_file.close();
   m_fileOpened = true;
 
@@ -907,7 +907,7 @@ void MainWindow::openFile() {
 void MainWindow::saveToFile() {
   if (m_fileOpened) {
     m_file.open(QFile::WriteOnly | QFile::Truncate);
-    ClassData::writeTo(m_data, &m_file);
+    ClassData::writeTo(classData, &m_file);
   } else {  // !m_fileOpened
     QString fileName = QFileDialog::getSaveFileName(
         this, "保存为文件", "data.stm", "ClassData 数据文件 (*.stm)");
@@ -916,7 +916,7 @@ void MainWindow::saveToFile() {
     QFile saveFile(fileName);
 
     saveFile.open(QFile::WriteOnly | QFile::Truncate);
-    ClassData::writeTo(m_data, &saveFile);
+    ClassData::writeTo(classData, &saveFile);
   }
 
   m_changed = false;
@@ -1045,7 +1045,7 @@ void MainWindow::copyUpdateFiles() {
 /* ---------------------------------------------------------------- */
 
 void MainWindow::onReadyRead() {
-  ClassData::readFrom(m_socket, m_data, false);
+  ClassData::readFrom(m_socket, classData, false);
 
   loadData();
 }
@@ -1117,7 +1117,7 @@ void MainWindow::loadData() {
   clearStudents();
 
   // students
-  for (const auto &[id, name] : m_data.students.toStdMap()) {
+  for (const auto &[id, name] : classData.students.toStdMap()) {
     int row = ui.studentsTable->rowCount();
     ui.studentsTable->insertRow(row);
     ui.studentsTable->setItem(row, 0,
@@ -1126,28 +1126,28 @@ void MainWindow::loadData() {
   }
 
   // students carry meals
-  for (int i = 0; i < m_data.mealStu.size(); ++i) {
+  for (int i = 0; i < classData.mealStu.size(); ++i) {
     QString str{oneDayOfWeek(i) + "："};
-    auto ls = m_data.mealStu[i];
+    auto ls = classData.mealStu[i];
     for (auto it = ls.cbegin(); it != ls.cend(); ++it) {
-      str += m_data.idAndName(*it);
+      str += classData.idAndName(*it);
       if (it + 1 != ls.cend()) str += ' ';
     }
     m_mealStuLabels[i]->setText(str);
   }
 
   // students on duty
-  ui.stuOnDutyTable->setRowCount(m_data.dutyJobs.size());
+  ui.stuOnDutyTable->setRowCount(classData.dutyJobs.size());
 
-  for (int i = 0; i < m_data.dutyJobs.size(); ++i) {
-    auto jobItem = new QTableWidgetItem(m_data.dutyJobs[i]);
+  for (int i = 0; i < classData.dutyJobs.size(); ++i) {
+    auto jobItem = new QTableWidgetItem(classData.dutyJobs[i]);
     jobItem->setBackground(kDutyJobsColor);
     jobItem->setForeground(Qt::black);
     jobItem->setFlags(jobItem->flags() | Qt::ItemIsEditable);
     ui.stuOnDutyTable->setItem(i, 0, jobItem);
 
     for (int j = 0; j < 5; ++j) {
-      auto widget = new StuOnDutyCellWidget(i, j + 1, m_data.stuOnDuty[j][i],
+      auto widget = new StuOnDutyCellWidget(i, j + 1, classData.stuOnDuty[j][i],
                                             ui.stuOnDutyTable);
       connect(widget, &StuOnDutyCellWidget::edited, this,
               &MainWindow::onStuOnDutyEdited);
@@ -1157,35 +1157,35 @@ void MainWindow::loadData() {
 
   // lessons
   clearLessons();
-  ui.lessonsTable->setRowCount(m_data.lessonsTm.size());
+  ui.lessonsTable->setRowCount(classData.lessonsTm.size());
 
-  for (int i = 0; i < m_data.lessonsTm.size(); ++i) {
+  for (int i = 0; i < classData.lessonsTm.size(); ++i) {
     auto timeItem = new QTableWidgetItem;
-    timeItem->setData(Qt::DisplayRole, m_data.lessonsTm[i]);
+    timeItem->setData(Qt::DisplayRole, classData.lessonsTm[i]);
     ui.lessonsTable->setItem(i, 0, timeItem);
 
     for (int j = 0; j < 5; ++j) {
       ui.lessonsTable->setItem(i, j + 1,
-                               new QTableWidgetItem(m_data.lessons[j][i]));
+                               new QTableWidgetItem(classData.lessons[j][i]));
     }
   }
 
   // notices
   clearNotices();
-  ui.noticesTable->setRowCount(m_data.notices.size());
+  ui.noticesTable->setRowCount(classData.notices.size());
 
-  for (int i = 0; i < m_data.notices.size(); ++i) {
-    auto w = new NoticesCellWidget(m_data.notices[i], i, ui.noticesTable);
+  for (int i = 0; i < classData.notices.size(); ++i) {
+    auto w = new NoticesCellWidget(classData.notices[i], i, ui.noticesTable);
     connect(w, &NoticesCellWidget::edited, this, &MainWindow::onNoticesEdited);
     ui.noticesTable->setCellWidget(i, 0, w);
   }
 
   // events
   clearEvents();
-  ui.eventsTable->setRowCount(m_data.events.size());
+  ui.eventsTable->setRowCount(classData.events.size());
 
-  for (int i = 0; i < m_data.events.size(); ++i) {
-    auto ev = m_data.events[i];
+  for (int i = 0; i < classData.events.size(); ++i) {
+    auto ev = classData.events[i];
 
     ui.eventsTable->setItem(i, 0, new QTableWidgetItem(ev.name));
 
@@ -1216,7 +1216,7 @@ void MainWindow::paintEvent(QPaintEvent *) {
   ui.btnClearStudents->setEnabled(ui.studentsTable->rowCount());
 
   // students on duty
-  if (m_data.dutyJobs.empty()) {
+  if (classData.dutyJobs.empty()) {
     // show label, hide table
 
     ui.labelNoDutyJobs->show();

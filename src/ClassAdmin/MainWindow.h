@@ -112,7 +112,6 @@ class MainWindow : public QMainWindow {
 
   const QColor kDutyJobsColor = {240, 240, 240};
 
-  ClassData::Data m_data;
   bool m_changed = false;
 
   QLocalServer *m_server = new QLocalServer(this);

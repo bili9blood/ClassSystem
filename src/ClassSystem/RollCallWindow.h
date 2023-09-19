@@ -6,8 +6,6 @@
 
 #include <random>
 
-#include "ClassData.h"
-
 class RollCallWindow : public QWidget {
   Q_OBJECT
  public:
@@ -26,8 +24,6 @@ class RollCallWindow : public QWidget {
 
  private:
   Ui::RollCallWindow ui;
-
-  ClassData::Data m_data;
 
   QTimer m_timer;
 

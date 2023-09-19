@@ -2,6 +2,8 @@
 
 #include <qmessagebox.h>
 
+#include "ClassData.h"
+
 RollCallWindow::RollCallWindow(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);
   reset();
@@ -28,7 +30,7 @@ void RollCallWindow::reset() {
   ui.nameList->clear();
   ui.calledList->clear();
 
-  ui.nameList->addItems(m_data.students.values());
+  ui.nameList->addItems(classData.students.values());
 }
 
 void RollCallWindow::toggleStartStop(bool checked) {
