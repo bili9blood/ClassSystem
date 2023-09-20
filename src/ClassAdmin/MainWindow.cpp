@@ -103,6 +103,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   PER_TABLE(events, Event)
 
 #undef PER_TABLE
+
+  ui.tabWidget->removeTab(3);  // 不显示临时安排
 }
 
 /* ---------------------------------------------------------------- */
