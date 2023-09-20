@@ -458,7 +458,13 @@ void MainPanel::mousePressEvent(QMouseEvent *ev) {
 }
 
 void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
-  move(ev->globalPos() + m_mouseStartPoint);
+  auto boundedPos = [this](const QPoint &pos) {
+    const QSize kScreenSize = QApplication::primaryScreen()->availableSize();
+    const int kBoundedX = qBound(0, pos.x(), kScreenSize.width() - width());
+    const int kBoundedY = qBound(0, pos.y(), kScreenSize.height() - height());
+    return QPoint(kBoundedX, kBoundedY);
+  };
+  move(boundedPos(ev->globalPos() + m_mouseStartPoint));
 }
 
 void MainPanel::resizeEvent(QResizeEvent *) {
