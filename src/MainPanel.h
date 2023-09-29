@@ -99,7 +99,6 @@ class MainPanel : public QWidget {
   PopupMenu *m_menu = new PopupMenu;
 
  private slots:
-  void onReadyRead();
   void onConnected();
 
  protected:

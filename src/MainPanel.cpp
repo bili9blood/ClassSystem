@@ -3,12 +3,14 @@
 #include <qbrush.h>
 #include <qbuffer.h>
 #include <qdatetime.h>
+#include <qhostaddress.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
 #include <qrandom.h>
 #include <qsizepolicy.h>
 
 #include "ClassData.h"
+#include "cs/socket.h"
 
 MainPanel::MainPanel(QWidget *parent)
     : QWidget(parent, Qt::FramelessWindowHint) {
@@ -344,12 +346,13 @@ void MainPanel::loadData() {
 
 void MainPanel::initSocket() {
   connect(m_socket, &QTcpSocket::connected, this, &MainPanel::onConnected);
-  connect(m_socket, &QTcpSocket::readyRead, this, &MainPanel::onReadyRead);
+  connect(m_socket, &QTcpSocket::readyRead,
+          std::bind(cs::socket::recvMsg, m_socket));
+
+  m_socket->connectToHost(cs::settings::serverHost, cs::settings::serverPort);
 }
 
-void MainPanel::onReadyRead() {}
-
-void MainPanel::onConnected() {}
+void MainPanel::onConnected() { qDebug("connected"); }
 
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
 #ifdef _WIN32
