@@ -27,7 +27,7 @@ QTabBar::tab:selected {
   m_lessonsTable->setFrameShape(QFrame::NoFrame);
   m_lessonsTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_lessonsTable->setFocusPolicy(Qt::NoFocus);
-  tableViewStretch(m_lessonsTable);
+  cs::tableViewStretch(m_lessonsTable);
   m_lessonsTable->setColumnCount(5);
   m_lessonsTable->setRowCount(8);
   m_lessonsTable->setWordWrap(false);
@@ -35,7 +35,7 @@ QTabBar::tab:selected {
   m_mealStuTable->setFrameShape(QFrame::NoFrame);
   m_mealStuTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_mealStuTable->setFocusPolicy(Qt::NoFocus);
-  tableViewStretch(m_mealStuTable);
+  cs::tableViewStretch(m_mealStuTable);
   m_mealStuTable->setColumnCount(5);
   m_mealStuTable->verticalHeader()->setVisible(false);
   m_mealStuTable->setWordWrap(false);
@@ -43,7 +43,7 @@ QTabBar::tab:selected {
   m_stuOnDutyTable->setFrameShape(QFrame::NoFrame);
   m_stuOnDutyTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_stuOnDutyTable->setFocusPolicy(Qt::NoFocus);
-  tableViewStretch(m_stuOnDutyTable);
+  cs::tableViewStretch(m_stuOnDutyTable);
   m_stuOnDutyTable->setColumnCount(5);
   m_stuOnDutyTable->setWordWrap(false);
 
@@ -60,7 +60,7 @@ void TableWindow::loadData() {
   m_lessonsTable->clear();
   for (int i = 0; i < 5; ++i) {
     m_lessonsTable->setHorizontalHeaderItem(
-        i, new QTableWidgetItem(oneDayOfWeek(i)));
+        i, new QTableWidgetItem(cs::oneDayOfWeek(i)));
     for (int j = 0; j < classData.lessons[i].size(); ++j) {
       m_lessonsTable->setVerticalHeaderItem(
           j, new QTableWidgetItem("第%1节"_s.arg(j + 1)));
@@ -70,7 +70,7 @@ void TableWindow::loadData() {
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(cs::font{.family = "华文中宋",
                              .pointSize = kPointSizeList[m_pointSizeIndex]}());
-      if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
+      if (i == cs::dayToday()) item->setBackground(QColor(230, 230, 230));
       m_lessonsTable->setItem(j, i, item);
     }
   }
@@ -85,14 +85,14 @@ void TableWindow::loadData() {
   m_mealStuTable->setRowCount(mx);
   for (int i = 0; i < 5; ++i) {
     m_mealStuTable->setHorizontalHeaderItem(
-        i, new QTableWidgetItem(oneDayOfWeek(i)));
+        i, new QTableWidgetItem(cs::oneDayOfWeek(i)));
     for (int j = 0; j < classData.mealStu[i].size(); ++j) {
       auto item =
           new QTableWidgetItem(classData.idAndName(classData.mealStu[i][j]));
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(cs::font{.family = "华文中宋",
                              .pointSize = kPointSizeList[m_pointSizeIndex]}());
-      if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
+      if (i == cs::dayToday()) item->setBackground(QColor(230, 230, 230));
       m_mealStuTable->setItem(j, i, item);
     }
   }
@@ -102,7 +102,7 @@ void TableWindow::loadData() {
   m_stuOnDutyTable->setRowCount(classData.dutyJobs.size());
   for (int i = 0; i < 5; ++i) {
     m_stuOnDutyTable->setHorizontalHeaderItem(
-        i, new QTableWidgetItem(oneDayOfWeek(i)));
+        i, new QTableWidgetItem(cs::oneDayOfWeek(i)));
     for (int j = 0; j < classData.dutyJobs.size(); ++j) {
       m_stuOnDutyTable->setVerticalHeaderItem(
           j, new QTableWidgetItem(classData.dutyJobs[j]));
@@ -115,7 +115,7 @@ void TableWindow::loadData() {
       item->setTextAlignment(Qt::AlignCenter);
       item->setFont(cs::font{.family = "华文中宋",
                              .pointSize = kPointSizeList[m_pointSizeIndex]}());
-      if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
+      if (i == cs::dayToday()) item->setBackground(QColor(230, 230, 230));
       m_stuOnDutyTable->setItem(j, i, item);
     }
   }

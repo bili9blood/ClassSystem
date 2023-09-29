@@ -3,7 +3,7 @@
 ImgPaster::ImgPaster(QWidget *parent, QPixmap pixmap)
     : QWidget{parent, Qt::FramelessWindowHint}, m_pixmap(pixmap) {
   setWindowTitle("贴图");
-  setParentToDesktop(this);
+  cs::setParentToDesktop(this);
 
   // init layout
   m_mainLayout->addWidget(m_labelPixmap);

@@ -113,7 +113,7 @@ inline bool readFrom(QIODevice *device, ClassData::Data &data,
     QVariant v;
     ds >> v;
     const auto &[date, str, fontPtSize] = v.value<ClassNotice>();
-    if (date == kForever || date > QDate::currentDate())
+    if (date == cs::kForever || date > QDate::currentDate())
       d.notices << ClassNotice{date, str, fontPtSize};
   }
   for (int i = 0; i < eventsSize; ++i) {

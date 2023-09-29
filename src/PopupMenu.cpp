@@ -13,7 +13,7 @@ PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
     : QWidget(parent,
               Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint),
       m_isLeftSide(isOnLeft) {
-  setWidgetTransparent(this);
+  cs::setWidgetTransparent(this);
 
   // append buttons
   m_btnsList << new MenuButton({":/img/capture.png"}, "截图", &m_btnsWidget)
@@ -21,7 +21,7 @@ PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
              << new MenuButton({":/img/roll-call.png"}, "随机点名",
                                &m_btnsWidget)
              << new MenuButton({":/img/help.png"}, "帮助", &m_btnsWidget);
-  setWidgetTransparent(&m_btnsWidget);
+  cs::setWidgetTransparent(&m_btnsWidget);
   m_btnsLayout.setMargin(0);
   m_btnsLayout.setSpacing(0);
   foreach (MenuButton *btn, m_btnsList) {

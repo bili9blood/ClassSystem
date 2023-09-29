@@ -90,6 +90,7 @@ inline QSize popupMenuSize;
 inline int menuButtonWidth;
 
 inline QString serverHost;
+inline ushort serverPort;
 
 inline void loadIni() {
   bool ok;
@@ -108,6 +109,11 @@ inline void loadIni() {
     serverHost = tmp;
   else
     serverHost = kDefaultHost;
+
+  if (ushort tmp = ini.value("serverPort").toUInt(&ok); ok)
+    serverPort = tmp;
+  else
+    serverPort = 8897;
 
   /* ------------------------- FontPointSize ------------------------ */
   std::tie(smallFontSize, mediumFontSize, largeFontSize, superFontSize) =
@@ -186,10 +192,6 @@ struct font {
   bool italic = false;
   inline QFont operator()() { return {family, pointSize, weight, italic}; }
 };
-
-constexpr const char kClassAdminSpec[] = "A";
-constexpr const char kClassSystemSpec[] = "S";
-enum class MsgType : uint { Request, Save };
 
 inline bool copyDir(QString src, QString dst) {
   QDir srcDir(src);

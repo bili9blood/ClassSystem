@@ -8,8 +8,8 @@ ScreenCapturer::ScreenCapturer(QWidget *parent)
     : QWidget(parent,
               Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint) {
   move({});
-  setWidgetTransparent(this);
-  setWidgetTransparent(m_btnBox);
+  cs::setWidgetTransparent(this);
+  cs::setWidgetTransparent(m_btnBox);
   setStyleSheet(".titleText{color: white;}");
   setCursor(Qt::CrossCursor);
 
