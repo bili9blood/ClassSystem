@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
   singleApp();
 
-  initLogger();
+  cs::initLogger();
 
   // 将程序路径存储到共享内存中
   QSharedMemory sm("CLASS-SYSTEM-PATH");
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
   createDirs();
 
-  settings::loadIni();
+  cs::settings::loadIni();
 
   QFile dataFile("data.stm");
   if (!dataFile.exists() || !ClassData::readFrom(&dataFile, classData)) {

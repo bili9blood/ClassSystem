@@ -50,7 +50,7 @@ void RollCallWindow::toggleStartStop(bool checked) {
 }
 
 void RollCallWindow::changeFontSize(int index) {
-  ui.label->setFont(qFont{.pointSize = kPointSizeList[index]}());
+  ui.label->setFont(cs::font{.pointSize = kPointSizeList[index]}());
 }
 
 void RollCallWindow::moveToAnother(QListWidget *src, int index,

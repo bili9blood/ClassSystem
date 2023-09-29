@@ -68,8 +68,8 @@ void TableWindow::loadData() {
           classData.lessons[i][j], classData.lessonsTm[j].toString("hh:mm"),
           classData.lessonsTm[j].addSecs(2400).toString("hh:mm")));
       item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(qFont{.family = "华文中宋",
-                          .pointSize = kPointSizeList[m_pointSizeIndex]}());
+      item->setFont(cs::font{.family = "华文中宋",
+                             .pointSize = kPointSizeList[m_pointSizeIndex]}());
       if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
       m_lessonsTable->setItem(j, i, item);
     }
@@ -90,8 +90,8 @@ void TableWindow::loadData() {
       auto item =
           new QTableWidgetItem(classData.idAndName(classData.mealStu[i][j]));
       item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(qFont{.family = "华文中宋",
-                          .pointSize = kPointSizeList[m_pointSizeIndex]}());
+      item->setFont(cs::font{.family = "华文中宋",
+                             .pointSize = kPointSizeList[m_pointSizeIndex]}());
       if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
       m_mealStuTable->setItem(j, i, item);
     }
@@ -113,8 +113,8 @@ void TableWindow::loadData() {
       }
       auto item = new QTableWidgetItem(str);
       item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(qFont{.family = "华文中宋",
-                          .pointSize = kPointSizeList[m_pointSizeIndex]}());
+      item->setFont(cs::font{.family = "华文中宋",
+                             .pointSize = kPointSizeList[m_pointSizeIndex]}());
       if (i == dayToday()) item->setBackground(QColor(230, 230, 230));
       m_stuOnDutyTable->setItem(j, i, item);
     }

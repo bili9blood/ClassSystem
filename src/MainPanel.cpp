@@ -12,8 +12,8 @@
 
 MainPanel::MainPanel(QWidget *parent)
     : QWidget(parent, Qt::FramelessWindowHint) {
-  setWidgetTransparent(this);
-  setParentToDesktop(this);
+  cs::setWidgetTransparent(this);
+  cs::setParentToDesktop(this);
 
   setStyleSheet(R"(
 
@@ -44,11 +44,12 @@ QFrame {
   m_labelTime->setObjectName("labelTime");
   m_labelDDDD->setText(QDate::currentDate().toString("dddd"));
   m_labelDate->setText(QDate::currentDate().toString("MM-dd"));
-  m_labelDate->setFont(qFont{.pointSize = settings::smallFontSize}());
-  m_labelDDDD->setFont(qFont{.pointSize = settings::smallFontSize}());
-  m_labelTime->setFont(QFont("华文中宋", settings::superFontSize, QFont::Bold));
-  m_labelDate->setFont(qFont{.pointSize = settings::smallFontSize}());
-  m_labelDDDD->setFont(qFont{.pointSize = settings::smallFontSize}());
+  m_labelDate->setFont(cs::font{.pointSize = cs::settings::smallFontSize}());
+  m_labelDDDD->setFont(cs::font{.pointSize = cs::settings::smallFontSize}());
+  m_labelTime->setFont(
+      QFont("华文中宋", cs::settings::superFontSize, QFont::Bold));
+  m_labelDate->setFont(cs::font{.pointSize = cs::settings::smallFontSize}());
+  m_labelDDDD->setFont(cs::font{.pointSize = cs::settings::smallFontSize}());
 
   m_sentenceLabel->setStyleSheet("color: #e5c07b;");
   m_sentenceLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -62,7 +63,7 @@ QFrame {
   }
   m_sentenceLabel->setWordWrap(true);
   m_sentenceLabel->setFont(
-      qFont{.family = "仿宋", .pointSize = settings::mediumFontSize}());
+      cs::font{.family = "仿宋", .pointSize = cs::settings::mediumFontSize}());
 
   // init lessons
   m_lessons->setObjectName("lessons");
@@ -70,12 +71,12 @@ QFrame {
   m_lessons->setFocusPolicy(Qt::NoFocus);
   m_lessons->horizontalHeader()->setVisible(false);
   m_lessons->verticalHeader()->setVisible(false);
-  tableViewStretch(m_lessons);
+  cs::tableViewStretch(m_lessons);
   m_lessons->setFrameShape(QFrame::NoFrame);
   m_lessons->setShowGrid(false);
   m_lessons->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
-  m_lessons->setFont(
-      qFont{.family = "华文中宋", .pointSize = settings::mediumFontSize}());
+  m_lessons->setFont(cs::font{.family = "华文中宋",
+                              .pointSize = cs::settings::mediumFontSize}());
   m_lessons->setTextElideMode(Qt::ElideNone);
 
   // init notices
@@ -87,13 +88,14 @@ QFrame {
   m_noticesWid->setAnimationDuration(500);
 
   m_noticesTitle->setObjectName("noticesTitle");
-  m_noticesTitle->setFont(
-      qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
+  m_noticesTitle->setFont(cs::font{.pointSize = cs::settings::largeFontSize,
+                                   .weight = QFont::Bold}());
   m_noticesTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
 
   // init days left
   m_eventNameLabel->setObjectName("eventNameLabel");
-  m_eventNameLabel->setFont(qFont{.pointSize = settings::mediumFontSize}());
+  m_eventNameLabel->setFont(
+      cs::font{.pointSize = cs::settings::mediumFontSize}());
   m_daysLeftDisplay->setFrameShape(QFrame::NoFrame);
   m_daysLeftDisplay->setSegmentStyle(QLCDNumber::Flat);
 
@@ -109,13 +111,14 @@ QFrame {
   m_mealStuTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_mealStuTable->setFocusPolicy(Qt::NoFocus);
 
-  tableViewStretch(m_mealStuTable);
-  m_mealStuTable->setFont(qFont{.family = "'Consolas', 'MiSans'",
-                                .pointSize = settings::mediumFontSize}());
+  cs::tableViewStretch(m_mealStuTable);
+  m_mealStuTable->setFont(
+      cs::font{.family = "'Consolas', 'MiSans'",
+               .pointSize = cs::settings::mediumFontSize}());
 
   m_mealStuTitle->setObjectName("mealStuTitle");
-  m_mealStuTitle->setFont(
-      qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
+  m_mealStuTitle->setFont(cs::font{.pointSize = cs::settings::largeFontSize,
+                                   .weight = QFont::Bold}());
 
   // init students on duty
   m_stuOnDutyTable->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -136,12 +139,13 @@ QFrame {
   m_stuOnDutyTable->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_stuOnDutyTable->setFocusPolicy(Qt::NoFocus);
 
-  m_stuOnDutyTable->setFont(qFont{.family = "'Consolas', 'MiSans'",
-                                  .pointSize = settings::mediumFontSize}());
+  m_stuOnDutyTable->setFont(
+      cs::font{.family = "'Consolas', 'MiSans'",
+               .pointSize = cs::settings::mediumFontSize}());
 
   m_stuOnDutyTitle->setObjectName("stuOnDutyTitle");
-  m_stuOnDutyTitle->setFont(
-      qFont{.pointSize = settings::largeFontSize, .weight = QFont::Bold}());
+  m_stuOnDutyTitle->setFont(cs::font{.pointSize = cs::settings::largeFontSize,
+                                     .weight = QFont::Bold}());
 
   // init lines
   m_sentenceLine->setFrameShape(QFrame::VLine);
@@ -194,7 +198,7 @@ QFrame {
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTable, 0);
 
   loadData();
-  initLocalSocket();
+  initSocket();
 }
 
 void MainPanel::loadData() {
@@ -212,7 +216,7 @@ void MainPanel::loadData() {
 
   m_lessons->clear();
 
-  auto lessonsToday = classData.lessons[dayToday()];
+  auto lessonsToday = classData.lessons[cs::dayToday()];
   m_lessons->setRowCount(lessonsToday.size());
   for (int i = 0; i < classData.lessonsTm.size(); ++i) {
     m_lessons->setItem(
@@ -246,7 +250,7 @@ void MainPanel::loadData() {
     auto b = new QTextBrowser(this);
     b->setText(str);
     b->setStyleSheet("color: #d2d0ce;background-color: transparent");
-    b->setFont(qFont{.pointSize = fontPtSize}());
+    b->setFont(cs::font{.pointSize = fontPtSize}());
     b->setAttribute(Qt::WA_TransparentForMouseEvents);
     b->setFocusPolicy(Qt::NoFocus);
     b->setFrameShape(QFrame::NoFrame);
@@ -273,7 +277,7 @@ void MainPanel::loadData() {
   m_mealStuTable->clear();
   m_mealStuTable->setColumnCount(1);
 
-  const auto mealStuToday = classData.mealStu[dayToday()];
+  const auto mealStuToday = classData.mealStu[cs::dayToday()];
   m_mealStuTable->setRowCount(mealStuToday.size());
   for (int i = 0; i < mealStuToday.size(); ++i) {
     m_mealStuTable->setItem(
@@ -288,7 +292,7 @@ void MainPanel::loadData() {
   m_stuOnDutyTable->clear();
   m_stuOnDutyTable->setRowCount(classData.dutyJobs.size());
 
-  const auto stuOnDutyToday = classData.stuOnDuty[dayToday()];
+  const auto stuOnDutyToday = classData.stuOnDuty[cs::dayToday()];
   m_stuOnDutyTable->setColumnCount(
       std::max_element(
           stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
@@ -296,8 +300,8 @@ void MainPanel::loadData() {
           ->size() +
       1);
 
-  const QFont dutyJobFont =
-      qFont{.pointSize = settings::mediumFontSize + 2, .weight = QFont::Bold}();
+  const QFont dutyJobFont = cs::font{
+      .pointSize = cs::settings::mediumFontSize + 2, .weight = QFont::Bold}();
 
   for (int i = 0; i < classData.dutyJobs.size(); ++i) {
     auto dutyJobItem = new QTableWidgetItem(classData.dutyJobs[i] + " ");
@@ -338,68 +342,12 @@ void MainPanel::loadData() {
   }());
 }
 
-void MainPanel::initLocalSocket() {
-#ifdef _WIN32
-  m_socket->setServerName(kServerName);
-  auto reconnectLater = [this]() {
-    QTimer::singleShot(1000, [this] { m_socket->connectToServer(); });
-  };
-  connect(m_socket, &QLocalSocket::readyRead, this, &MainPanel::onReadyRead);
-  connect(m_socket, &QLocalSocket::connected, this, &MainPanel::onConnected);
-  connect(m_socket, &QLocalSocket::errorOccurred,
-          [this, reconnectLater](const QLocalSocket::LocalSocketError &err) {
-            if (err != QLocalSocket::ServerNotFoundError) {
-              qDebug() << m_socket->errorString();
-            }
-            reconnectLater();
-          });
-  connect(m_socket, &QLocalSocket::disconnected, reconnectLater);
-  m_socket->connectToServer();
-#else
-  m_socket->setServerName(kServerName);
-  auto reconnectLater = [this]() {
-    QTimer::singleShot(1000,
-                       [this] { m_socket->connectToServer(kServerName); });
-  };
-  connect(m_socket, &QLocalSocket::readyRead, this, &MainPanel::onReadyRead);
-  connect(m_socket, &QLocalSocket::connected, this, &MainPanel::onConnected);
-  connect(m_socket, &QLocalSocket::errorOccurred,
-          [this, reconnectLater](const QLocalSocket::LocalSocketError &err) {
-            if (err != QLocalSocket::ServerNotFoundError ||
-                err != QLocalSocket::ConnectionRefusedError) {
-              qDebug() << m_socket->errorString();
-            }
-          });
-  connect(m_socket, &QLocalSocket::disconnected, reconnectLater);
-  m_socket->connectToServer(kServerName);
-#endif
+void MainPanel::initSocket() {
+  connect(m_socket, &QTcpSocket::connected, this, &MainPanel::onConnected);
+  connect(m_socket, &QTcpSocket::readyRead, this, &MainPanel::onReadyRead);
 }
 
-void MainPanel::onReadyRead() {
-  QBuffer b;
-  b.setData(m_socket->readAll());
-  b.open(QBuffer::ReadWrite);
-  QDataStream ds(&b);
-  MsgType ty;
-  ds >> ty;
-  switch (ty) {
-    case MsgType::Request: {
-      QBuffer writeBuf;
-      writeBuf.open(QBuffer::WriteOnly);
-      ClassData::writeTo(classData, &writeBuf);
-      m_socket->write(writeBuf.data());
-      break;
-    }
-    case MsgType::Save: {
-      ClassData::readFrom(&b, classData);
-      QFile file("data.stm");
-      ClassData::writeTo(classData, &file);
-      loadData();
-      m_menu->m_tableWindow.loadData();
-      break;
-    }
-  }
-}
+void MainPanel::onReadyRead() {}
 
 void MainPanel::onConnected() {}
 
@@ -440,7 +388,7 @@ void MainPanel::paintEvent(QPaintEvent *) {
   if (m_init) {
     m_menu->show();
     // init geometry
-    setGeometry(settings::ini.value("geometry").toRect());
+    setGeometry(cs::settings::ini.value("geometry").toRect());
     m_init = false;
   }
   QPainter painter(this);
@@ -468,11 +416,11 @@ void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void MainPanel::resizeEvent(QResizeEvent *) {
-  if (!m_init) settings::ini.setValue("geometry", geometry());
+  if (!m_init) cs::settings::ini.setValue("geometry", geometry());
 }
 
 void MainPanel::moveEvent(QMoveEvent *) {
-  if (!m_init) settings::ini.setValue("geometry", geometry());
+  if (!m_init) cs::settings::ini.setValue("geometry", geometry());
 }
 
 void MainPanel::timerEvent(QTimerEvent *ev) {

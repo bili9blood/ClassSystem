@@ -6,14 +6,15 @@
 
 MenuButton::MenuButton(QPixmap icon, QString text, QWidget *parent)
     : QWidget(parent) {
-  setFixedWidth(settings::menuButtonWidth);
+  setFixedWidth(cs::cs::settings::menuButtonWidth);
   // init labels
   m_iconLabel->setAlignment(Qt::AlignCenter);
   m_iconLabel->setPixmap(
       icon.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
   m_textLabel->setStyleSheet("color: white");
   m_textLabel->setText(text);
-  m_textLabel->setFont(qFont{.pointSize = settings::smallFontSize}());
+  m_textLabel->setFont(
+      cs::font{.pointSize = cs::cs::settings::smallFontSize}());
   m_textLabel->setAlignment(Qt::AlignCenter);
 
   // install event filter

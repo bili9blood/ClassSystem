@@ -11,8 +11,9 @@ TitleWidget::TitleWidget(QString title, QWidget *parent) : QWidget(parent) {
       QPixmap(":/img/logo.png")
           .scaled(50, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
   m_textLabel->setText(title);
-  m_textLabel->setFont(qFont{.family = "zihun181hao-feichibiaotiti",
-                             .pointSize = settings::mediumFontSize}());
+  m_textLabel->setFont(
+      cs::font{.family = "zihun181hao-feichibiaotiti",
+               .pointSize = cs::cs::settings::mediumFontSize}());
   m_textLabel->setProperty("class", "titleText");
 
   // init layouts

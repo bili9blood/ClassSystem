@@ -19,6 +19,8 @@
 #include <windowsx.h>
 #endif
 
+namespace cs {
+
 inline void tableViewStretch(QTableView *view) {
   view->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -177,7 +179,7 @@ inline void setWidgetTransparent(QWidget *widget) {
   widget->setAttribute(Qt::WA_TranslucentBackground);
 }
 
-struct qFont {
+struct font {
   const QString &family = "MiSans";
   int pointSize = -1;
   int weight = -1;
@@ -188,10 +190,6 @@ struct qFont {
 constexpr const char kClassAdminSpec[] = "A";
 constexpr const char kClassSystemSpec[] = "S";
 enum class MsgType : uint { Request, Save };
-
-inline QString operator""_s(const char *str, size_t size) {
-  return QByteArray(str, size);
-}
 
 inline bool copyDir(QString src, QString dst) {
   QDir srcDir(src);
@@ -271,3 +269,13 @@ inline QString oneDayOfWeek(const int &i) {
 inline int dayToday() {
   return oneDayOfWeek(QDate::currentDate().toString("ddd"));
 }
+
+namespace literals {
+inline QString operator""_s(const char *str, size_t size) {
+  return QByteArray(str, size);
+}
+}  // namespace literals
+
+}  // namespace cs
+
+using namespace cs::literals;

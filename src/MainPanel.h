@@ -14,8 +14,8 @@
 #include <qtablewidget.h>
 #include <qtextbrowser.h>
 
-// local socket
-#include <qlocalsocket.h>
+// tcp socket
+#include <qtcpsocket.h>
 
 // other
 #include <qaction.h>
@@ -93,9 +93,8 @@ class MainPanel : public QWidget {
   constexpr static int kPadding = 8;
 
   // local server
-  QLocalSocket *m_socket = new QLocalSocket(this);
-  static constexpr const char kServerName[] = "CLASS-ADMIN-SERVER";
-  void initLocalSocket();
+  QTcpSocket *m_socket = new QTcpSocket(this);
+  void initSocket();
 
   PopupMenu *m_menu = new PopupMenu;
 
