@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <format>
+#include <nlohmann/json.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -86,6 +87,8 @@ inline int superFontSize;
 inline QSize popupMenuSize;
 inline int menuButtonWidth;
 
+inline QString serverHost;
+
 inline void loadIni() {
   bool ok;
   /* ---------------------------- General --------------------------- */
@@ -98,6 +101,11 @@ inline void loadIni() {
     menuButtonWidth = tmp;
   else
     menuButtonWidth = 140;
+
+  if (QString tmp = ini.value("serverHost").toString(); !tmp.isEmpty())
+    serverHost = tmp;
+  else
+    serverHost = kDefaultHost;
 
   /* ------------------------- FontPointSize ------------------------ */
   std::tie(smallFontSize, mediumFontSize, largeFontSize, superFontSize) =

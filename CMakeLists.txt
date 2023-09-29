@@ -29,13 +29,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets Core Network REQUIRED)
 
-# ----------------------------------------------------------------
-# ClassSystem 前台展示端
-# ----------------------------------------------------------------
 qt_wrap_ui(
     CLASSSYSTEM_UI_SOURCES
 
-    src/ClassSystem/RollCallWindow.ui
+    src/RollCallWindow.ui
 )
 add_executable(ClassSystem
 
@@ -45,27 +42,27 @@ add_executable(ClassSystem
     assets/ICON.RC # Windows Only
     assets/ClassSystem.qrc
 
-    src/ClassSystem/main.cpp
+    src/main.cpp
 
     # 主面板
-    src/ClassSystem/MainPanel.cpp src/ClassSystem/MainPanel.h
+    src/MainPanel.cpp src/MainPanel.h
 
     # 悬停菜单
-    src/ClassSystem/PopupMenu.cpp src/ClassSystem/PopupMenu.h
-    src/ClassSystem/MenuButton.cpp src/ClassSystem/MenuButton.h
+    src/PopupMenu.cpp src/PopupMenu.h
+    src/MenuButton.cpp src/MenuButton.h
 
     # 截图&贴图
-    src/ClassSystem/ScreenCapturer.cpp src/ClassSystem/ScreenCapturer.h
-    src/ClassSystem/ImgPaster.cpp src/ClassSystem/ImgPaster.h
+    src/ScreenCapturer.cpp src/ScreenCapturer.h
+    src/ImgPaster.cpp src/ImgPaster.h
 
     # 标题
-    src/ClassSystem/TitleWidget.cpp src/ClassSystem/TitleWidget.h
+    src/TitleWidget.cpp src/TitleWidget.h
 
     # 表格
-    src/ClassSystem/TableWindow.cpp src/ClassSystem/TableWindow.h
+    src/TableWindow.cpp src/TableWindow.h
 
     # 随机点名
-    src/ClassSystem/RollCallWindow.cpp src/ClassSystem/RollCallWindow.h
+    src/RollCallWindow.cpp src/RollCallWindow.h
 
     # 滑动 Stacked Widget
     include/QAnimationStackedWidget/QAnimationStackedWidget.cpp
@@ -74,54 +71,6 @@ add_executable(ClassSystem
     ${CLASSSYSTEM_UI_SOURCES}
     ${UTILS_SOURCES}
 )
-target_include_directories(ClassSystem PUBLIC src/ClassSystem)
+target_include_directories(ClassSystem PUBLIC src)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
-
-# ----------------------------------------------------------------
-# ClassAdmin 后台管理端
-# ----------------------------------------------------------------
-qt_wrap_ui(
-    CLASSADMIN_UI_SOURCES
-
-    src/ClassAdmin/MainWindow.ui # 主窗口
-    src/ClassAdmin/EditMealStuDialog.ui # 编辑抬饭生
-    src/ClassAdmin/StuOnDutyCellWdiget.ui # 值日生单元格
-    src/ClassAdmin/NoticesCellWidget.ui # 公告单元格
-)
-add_executable(ClassAdmin
-
-    ${__DECL_RELEASE_WIN32}
-
-    # 资源
-    assets/ICON.RC # Windows Only
-    assets/ClassAdmin.qrc
-
-    src/ClassAdmin/main.cpp
-
-    # 主窗口
-    src/ClassAdmin/MainWindow.cpp src/ClassAdmin/MainWindow.h
-
-    # 学生
-    src/ClassAdmin/ImportDialog.cpp src/ClassAdmin/ImportDialog.h
-    src/ClassAdmin/EditMealStuDialog.cpp src/ClassAdmin/EditMealStuDialog.h
-    src/ClassAdmin/StuOnDutyCellWidget.cpp src/ClassAdmin/StuOnDutyCellWidget.h
-
-    # 公告单元格
-    src/ClassAdmin/NoticesCellWidget.cpp src/ClassAdmin/NoticesCellWidget.h
-
-    # 工具栏
-    src/ClassAdmin/ResetPwdDialog.cpp src/ClassAdmin/ResetPwdDialog.h
-    src/ClassAdmin/Commands.h
-
-    # 自定义代理
-    src/ClassAdmin/ItemDelegates.h
-
-    ${CLASSADMIN_UI_SOURCES}
-    ${UTILS_SOURCES}
-)
-target_link_libraries(ClassAdmin PUBLIC "quazip1-qt5$<$<CONFIG:Debug>:d>")
-
-target_include_directories(ClassAdmin PUBLIC src/ClassAdmin)
-target_link_libraries(ClassAdmin PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
-target_precompile_headers(ClassAdmin PUBLIC src/pch.h)
