@@ -27,8 +27,7 @@ void singleApp() {
 
 int main(int argc, char **argv) {
   if (argc == 2 && strcmp(argv[1], "-v") == 0) {
-    printf("v%d.%d.%d", PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR,
-           PROJECT_VERSION_PATCH);
+    printf("v%s\n", cs::config::projectVersion);
     return 0;
   }
 

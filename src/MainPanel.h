@@ -90,13 +90,14 @@ class MainPanel : public QWidget {
   bool m_init = true;
 
   QPoint m_mouseStartPoint;
-  constexpr static int kPadding = 8;
 
   // local server
   QTcpSocket *m_socket = new QTcpSocket(this);
   void initSocket();
 
   PopupMenu *m_menu = new PopupMenu;
+
+  void saveGeometry();
 
  private slots:
   void onConnected();

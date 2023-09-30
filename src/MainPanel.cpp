@@ -23,7 +23,7 @@ MainPanel::MainPanel(QWidget *parent)
   color: #d2d0ce;
 }
 
-QFrame {
+QFrame:not(QLabel) {
   color: rgba(102, 113, 134 ,180);
 }
 
@@ -349,12 +349,41 @@ void MainPanel::initSocket() {
   connect(m_socket, &QTcpSocket::readyRead,
           std::bind(cs::socket::recvMsg, m_socket));
 
+  auto &callbacks = cs::socket::callbacks;
+  callbacks["ERROR"] = [this](const nlohmann::json &data) {
+    const auto errorType = data["type"].get<std::string>();
+    const auto errorStr = data["str"].get<std::string>();
+
+    QMessageBox::critical(
+        this, "ClassSystem 错误",
+        QString::asprintf("服务器错误：%s", errorStr.c_str()));
+
+    qFatal("Server Error[%s]: %s", errorType.c_str(), errorStr.c_str());
+    QApplication::quit();
+  };
   m_socket->connectToHost(cs::settings::serverHost, cs::settings::serverPort);
 }
 
-void MainPanel::onConnected() { qDebug("connected"); }
+void MainPanel::onConnected() {
+  nlohmann::json json = {{"class", cs::settings::className.toStdString()},
+                         {"version", cs::config::projectVersion}};
+  m_socket->write(json.dump().c_str());
+  m_socket->flush();
+}
+
+void MainPanel::saveGeometry() {
+  if (m_init) return;
+
+  using namespace cs::settings;
+
+  ini.beginGroup("Gui");
+  ini.setValue("geometry", geometry());
+  ini.endGroup();
+}
 
 bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
+  constexpr int kPadding = 8;
+
 #ifdef _WIN32
   auto msg = static_cast<MSG *>(message);
   if (msg->message == WM_NCHITTEST) {  // resize
@@ -390,8 +419,14 @@ bool MainPanel::nativeEvent(const QByteArray &, void *message, long *result) {
 void MainPanel::paintEvent(QPaintEvent *) {
   if (m_init) {
     m_menu->show();
+
     // init geometry
-    setGeometry(cs::settings::ini.value("geometry").toRect());
+    using namespace cs::settings;
+
+    ini.beginGroup("Gui");
+    setGeometry(ini.value("geometry").toRect());
+    ini.endGroup();
+
     m_init = false;
   }
   QPainter painter(this);
@@ -418,13 +453,9 @@ void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
   move(boundedPos(ev->globalPos() + m_mouseStartPoint));
 }
 
-void MainPanel::resizeEvent(QResizeEvent *) {
-  if (!m_init) cs::settings::ini.setValue("geometry", geometry());
-}
+void MainPanel::resizeEvent(QResizeEvent *) { saveGeometry(); }
 
-void MainPanel::moveEvent(QMoveEvent *) {
-  if (!m_init) cs::settings::ini.setValue("geometry", geometry());
-}
+void MainPanel::moveEvent(QMoveEvent *) { saveGeometry(); }
 
 void MainPanel::timerEvent(QTimerEvent *ev) {
   if (ev->timerId() == m_clockTimerId) {

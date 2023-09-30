@@ -47,54 +47,65 @@ inline void messageHandler(QtMsgType type, const QMessageLogContext &context,
 #undef PER_LOG_TYPE
   }
   QString text =
-      QString::asprintf("[%s] [%s] %s\n",
+      QString::asprintf("[%s] [%s] %s\r\n",
                         QDateTime::currentDateTime()
                             .toString("yyyy-MM-dd hh:mm:ss.zzz")
                             .toUtf8()
                             .constData(),
-                        typeStr.toUtf8().constData(), msg.toUtf8().constData());
+                        typeStr.toUtf8().constData(),
+                        msg.left(msg.size() - 1).toUtf8().constData());
 
-  QFile logFile("logs.txt");
+  QFile logFile("ClassSystem.log");
   if (!logFile.open(QFile::WriteOnly | QFile::Append)) return;
   logFile.write(text.toUtf8());
   logFile.close();
 }
 
 inline void initLogger() {
-  QFileInfo logFileInfo(QApplication::applicationDirPath() + "/logs.txt");
+  QFileInfo logFileInfo(QApplication::applicationDirPath() +
+                        "/ClassSystem.log");
   if (logFileInfo.exists() && logFileInfo.size() > 5242880 /*5Mb*/)
     QFile::remove(logFileInfo.filePath());
 
   QFile logFile(logFileInfo.filePath());
   logFile.open(QFile::WriteOnly | QFile::Append);
-  logFile.write(R"(
-
-------------------
- Program Started.
-------------------
-)");
+  logFile.write("\r\n");
   logFile.close();
 
   qInstallMessageHandler(messageHandler);
+  qInfo() << "===***Program Started at" << qApp->applicationFilePath();
 }
 
 namespace settings {
 inline QSettings ini("settings.ini", QSettings::IniFormat);
 
+// General
+inline QString className;
+
+// Gui
+inline QSize popupMenuSize;
+inline int menuButtonWidth;
+
+// FontPointSize
 inline int smallFontSize;
 inline int mediumFontSize;
 inline int largeFontSize;
 inline int superFontSize;
 
-inline QSize popupMenuSize;
-inline int menuButtonWidth;
-
+// Server
 inline QString serverHost;
 inline ushort serverPort;
 
 inline void loadIni() {
   bool ok;
+
   /* ---------------------------- General --------------------------- */
+
+  className = ini.value("className").toString();
+
+  /* ------------------------------ Gui ----------------------------- */
+  ini.beginGroup("Gui");
+
   if (QSize tmp = ini.value("popupMenuSize").toSize(); !tmp.isEmpty())
     popupMenuSize = tmp;
   else
@@ -105,29 +116,36 @@ inline void loadIni() {
   else
     menuButtonWidth = 140;
 
-  if (QString tmp = ini.value("serverHost").toString(); !tmp.isEmpty())
+  ini.endGroup();
+
+  /* ---------------------------- Server ---------------------------- */
+  ini.beginGroup("Server");
+
+  if (QString tmp = ini.value("host").toString(); !tmp.isEmpty())
     serverHost = tmp;
   else
-    serverHost = kDefaultHost;
+    serverHost = cs::config::defaultHost;
 
-  if (ushort tmp = ini.value("serverPort").toUInt(&ok); ok)
+  if (ushort tmp = ini.value("port").toUInt(&ok); ok)
     serverPort = tmp;
   else
     serverPort = 8897;
 
-  /* ------------------------- FontPointSize ------------------------ */
-  std::tie(smallFontSize, mediumFontSize, largeFontSize, superFontSize) =
-      std::tuple(16, 20, 28, 36);
+  ini.endGroup();
 
+  /* ------------------------- FontPointSize ------------------------ */
   ini.beginGroup("FontPointSize");
 
-#define PER_FONT_SIZE(x) \
-  if (int tmp = ini.value(#x).toInt(&ok); ok && tmp > 0) x##FontSize = tmp;
+#define PER_FONT_SIZE(x, y)                              \
+  if (int tmp = ini.value(#x).toInt(&ok); ok && tmp > 0) \
+    x##FontSize = tmp;                                   \
+  else                                                   \
+    x##FontSize = y;
 
-  PER_FONT_SIZE(small)
-  PER_FONT_SIZE(medium)
-  PER_FONT_SIZE(large)
-  PER_FONT_SIZE(super)
+  PER_FONT_SIZE(small, 16)
+  PER_FONT_SIZE(medium, 20)
+  PER_FONT_SIZE(large, 28)
+  PER_FONT_SIZE(super, 36)
 
 #undef PER_FONT_SIZE
 
@@ -136,7 +154,7 @@ inline void loadIni() {
 
 }  // namespace settings
 
-const QDate kForever = QDate(1970, 1, 1);
+const QDate kForever = {1970, 1, 1};
 
 inline QColor invertColor(const QColor &color) {
   return {255 - color.red(), 255 - color.green(), 255 - color.blue()};

@@ -1,8 +1,7 @@
 // clang-format off
 #pragma once
 
-#define PROJECT_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
-#define PROJECT_VERSION_MINOR @PROJECT_VERSION_MINOR@
-#define PROJECT_VERSION_PATCH @PROJECT_VERSION_PATCH@
-
-inline constexpr const char kDefaultHost[] = "@DEFAULE_HOST@";
+namespace cs::config{
+inline constexpr const char projectVersion[] = "@PROJECT_VERSION@";
+inline constexpr const char defaultHost[] = "@DEFAULE_HOST@";
+} //namespace cs::config
