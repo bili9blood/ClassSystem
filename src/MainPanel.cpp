@@ -23,8 +23,12 @@ MainPanel::MainPanel(QWidget *parent)
   color: #d2d0ce;
 }
 
-QFrame:not(QLabel) {
+QFrame {
   color: rgba(102, 113, 134 ,180);
+}
+
+QLabel {
+  color: black;
 }
 
 .titleText, #mealStuTitle, #stuOnDutyTitle, #noticesTitle, #eventNameLabel, QLCDNumber {
@@ -199,7 +203,6 @@ QFrame:not(QLabel) {
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTitle);
   m_stuOnDutyLayout->addWidget(m_stuOnDutyTable, 0);
 
-  loadData();
   initSocket();
 }
 
@@ -295,13 +298,14 @@ void MainPanel::loadData() {
   m_stuOnDutyTable->setRowCount(classData.dutyJobs.size());
 
   const auto stuOnDutyToday = classData.stuOnDuty[cs::dayToday()];
-  m_stuOnDutyTable->setColumnCount(
-      std::max_element(stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
-                       [](const QList<uint> &a, const QList<uint> &b) {
-                         return a.size() < b.size();
-                       })
-          ->size() +
-      1);
+  if (!stuOnDutyToday.empty())
+    m_stuOnDutyTable->setColumnCount(
+        std::max_element(stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
+                         [](const QVector<uint> &a, const QVector<uint> &b) {
+                           return a.size() < b.size();
+                         })
+            ->size() +
+        1);
 
   const QFont dutyJobFont = cs::font{
       .pointSize = cs::settings::mediumFontSize + 2, .weight = QFont::Bold}();
@@ -362,7 +366,47 @@ void MainPanel::initSocket() {
     qFatal("Server Error[%s]: %s", errorType.c_str(), errorStr.c_str());
     QApplication::quit();
   };
+
+  callbacks["DATA"] = [this](const nlohmann::json &data) {
+    classData = ClassData::parse(data);
+    loadData();
+    m_menu->m_tableWindow.loadData();
+  };
+
   m_socket->connectToHost(cs::settings::serverHost, cs::settings::serverPort);
+
+  QMessageBox msgBox("ClassSystem 提示", "正在连接到服务器...",
+                     QMessageBox::NoIcon, 0, 0, 0, this);
+  msgBox.setWindowFlag(Qt::WindowCloseButtonHint, false);
+  msgBox.setStandardButtons(QMessageBox::NoButton);
+  msgBox.show();
+
+  QEventLoop loop;
+  QTimer timer;
+  ushort seconds = 0;
+  timer.start(1000);
+  bool connected = false;
+  connect(m_socket, &QTcpSocket::connected, [&loop, &connected] {
+    loop.quit();
+    connected = true;
+  });
+  connect(
+      &timer, &QTimer::timeout, [&seconds, connected, &timer, &loop, &msgBox] {
+        ++seconds;
+        if (seconds >= 10 || connected) {
+          timer.stop();
+          loop.quit();
+        }
+        msgBox.setText(QString::asprintf("正在连接到服务器...%us", seconds));
+      });
+  loop.exec();
+
+  if (!connected) {
+    QMessageBox::critical(this, "ClassSystem 错误",
+                          "无法连接到服务器：连接超时！");
+    qFatal("Connect to server timeout(10s).");
+    QApplication::quit();
+  }
 }
 
 void MainPanel::onConnected() {
