@@ -296,9 +296,10 @@ void MainPanel::loadData() {
 
   const auto stuOnDutyToday = classData.stuOnDuty[cs::dayToday()];
   m_stuOnDutyTable->setColumnCount(
-      std::max_element(
-          stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
-          [](const auto &a, const auto &b) { return a.size() < b.size(); })
+      std::max_element(stuOnDutyToday.cbegin(), stuOnDutyToday.cend(),
+                       [](const QList<uint> &a, const QList<uint> &b) {
+                         return a.size() < b.size();
+                       })
           ->size() +
       1);
 
