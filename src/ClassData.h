@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable : 4267)
 
 #include <qdatetime.h>
 #include <qlist.h>
@@ -15,16 +16,6 @@ struct ClassNotice {
   int fontPtSize = 20;
 };
 
-Q_DECLARE_METATYPE(ClassNotice)
-
-inline QDataStream &operator<<(QDataStream &out, const ClassNotice &notice) {
-  return out << notice.date << notice.str << notice.fontPtSize;
-}
-
-inline QDataStream &operator>>(QDataStream &in, ClassNotice &notice) {
-  return in >> notice.date >> notice.str >> notice.fontPtSize;
-}
-
 struct ClassEvent {
   QString name;
   QDate date;
@@ -36,39 +27,30 @@ struct ClassEvent {
   }
 };
 
-Q_DECLARE_METATYPE(ClassEvent)
-
-inline QDataStream &operator<<(QDataStream &out, const ClassEvent &event) {
-  return out << event.name << event.date << event.important;
-}
-
-inline QDataStream &operator>>(QDataStream &in, ClassEvent &event) {
-  return in >> event.name >> event.date >> event.important;
-}
-
 namespace ClassData {
 struct Data {
   Data() {
-    lessons << QStringList() << QStringList() << QStringList() << QStringList()
-            << QStringList();
+    using StringVectr = QVector<QString>;
+    lessons << StringVectr() << StringVectr() << StringVectr() << StringVectr()
+            << StringVectr();
 
-    using MealStuEachDay = QList<uint>;
+    using MealStuEachDay = QVector<uint>;
     mealStu << MealStuEachDay() << MealStuEachDay() << MealStuEachDay()
             << MealStuEachDay() << MealStuEachDay();
 
-    using StuOnDutyEachDay = QList<QList<uint>>;
+    using StuOnDutyEachDay = QVector<QVector<uint>>;
     stuOnDuty << StuOnDutyEachDay() << StuOnDutyEachDay() << StuOnDutyEachDay()
               << StuOnDutyEachDay() << StuOnDutyEachDay();
   }
 
   QMap<uint, QString> students;
-  QList<QStringList> lessons;
-  QList<QTime> lessonsTm;
-  QList<QList<uint>> mealStu;
-  QList<QList<QList<uint>>> stuOnDuty;
-  QList<QString> dutyJobs;
-  QList<ClassNotice> notices;
-  QList<ClassEvent> events;
+  QVector<QVector<QString>> lessons;
+  QVector<QTime> lessonsTm;
+  QVector<QVector<uint>> mealStu;
+  QVector<QVector<QVector<uint>>> stuOnDuty;
+  QVector<QString> dutyJobs;
+  QVector<ClassNotice> notices;
+  QVector<ClassEvent> events;
   inline QString idAndName(const uint &id) {
     if (!id) return {};
     return QString::fromStdString(
@@ -76,57 +58,72 @@ struct Data {
   }
 };
 
-inline bool writeTo(const ClassData::Data &d, QIODevice *device,
-                    bool shouldClose = true) {
-  if (!device->isOpen() &&
-      !device->open(QIODevice::ReadWrite | QIODevice::Truncate)) {
-    return false;
-  }
-  QDataStream ds(device);
-  ds.setVersion(QDataStream::Qt_5_15);
-  ds << d.students << d.lessons << d.lessonsTm << d.mealStu << d.stuOnDuty
-     << d.dutyJobs;
-  ds << (int)d.notices.size();
-  auto ls = d.events;
-  ds << (int)ls.size();
-  for (const auto &n : d.notices) ds << QVariant::fromValue(n);
+inline ClassData::Data parse(const nlohmann::json &data) {
+  ClassData::Data ret;
 
-  std::sort(ls.begin(), ls.end(), std::greater<>());
-  for (const auto &n : ls) ds << QVariant::fromValue(n);
-  if (shouldClose) device->close();
-  return true;
-}
+  // students
+  for (auto it = data["students"].cbegin(); it != data["students"].cend(); ++it)
+    ret.students[std::stoi(it.key())] = QString::fromStdString(it.value());
 
-inline bool readFrom(QIODevice *device, ClassData::Data &data,
-                     bool shouldClose = true) {
-  if (!device->isOpen() && !device->open(QIODevice::ReadWrite)) {
-    return false;
+  // lessons
+  for (int i = 0; i < 5; ++i) {
+    auto lessonsCountInOneDay = data["lessons"][i].size();
+    ret.lessons[i].resize(lessonsCountInOneDay);
+    for (int j = 0; j < lessonsCountInOneDay; ++j)
+      ret.lessons[i][j] = QString::fromStdString(data["lessons"][i][j]);
   }
-  QDataStream ds(device);
-  ClassData::Data d;
-  ds.setVersion(QDataStream::Qt_5_15);
-  int noticesSize, eventsSize;
-  ds >> d.students >> d.lessons >> d.lessonsTm >> d.mealStu >> d.stuOnDuty >>
-      d.dutyJobs >> noticesSize >> eventsSize;
 
-  for (int i = 0; i < noticesSize; ++i) {
-    QVariant v;
-    ds >> v;
-    const auto &[date, str, fontPtSize] = v.value<ClassNotice>();
-    if (date == cs::kForever || date > QDate::currentDate())
-      d.notices << ClassNotice{date, str, fontPtSize};
-  }
-  for (int i = 0; i < eventsSize; ++i) {
-    QVariant v;
-    ds >> v;
-    if (v.value<ClassEvent>().date >= QDate::currentDate())
-      d.events.push_back(v.value<ClassEvent>());
-  }
-  std::sort(d.events.begin(), d.events.end(), std::greater<>());
-  if (!ClassData::writeTo(d, device, shouldClose)) return false;
+  // lessonsTm
+  auto lessonsTmCount = data["lessonsTm"].size();
+  ret.lessonsTm.resize(lessonsTmCount);
+  for (int i = 0; i < lessonsTmCount; ++i)
+    ret.lessonsTm[i] = QTime::fromMSecsSinceStartOfDay(data["lessonsTm"][i]);
 
-  data = d;
-  return true;
+  // mealStu
+  for (int i = 0; i < 5; ++i) {
+    auto vec = data["mealStu"][i].get<std::vector<int>>();
+    ret.mealStu[i] = {vec.cbegin(), vec.cend()};
+  }
+
+  // stuOnDuty
+  for (int i = 0; i < 5; ++i) {
+    auto jobsCount = data["stuOnDuty"][i].size();
+    ret.stuOnDuty[i].resize(jobsCount);
+
+    for (int j = 0; j < jobsCount; ++j) {
+      auto vec = data["stuOnDuty"][i][j].get<std::vector<int>>();
+      ret.stuOnDuty[i][j] = {vec.cbegin(), vec.cend()};
+    }
+  }
+
+  // dutyJobs
+  ret.dutyJobs.resize(data["dutyJobs"].size());
+  for (auto [retIt, jsonIt] =
+           std::pair(ret.dutyJobs.begin(), data["dutyJobs"].cbegin());
+       retIt != ret.dutyJobs.end() && jsonIt != data["dutyJobs"].cend();
+       ++retIt, ++jsonIt)
+    *retIt = QString::fromStdString(jsonIt.value());
+
+  // notices
+  auto noticesCount = data["notices"].size();
+  ret.notices.resize(noticesCount);
+  for (int i = 0; i < noticesCount; ++i) {
+    auto notice = data["notices"][i];
+    ret.notices[i] = {QDate::fromJulianDay(notice["date"]),
+                      QString::fromStdString(notice["str"]),
+                      notice["fontPtSize"]};
+  }
+
+  // events
+  auto eventsCount = data["events"].size();
+  ret.events.resize(eventsCount);
+  for (int i = 0; i < eventsCount; ++i) {
+    auto ev = data["events"][i];
+    ret.events[i] = {QString::fromStdString(ev["name"]),
+                     QDate::fromJulianDay(ev["date"]), ev["important"]};
+  }
+
+  return ret;
 }
 }  // namespace ClassData
 

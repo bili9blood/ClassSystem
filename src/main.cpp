@@ -56,10 +56,6 @@ int main(int argc, char **argv) {
 
   memcpy(sm.data(), b.data(), b.size());
 
-  // 注册元类型
-  qRegisterMetaTypeStreamOperators<ClassNotice>("ClassNotice");
-  qRegisterMetaTypeStreamOperators<ClassEvent>("ClassEvent");
-
   // 添加 MiSans 并设为默认字体
   if (int fontId =
           QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
@@ -73,15 +69,6 @@ int main(int argc, char **argv) {
   createDirs();
 
   cs::settings::loadIni();
-
-  QFile dataFile("data.stm");
-  if (!dataFile.exists() || !ClassData::readFrom(&dataFile, classData)) {
-    QMessageBox::critical(nullptr, "ClassSystem",
-                          "无法读取数据！<br/>程序将关闭。");
-    return 0;
-  }
-  dataFile.close();
-
   QApplication::setQuitOnLastWindowClosed(false);
 
   // 显示主面板
