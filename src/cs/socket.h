@@ -6,7 +6,7 @@ namespace cs::socket {
 using callback_type = std::function<void(const nlohmann::json &)>;
 
 // key: cmd, value: callbackfunc
-inline QMap<QString, callback_type> callbacks;
+inline std::unordered_map<QString, callback_type> callbacks;
 
 namespace details {
 inline bool complete = true;  // 解决TCP拆包，是否出现拆包
