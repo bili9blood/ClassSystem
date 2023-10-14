@@ -42,6 +42,9 @@ add_executable(ClassSystem
     # 主面板
     src/MainPanel.cpp src/MainPanel.h
 
+    # 显示版本，有更新时显示下载进度
+    src/VersionDisplay.cpp src/VersionDisplay.h
+
     # 悬停菜单
     src/PopupMenu.cpp src/PopupMenu.h
     src/MenuButton.cpp src/MenuButton.h

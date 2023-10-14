@@ -18,17 +18,12 @@ MainPanel::MainPanel(QWidget *parent)
   cs::setParentToDesktop(this);
 
   setStyleSheet(R"(
-
-#labelDDDD, #labelDate, #mealStuTable, #stuOnDutyTable {
-  color: #d2d0ce;
-}
-
 QFrame {
   color: rgba(102, 113, 134 ,180);
 }
 
-QLabel {
-  color: black;
+QLabel, #mealStuTable, #stuOnDutyTable {
+  color: #d2d0ce;
 }
 
 .titleText, #mealStuTitle, #stuOnDutyTitle, #noticesTitle, #eventNameLabel, QLCDNumber {
@@ -153,6 +148,10 @@ QLabel {
   m_stuOnDutyTitle->setFont(cs::font{.pointSize = cs::settings::largeFontSize,
                                      .weight = QFont::Bold}());
 
+  // init version display
+  m_versionDisplay->setSizePolicy(QSizePolicy::MinimumExpanding,
+                                  QSizePolicy::MinimumExpanding);
+
   // init lines
   m_sentenceLine->setFrameShape(QFrame::VLine);
   m_titleLine->setFrameShape(QFrame::VLine);
@@ -180,7 +179,8 @@ QLabel {
   m_headerLayout->addWidget(m_sentenceLine, 0, 2, 2, 1);
   m_headerLayout->addWidget(m_sentenceLabel, 0, 3, 2, 1, Qt::AlignTop);
   m_headerLayout->addWidget(m_titleLine, 0, 4, 2, 1);
-  m_headerLayout->addWidget(m_title, 0, 5, 2, 1, Qt::AlignRight);
+  m_headerLayout->addWidget(m_title, 0, 5, Qt::AlignRight);
+  m_headerLayout->addWidget(m_versionDisplay, 1, 5, Qt::AlignCenter);
 
   m_noticesLayout->setMargin(0);
   m_noticesLayout->setSpacing(2);
