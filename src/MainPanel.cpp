@@ -495,7 +495,13 @@ void MainPanel::mouseMoveEvent(QMouseEvent *ev) {
     const int kBoundedY = qBound(0, pos.y(), kScreenSize.height() - height());
     return QPoint(kBoundedX, kBoundedY);
   };
-  move(boundedPos(ev->globalPos() + m_mouseStartPoint));
+  auto unbounded = ev->globalPos() + m_mouseStartPoint,
+       bounded = boundedPos(unbounded);
+
+  // 出界时重置鼠标初始点
+  if (bounded != unbounded) m_mouseStartPoint = pos() - ev->globalPos();
+
+  move(bounded);
 }
 
 void MainPanel::resizeEvent(QResizeEvent *) { saveGeometry(); }
