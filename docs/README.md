@@ -5,13 +5,13 @@ ClassSystem 是一个展示 [班级信息](/class-data) ，帮助班干和老�
 # 贡献者
 
 ```card
-title: 文昱翀
+title: 文昱翀chong
 desc: 程序、创意、文档
 logo: /img/yu-chong.png
 ```
 
 ```card
-title: 陈梓畅
+title: 陈梓畅畅
 desc: 文档、测试、创意
 logo: /img/zi-chang.png
 ```
