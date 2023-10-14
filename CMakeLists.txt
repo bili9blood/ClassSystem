@@ -12,12 +12,7 @@ include_directories(src ${CMAKE_BINARY_DIR} include)
 
 set(UTILS_SOURCES src/ClassData.h)
 
-# 从 version.txt 中读取版本
-file(STRINGS version.txt VER LIMIT_COUNT 1)
-string(LENGTH ${VER} VER_LENGTH)
-string(SUBSTRING ${VER} 1 ${VER_LENGTH}-1 VER)
-
-project(ClassSystem LANGUAGES CXX VERSION ${VER})
+project(ClassSystem LANGUAGES CXX VERSION 1.9.0)
 
 configure_file(src/config.h.in config.h)
 
@@ -74,3 +69,9 @@ add_executable(ClassSystem
 target_include_directories(ClassSystem PUBLIC src)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
+
+if(${MSVC})
+    set_target_properties(ClassSystem PROPERTIES
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
+    )
+endif()
