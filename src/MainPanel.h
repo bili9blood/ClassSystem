@@ -25,7 +25,6 @@
 
 #include "PopupMenu.h"
 #include "TitleWidget.h"
-#include "VersionDisplay.h"
 
 class MainPanel : public QWidget {
   Q_OBJECT
@@ -34,6 +33,9 @@ class MainPanel : public QWidget {
   explicit MainPanel(QWidget *parent = nullptr);
 
   void loadData();
+
+ signals:
+  void updatesAvailable();
 
  private:
   // layouts
@@ -59,7 +61,7 @@ class MainPanel : public QWidget {
   QLabel *m_labelDDDD = new QLabel("星期八", this);
   QLabel *m_sentenceLabel = new QLabel(this);
   TitleWidget *m_title = new TitleWidget("ClassSystem", this);
-  VersionDisplay *m_versionDisplay = new VersionDisplay(this);
+  QLabel *m_versionLabel = new QLabel("V"_s + cs::config::projectVersion, this);
 
   // lessons
   QTableWidget *m_lessons = new QTableWidget(9, 1, this);

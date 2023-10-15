@@ -149,8 +149,9 @@ QLabel, #mealStuTable, #stuOnDutyTable {
                                      .weight = QFont::Bold}());
 
   // init version display
-  m_versionDisplay->setSizePolicy(QSizePolicy::MinimumExpanding,
-                                  QSizePolicy::MinimumExpanding);
+  m_versionLabel->setAlignment(Qt::AlignCenter);
+  m_versionLabel->setFont(
+      {"华文中宋", cs::settings::smallFontSize, QFont::Thin});
 
   // init lines
   m_sentenceLine->setFrameShape(QFrame::VLine);
@@ -180,7 +181,7 @@ QLabel, #mealStuTable, #stuOnDutyTable {
   m_headerLayout->addWidget(m_sentenceLabel, 0, 3, 2, 1, Qt::AlignTop);
   m_headerLayout->addWidget(m_titleLine, 0, 4, 2, 1);
   m_headerLayout->addWidget(m_title, 0, 5, Qt::AlignRight);
-  m_headerLayout->addWidget(m_versionDisplay, 1, 5, Qt::AlignCenter);
+  m_headerLayout->addWidget(m_versionLabel, 1, 5, Qt::AlignCenter);
 
   m_noticesLayout->setMargin(0);
   m_noticesLayout->setSpacing(2);
