@@ -373,6 +373,8 @@ void MainPanel::initSocket() {
     m_menu->m_tableWindow.loadData();
   };
 
+  callbacks["UPDATE"] = [this](const auto &) { emit updatesAvailable(); };
+
   m_socket->connectToHost(cs::settings::serverHost, cs::settings::serverPort);
 
   QMessageBox msgBox("ClassSystem 提示", "正在连接到服务器...",
@@ -393,7 +395,7 @@ void MainPanel::initSocket() {
   connect(
       &timer, &QTimer::timeout, [&seconds, connected, &timer, &loop, &msgBox] {
         ++seconds;
-        if (seconds >= 10 || connected) {
+        if (seconds >= cs::settings::connectionTimeoutSeconds || connected) {
           timer.stop();
           loop.quit();
         }

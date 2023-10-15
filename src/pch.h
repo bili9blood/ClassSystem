@@ -95,6 +95,7 @@ inline int superFontSize;
 // Server
 inline QString serverHost;
 inline ushort serverPort;
+inline ushort connectionTimeoutSeconds;
 
 inline void loadIni() {
   bool ok;
@@ -130,6 +131,11 @@ inline void loadIni() {
     serverPort = tmp;
   else
     serverPort = 8897;
+
+  if (ushort tmp = ini.value("timeoutSecs").toUInt(&ok); ok)
+    connectionTimeoutSeconds = tmp;
+  else
+    connectionTimeoutSeconds = 10;
 
   ini.endGroup();
 
