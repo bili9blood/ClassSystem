@@ -139,7 +139,7 @@ inline void loadIni() {
   else
     connectionTimeoutSeconds = 10;
 
-  if (ushort tmp = ini.value("httpServerPort").toUInt(&ok); ok)
+  if (ushort tmp = ini.value("httpPort").toUInt(&ok); ok)
     httpServerPort = tmp;
   else
     httpServerPort = 8895;
