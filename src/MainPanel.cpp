@@ -6,6 +6,7 @@
 #include <qhostaddress.h>
 #include <qmessagebox.h>
 #include <qpainter.h>
+#include <qprocess.h>
 #include <qrandom.h>
 #include <qsizepolicy.h>
 
@@ -375,7 +376,15 @@ void MainPanel::initSocket() {
     m_menu->m_tableWindow.loadData();
   };
 
-  callbacks["UPDATE"] = [this](const auto &) { emit updatesAvailable(); };
+  callbacks["UPDATE"] = [](const nlohmann::json &data) {
+    QFile latestFile("LATEST");
+    latestFile.open(QFile::WriteOnly);
+    latestFile.write(QByteArray::fromBase64(data.get<std::string>().c_str()));
+    latestFile.close();
+
+    QProcess::startDetached("Updater.exe",
+                            {QString::number(qApp->applicationPid())});
+  };
 
   m_socket->connectToHost(cs::settings::serverHost, cs::settings::serverPort);
 

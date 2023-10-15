@@ -70,8 +70,10 @@ target_include_directories(ClassSystem PUBLIC src)
 target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 
+add_executable(Updater ${__DECL_RELEASE_WIN32} src/UpdaterMain.cpp)
+
 if(${MSVC})
-    set_target_properties(ClassSystem PROPERTIES
+    set_target_properties(ClassSystem Updater PROPERTIES
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
     )
 endif()

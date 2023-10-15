@@ -34,9 +34,6 @@ class MainPanel : public QWidget {
 
   void loadData();
 
- signals:
-  void updatesAvailable();
-
  private:
   // layouts
   QGridLayout *m_mainLayout = new QGridLayout(this);
