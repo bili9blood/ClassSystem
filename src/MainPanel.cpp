@@ -99,6 +99,7 @@ QLabel, #mealStuTable, #stuOnDutyTable {
       cs::font{.pointSize = cs::settings::mediumFontSize}());
   m_daysLeftDisplay->setFrameShape(QFrame::NoFrame);
   m_daysLeftDisplay->setSegmentStyle(QLCDNumber::Flat);
+  m_daysLeftDisplay->setMinimumHeight(120);
 
   // init students carry meals
   m_mealStuTable->setObjectName("mealStuTable");
