@@ -12,7 +12,7 @@ include_directories(src ${CMAKE_BINARY_DIR} include)
 
 set(UTILS_SOURCES src/ClassData.h)
 
-project(ClassSystem LANGUAGES CXX VERSION 1.9.0)
+project(ClassSystem LANGUAGES CXX VERSION 1.9.1)
 
 configure_file(src/config.h.in config.h)
 
@@ -41,6 +41,9 @@ add_executable(ClassSystem
 
     # 主面板
     src/MainPanel.cpp src/MainPanel.h
+
+    # 显示版本，有更新时显示下载进度
+    src/VersionDisplay.cpp src/VersionDisplay.h
 
     # 悬停菜单
     src/PopupMenu.cpp src/PopupMenu.h
