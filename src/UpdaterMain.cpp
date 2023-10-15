@@ -3,7 +3,6 @@
 
 #include <functional>
 #include <string>
-#include <thread>
 
 constexpr const char latestFileName[] = "LATEST";
 constexpr const char mainProgramName[] = "ClassSystem.exe";
@@ -24,6 +23,5 @@ int main(int argc, char** argv) {
   ::DeleteFile(latestFileName);
 
   // 重新启动主程序
-  std::thread th(std::bind(system, mainProgramName));
-  th.detach();
+  system(mainProgramName);
 }

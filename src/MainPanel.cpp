@@ -9,8 +9,10 @@
 #include <qprocess.h>
 #include <qrandom.h>
 #include <qsizepolicy.h>
+#include <qthread.h>
 
 #include "ClassData.h"
+#include "UpdateDownloader.h"
 #include "cs/socket.h"
 
 MainPanel::MainPanel(QWidget *parent)
@@ -375,20 +377,25 @@ void MainPanel::initSocket() {
     m_menu->m_tableWindow.loadData();
   };
 
-  callbacks["UPDATE"] = [](const nlohmann::json &data) {
-    QFile latestFile("LATEST");
-    latestFile.open(QFile::WriteOnly);
-    latestFile.write(QByteArray::fromBase64(data.get<std::string>().c_str()));
-    latestFile.close();
+  callbacks["UPDATE"] = [this](const nlohmann::json &) {
+    auto downloader = new UpdateDownloader();
+    connect(this, &MainPanel::updatesAvailable, downloader,
+            &UpdateDownloader::download);
+    connect(downloader, &UpdateDownloader::progress, m_versionDisplay,
+            &VersionDisplay::onProgress);
 
-    QProcess::startDetached("Updater.exe",
-                            {QString::number(qApp->applicationPid())});
+    auto downloadThread = new QThread();
+    downloadThread->start();
+    downloader->moveToThread(downloadThread);
+
+    emit updatesAvailable();
   };
 
-  m_socket->connectToHost(cs::settings::serverHost, cs::settings::serverPort);
+  m_socket->connectToHost(cs::settings::serverHost,
+                          cs::settings::tcpServerPort);
 
   QMessageBox msgBox("ClassSystem 提示", "正在连接到服务器...",
-                     QMessageBox::NoIcon, 0, 0, 0, this);
+                     QMessageBox::NoIcon, 0, 0, 0, nullptr);
   msgBox.setWindowFlag(Qt::WindowCloseButtonHint, false);
   msgBox.setStandardButtons(QMessageBox::NoButton);
   msgBox.show();
@@ -414,7 +421,7 @@ void MainPanel::initSocket() {
   loop.exec();
 
   if (!connected) {
-    QMessageBox::critical(this, "ClassSystem 错误",
+    QMessageBox::critical(nullptr, "ClassSystem 错误",
                           "无法连接到服务器：连接超时！");
     qFatal("Connect to server timeout(10s).");
     QApplication::quit();

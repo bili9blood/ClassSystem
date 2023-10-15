@@ -35,6 +35,9 @@ class MainPanel : public QWidget {
 
   void loadData();
 
+ signals:
+  void updatesAvailable();
+
  private:
   // layouts
   QGridLayout *m_mainLayout = new QGridLayout(this);
@@ -93,7 +96,7 @@ class MainPanel : public QWidget {
 
   QPoint m_mouseStartPoint;
 
-  // local server
+  // server
   QTcpSocket *m_socket = new QTcpSocket(this);
   void initSocket();
 

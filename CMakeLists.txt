@@ -62,6 +62,9 @@ add_executable(ClassSystem
     # 随机点名
     src/RollCallWindow.cpp src/RollCallWindow.h
 
+    # 从FTP下载更新
+    src/UpdateDownloader.cpp src/UpdateDownloader.h
+
     # 滑动 Stacked Widget
     include/QAnimationStackedWidget/QAnimationStackedWidget.cpp
     include/QAnimationStackedWidget/QAnimationStackedWidget.h

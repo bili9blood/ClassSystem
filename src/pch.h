@@ -8,6 +8,7 @@
 #include <qheaderview.h>
 #include <qsettings.h>
 #include <qtableview.h>
+#include <qurl.h>
 #include <qwidget.h>
 
 #include <algorithm>
@@ -94,8 +95,9 @@ inline int superFontSize;
 
 // Server
 inline QString serverHost;
-inline ushort serverPort;
+inline ushort tcpServerPort;
 inline ushort connectionTimeoutSeconds;
+inline ushort httpServerPort;
 
 inline void loadIni() {
   bool ok;
@@ -127,15 +129,20 @@ inline void loadIni() {
   else
     serverHost = cs::config::defaultHost;
 
-  if (ushort tmp = ini.value("port").toUInt(&ok); ok)
-    serverPort = tmp;
+  if (ushort tmp = ini.value("tcpPort").toUInt(&ok); ok)
+    tcpServerPort = tmp;
   else
-    serverPort = 8897;
+    tcpServerPort = 8897;
 
   if (ushort tmp = ini.value("timeoutSecs").toUInt(&ok); ok)
     connectionTimeoutSeconds = tmp;
   else
     connectionTimeoutSeconds = 10;
+
+  if (ushort tmp = ini.value("httpServerPort").toUInt(&ok); ok)
+    httpServerPort = tmp;
+  else
+    httpServerPort = 8895;
 
   ini.endGroup();
 
