@@ -20,6 +20,7 @@ int main(int argc, char** argv) {
   ::Sleep(500);
 
   ::CopyFile(latestFileName, mainProgramName, false);
+  ::Sleep(500);
   ::DeleteFile(latestFileName);
 
   // 重新启动主程序
