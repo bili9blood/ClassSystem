@@ -3,4 +3,7 @@ dist
 out
 *.log*
 yarn.lock
+package-lock.json
 settings.json
+.vscode/
+.idea/
