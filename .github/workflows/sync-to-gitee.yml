@@ -1,0 +1,14 @@
+name: Sync to Gitee
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
+      - name: Sync
+        run: sh sync-to-gitee.sh ${{ secrets.ACCESS_TOKEN }}
