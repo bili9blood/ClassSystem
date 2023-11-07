@@ -1,6 +1,3 @@
-<!-- To 陈梓畅： 按 Ctrl+/ 就可以写注释啦 -->
-<!-- TODO:把这两行去掉 -->
-
 # 关于
 
 ClassSystem 是一个展示 [班级信息](/class-data) ，帮助班干和老师更好管理班级的工具。它分为 [前台展示端 (ClassSystem.exe)](/class-system/) 与 [后台管理端 (ClassAdmin.exe)](/class-admin/) 。
