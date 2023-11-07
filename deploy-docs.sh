@@ -4,8 +4,8 @@
 set -e
 
 # 生成静态文件
-yarn install --ignore-scripts
-yarn run docs:build --ignore-scripts
+npm install --ignore-scripts
+npm run docs:build --ignore-scripts
 
 # 进入生成的文件夹
 cd docs/.vuepress/dist
