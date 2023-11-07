@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - "main"
-    paths:
-      - "sync-to-gitee.sh"
 jobs:
   sync:
     runs-on: ubuntu-latest
