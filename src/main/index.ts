@@ -1,17 +1,17 @@
-import { app, shell, BrowserWindow } from "electron";
+import { app, screen, shell, BrowserWindow } from "electron";
 import { join } from "path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-import fs, { accessSync, readFileSync } from "fs";
+import { readFileSync } from "fs";
 import embed_desktop from "../native/build/Release/embed-desktop.node";
+import { WindowMessages } from "./window-messages";
 
 class AppSettings {
-  position: { x: number; y: number } = { x: 500, y: 100 };
+  position: { top: number; right: number } = { top: 20, right: 20 };
 }
 
 let appSettings: AppSettings;
 
 try {
-  accessSync("settings.json", fs.constants.R_OK | fs.constants.W_OK);
   appSettings = JSON.parse(readFileSync("settings.json").toString());
 } catch (e) {
   appSettings = new AppSettings();
@@ -23,12 +23,10 @@ if (!app.requestSingleInstanceLock()) app.quit();
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    ...appSettings.position,
-
     show: false,
     frame: false,
     transparent: true,
-    resizable: true,
+    resizable: false,
 
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
@@ -53,7 +51,16 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 
-  mainWindow.hookWindowMessage(278 /* , function () {
+  mainWindow.hookWindowMessage(WindowMessages.WM_SIZE, () => {
+    const { width: s_width } = screen.getPrimaryDisplay().size;
+    const [w_width] = mainWindow.getSize();
+    mainWindow.setPosition(
+      s_width - w_width - appSettings.position.right,
+      appSettings.position.top
+    );
+  });
+
+  mainWindow.hookWindowMessage(WindowMessages.WM_INITMENU, () => {
     mainWindow.blur();
     mainWindow.focus();
     mainWindow.setEnabled(false);
