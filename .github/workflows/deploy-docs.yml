@@ -3,7 +3,6 @@ on:
   push:
     paths:
       - "docs/**"
-      - "deploy-docs.sh"
 
 jobs:
   deploy:
