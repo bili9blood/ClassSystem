@@ -56,15 +56,7 @@ int main(int argc, char **argv) {
 
   memcpy(sm.data(), b.data(), b.size());
 
-  // 添加 MiSans 并设为默认字体
-  if (int fontId =
-          QFontDatabase::addApplicationFont(":/font/MiSans-Regular.ttf");
-      fontId != -1)
-    QApplication::setFont(
-        QFontDatabase::applicationFontFamilies(fontId).first());
-
-  // 添加标题字体
-  QFontDatabase::addApplicationFont(":/font/title.ttf");
+  QApplication::setFont({"微软雅黑"});
 
   createDirs();
 

@@ -9,11 +9,12 @@
 inline PopupMenu *leftMenu;
 inline PopupMenu *rightMenu;
 
-PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
+PopupMenu::PopupMenu(QWidget *parent)
     : QWidget(parent,
-              Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint),
-      m_isLeftSide(isOnLeft) {
+              Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint) {
   cs::setWidgetTransparent(this);
+
+  if (!rightMenu) rightMenu = this;
 
   // append buttons
   m_btnsList << new MenuButton({":/img/capture.png"}, "截图", &m_btnsWidget)
@@ -38,15 +39,14 @@ PopupMenu::PopupMenu(bool isOnLeft, QWidget *parent)
   setBtnsVisible(true);
 
   // 左侧
-  if (isOnLeft) {
+  if (this != rightMenu) {  // 不能写 `this == leftMenu` ，因为这样会陷入死循环
     // 旋转
     QTransform trans;
     trans.rotate(180);
     m_iconClosed = m_iconClosed.transformed(trans, Qt::SmoothTransformation);
     m_iconOpened = m_iconOpened.transformed(trans, Qt::SmoothTransformation);
   } else {  // 右侧
-    rightMenu = this;
-    leftMenu = new PopupMenu(true);
+    leftMenu = new PopupMenu;
   }
 }
 
@@ -62,7 +62,7 @@ void PopupMenu::updateBtnsPosition() {
     return qBound(0, y, maxHeight);
   }(y() - m_btnsWidget.height() / 2 + height() / 2);
 
-  if (m_isLeftSide) {
+  if (this == leftMenu) {
     m_btnsWidget.move(x() + width() + 10, btnsYPos);
   } else {
     m_btnsWidget.move(x() - 10 - m_btnsWidget.width(), btnsYPos);
@@ -136,8 +136,9 @@ bool PopupMenu::eventFilter(QObject *obj, QEvent *ev) {
 void PopupMenu::paintEvent(QPaintEvent *) {
   if (m_init) {
     const int xPos =
-        m_isLeftSide ? 0
-                     : QApplication::primaryScreen()->size().width() - width();
+        this == leftMenu
+            ? 0
+            : QApplication::primaryScreen()->size().width() - width();
     move(xPos, y());
     setBtnsVisible(false);
     m_init = false;
@@ -146,7 +147,7 @@ void PopupMenu::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   painter.setBrush(m_bgColor);
   painter.setPen(Qt::transparent);
-  if (m_isLeftSide) {
+  if (this == leftMenu) {
     painter.drawRoundedRect(
         QRect(rect().topLeft() - QPoint(10, 0), rect().size() + QSize(10, 0)),
         10, 10);
@@ -180,7 +181,7 @@ void PopupMenu::leaveEvent(QEvent *ev) {
 
 void PopupMenu::moveEvent(QMoveEvent *ev) {
   updateBtnsPosition();
-  if (m_isLeftSide) {
+  if (this == leftMenu) {
     rightMenu->move(rightMenu->x(), y());
   } else {
     leftMenu->move(leftMenu->x(), y());
@@ -188,7 +189,7 @@ void PopupMenu::moveEvent(QMoveEvent *ev) {
 }
 
 void PopupMenu::showEvent(QShowEvent *ev) {
-  if (!m_isLeftSide) {
+  if (this == rightMenu) {
     leftMenu->show();
   }
 }

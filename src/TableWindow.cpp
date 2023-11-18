@@ -74,51 +74,6 @@ void TableWindow::loadData() {
       m_lessonsTable->setItem(j, i, item);
     }
   }
-
-  // students carry meals
-  int mx =
-      std::max<int>({classData.mealStu[0].size(), classData.mealStu[1].size(),
-                     classData.mealStu[2].size(), classData.mealStu[3].size(),
-                     classData.mealStu[4].size()});
-
-  m_mealStuTable->clear();
-  m_mealStuTable->setRowCount(mx);
-  for (int i = 0; i < 5; ++i) {
-    m_mealStuTable->setHorizontalHeaderItem(
-        i, new QTableWidgetItem(cs::oneDayOfWeek(i)));
-    for (int j = 0; j < classData.mealStu[i].size(); ++j) {
-      auto item =
-          new QTableWidgetItem(classData.idAndName(classData.mealStu[i][j]));
-      item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(cs::font{.family = "华文中宋",
-                             .pointSize = kPointSizeList[m_pointSizeIndex]}());
-      if (i == cs::dayToday()) item->setBackground(QColor(230, 230, 230));
-      m_mealStuTable->setItem(j, i, item);
-    }
-  }
-
-  // students on duty
-  m_stuOnDutyTable->clear();
-  m_stuOnDutyTable->setRowCount(classData.dutyJobs.size());
-  for (int i = 0; i < 5; ++i) {
-    m_stuOnDutyTable->setHorizontalHeaderItem(
-        i, new QTableWidgetItem(cs::oneDayOfWeek(i)));
-    for (int j = 0; j < classData.dutyJobs.size(); ++j) {
-      m_stuOnDutyTable->setVerticalHeaderItem(
-          j, new QTableWidgetItem(classData.dutyJobs[j]));
-      QString str;
-      for (const uint &id : classData.stuOnDuty[i][j]) {
-        if (str.size()) str += '\n';
-        str += classData.idAndName(id);
-      }
-      auto item = new QTableWidgetItem(str);
-      item->setTextAlignment(Qt::AlignCenter);
-      item->setFont(cs::font{.family = "华文中宋",
-                             .pointSize = kPointSizeList[m_pointSizeIndex]}());
-      if (i == cs::dayToday()) item->setBackground(QColor(230, 230, 230));
-      m_stuOnDutyTable->setItem(j, i, item);
-    }
-  }
 }
 
 void TableWindow::wheelEvent(QWheelEvent *ev) {

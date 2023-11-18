@@ -217,7 +217,7 @@ inline void setWidgetTransparent(QWidget *widget) {
 }
 
 struct font {
-  const QString &family = "MiSans";
+  const QString &family = "微软雅黑";
   int pointSize = -1;
   int weight = -1;
   bool italic = false;

@@ -42,9 +42,6 @@ add_executable(ClassSystem
     # 主面板
     src/MainPanel.cpp src/MainPanel.h
 
-    # 显示版本，有更新时显示下载进度
-    src/VersionDisplay.cpp src/VersionDisplay.h
-
     # 悬停菜单
     src/PopupMenu.cpp src/PopupMenu.h
     src/MenuButton.cpp src/MenuButton.h
@@ -62,24 +59,19 @@ add_executable(ClassSystem
     # 随机点名
     src/RollCallWindow.cpp src/RollCallWindow.h
 
-    # 从FTP下载更新
+    # 下载更新
     src/UpdateDownloader.cpp src/UpdateDownloader.h
-
-    # 滑动 Stacked Widget
-    include/QAnimationStackedWidget/QAnimationStackedWidget.cpp
-    include/QAnimationStackedWidget/QAnimationStackedWidget.h
 
     ${CLASSSYSTEM_UI_SOURCES}
     ${UTILS_SOURCES}
 )
 target_include_directories(ClassSystem PUBLIC src)
-target_link_libraries(ClassSystem PUBLIC Qt5::Widgets Qt5::Core Qt5::Network)
+target_link_libraries(
+    ClassSystem PUBLIC
+
+    Qt5::Widgets Qt5::Core Qt5::Network
+    ws2_32
+)
 target_precompile_headers(ClassSystem PUBLIC src/pch.h)
 
 add_executable(Updater ${__DECL_RELEASE_WIN32} src/UpdaterMain.cpp)
-
-if(${MSVC})
-    set_target_properties(ClassSystem Updater PROPERTIES
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
-    )
-endif()

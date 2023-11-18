@@ -19,7 +19,7 @@ class PopupMenu : public QWidget {
 
   Q_OBJECT
  public:
-  explicit PopupMenu(bool isOnLeft = false, QWidget *parent = nullptr);
+  explicit PopupMenu(QWidget *parent = nullptr);
 
   ~PopupMenu();
 
@@ -27,8 +27,6 @@ class PopupMenu : public QWidget {
   void onBtnClicked();
 
  private:
-  const bool m_isLeftSide;
-
   // buttons
   QWidget m_btnsWidget = QWidget(
       nullptr, Qt::WindowStaysOnTopHint | Qt::Tool | Qt::FramelessWindowHint);
