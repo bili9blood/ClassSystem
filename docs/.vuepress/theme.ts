@@ -11,13 +11,20 @@ export default hopeTheme({
     },
   },
 
+  //导航栏：GitHub仓库和编辑链接
+  repo: "https://github.com/bili9blood/ClassSystem",
+  repoLabel: "GitHub",
+  repoDisplay: true,
+
   logo: "img/logo.png",
+  fullscreen: true,
 
-  contributors: false,
-  lastUpdated: false,
+  contributors: true,
+  lastUpdated: true,
+  sidebarIcon: true,
 
-  prevLink: false,
-  nextLink: false,
+  prevLink: true,
+  nextLink: true,
 
-  pageInfo: ["Word", "ReadingTime"],
+  pageInfo: ["Word", "ReadingTime", "Date"]
 });

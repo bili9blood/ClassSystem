@@ -1,6 +1,14 @@
 export default [
   "/", "class-system", "/class-admin", "/class-data",
-  
+
+  // {
+  //   text: "介绍",
+  //   link: "/",
+  //   icon: ".vuepress\public\page_ico\info.svg",
+  //   collapsible: true,
+  //   children: [""],
+  // },
+
   // {
   //   text: "前台展示端",
   //   link: "",
