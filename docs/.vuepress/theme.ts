@@ -1,13 +1,15 @@
 import { hopeTheme } from "vuepress-theme-hope";
 
 export default hopeTheme({
-  sidebar,
+  sidebar: ["/", "class-system", "/class-admin", "/class-data"],
   breadcrumb: false,
 
   plugins: {
     mdEnhance: {
       card: true,
     },
+    git: true,
+    // 页面底下的 “编辑此页” 无法与仓库 md 文件对号
   },
 
   //导航栏：GitHub仓库和编辑链接
@@ -16,14 +18,8 @@ export default hopeTheme({
   repoDisplay: true,
 
   logo: "img/logo.png",
+
   fullscreen: true,
 
-  contributors: true,
-  lastUpdated: true,
-  sidebarIcon: true,
-
-  prevLink: true,
-  nextLink: true,
-
-  pageInfo: ["Word", "ReadingTime", "Date"]
+  pageInfo: ["Word", "ReadingTime"]
 });
