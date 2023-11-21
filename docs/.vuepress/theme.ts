@@ -1,5 +1,4 @@
 import { hopeTheme } from "vuepress-theme-hope";
-import sidebar from "./sidebar";
 
 export default hopeTheme({
   sidebar,
