@@ -8,7 +8,6 @@ export default hopeTheme({
     mdEnhance: {
       card: true,
     },
-    git: true,
   },
 
   //导航栏：GitHub仓库和编辑链接
