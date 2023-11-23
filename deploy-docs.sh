@@ -23,9 +23,12 @@ git init
 git config user.name "class-system"
 git config user.email "3501202786@qq.com"
 
+unset http_proxy
+unset https_proxy
+
 
 git add -A
 git commit -m 'deploy'
 
-git push -f https://class-system:$1@gitee.com/class-system/docs.git master
+git push -f http://class-system:$1@gitee.com/class-system/docs.git master
 echo "Done."
