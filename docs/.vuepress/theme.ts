@@ -21,5 +21,5 @@ export default hopeTheme({
 
   fullscreen: true,
 
-  pageInfo: ["Word", "ReadingTime"],
+  pageInfo: ["Word", "ReadingTime", "Date"],
 });
