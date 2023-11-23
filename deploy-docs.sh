@@ -31,6 +31,6 @@ if [-z "$1"]
 then
   echo "Done."
 else
-  git push -f https://$1@gitee.com/class-system/docs.git master
+  git push -f https://class-system:$1@gitee.com/class-system/docs.git master
   echo "Done."
 fi
