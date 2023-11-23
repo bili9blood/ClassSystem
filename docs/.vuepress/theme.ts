@@ -9,17 +9,18 @@ export default hopeTheme({
       card: true,
     },
     git: true,
-    // 页面底下的 “编辑此页” 无法与仓库 md 文件对号
   },
 
   //导航栏：GitHub仓库和编辑链接
   repo: "https://github.com/bili9blood/ClassSystem",
   repoLabel: "GitHub",
   repoDisplay: true,
+  // 配置仓库中的文档路径，解决 `编辑此页` 按钮跳转页面错误的问题。
+  docsDir: "/docs/",
 
   logo: "img/logo.png",
 
   fullscreen: true,
 
-  pageInfo: ["Word", "ReadingTime"]
+  pageInfo: ["Word", "ReadingTime"],
 });
