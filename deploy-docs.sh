@@ -20,7 +20,7 @@ cd .vuepress/dist
 git init
 
 
-git config user.name "class-system-docs"
+git config user.name "class-system"
 git config user.email "3501202786@qq.com"
 
 
@@ -31,6 +31,6 @@ if [-z "$1"]
 then
   echo "Done."
 else
-  git push -f https://$1@gitee.com/class-system-docs/class-system-docs.git master
+  git push -f https://$1@gitee.com/class-system/docs.git master
   echo "Done."
 fi
