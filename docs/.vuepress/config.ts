@@ -6,8 +6,8 @@ export default defineUserConfig({
   lang: "zh-CN",
 
   head: [
-    ["link", { rel: "icon", href: "/img/logo.ico" }],
-    ["link", { rel: "icon", href: "/img/logo.png" }],
+    ["link", { rel: "icon", href: "/docs/img/logo.ico" }],
+    ["link", { rel: "icon", href: "/docs/img/logo.png" }],
   ],
 
   base: "/docs/",
