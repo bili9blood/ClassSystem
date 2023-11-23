@@ -26,7 +26,6 @@ git config user.email "3501202786@qq.com"
 unset http_proxy
 unset https_proxy
 
-
 git add -A
 git commit -m 'deploy'
 
