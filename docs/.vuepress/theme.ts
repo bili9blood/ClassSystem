@@ -9,7 +9,7 @@ export default hopeTheme({
       // @ts-ignore
       card: true,
     },
-    git: { updatedTime: true, contributors: true },
+    git: true,
   },
 
   //导航栏：GitHub仓库和编辑链接
