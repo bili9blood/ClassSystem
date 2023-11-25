@@ -13,7 +13,6 @@ git clone $GITEE_REPO publish
 
 # 生成静态文件
 yarn install
-yarn global add vuepress
 NODE_OPTIONS=--openssl-legacy-provider
 yarn run docs:build
 
