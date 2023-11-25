@@ -22,13 +22,14 @@ cd -
 # 生成静态文件
 yarn install
 yarn global add vuepress
-export NODE_OPTIONS=--openssl-legacy-provider
+NODE_OPTIONS=--openssl-legacy-provider
 yarn run docs:build
 
 # 进入生成的文件夹
 cd .vuepress/dist
 
 echo "status after"
+echo $PWD
 git status
 
 # git config user.name "class-system"
