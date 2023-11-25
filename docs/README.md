@@ -1,10 +1,3 @@
----
-# 图标搞不定
-
-# 日期可以自行标注
-date: 2023-11-23
----
-
 # 介绍
 
 ClassSystem 是一个展示 [班级信息](/class-data) ，帮助班干和老师更好管理班级的工具。它分为 [前台展示端 (ClassSystem.exe)](/class-system/) 与 [后台管理端 (ClassAdmin.exe)](/class-admin/) 。
