@@ -1,5 +1,7 @@
 import { defineUserConfig } from "vuepress";
 import theme from "./theme";
+import { cut } from "nodejs-jieba";
+import { searchProPlugin } from "vuepress-plugin-search-pro";
 
 export default defineUserConfig({
   title: "ClassSystem 使用文档",
@@ -16,5 +18,13 @@ export default defineUserConfig({
 
   // home: "https://class-system-docs.gitee.io/",
 
-  plugins: [],
+  plugins: [
+    searchProPlugin({
+      indexContent: true,
+      indexOptions: {
+        tokenize: (text, fieldName) =>
+          fieldName === "id" ? [text] : cut(text, true),
+      },
+    }),
+  ],
 });
