@@ -6,6 +6,7 @@ export default hopeTheme({
 
   plugins: {
     mdEnhance: {
+      // @ts-ignore
       card: true,
     },
   },
