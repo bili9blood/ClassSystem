@@ -3,7 +3,7 @@
 # 确保脚本抛出遇到的错误
 set -e
 
-rm .git
+rm -rf .git
 
 cd docs
 
