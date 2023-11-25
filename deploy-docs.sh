@@ -12,15 +12,23 @@ GITEE_REPO=https://class-system:$1@gitee.com/class-system/docs.git
 mkdir .vuepress/dist
 git clone $GITEE_REPO .vuepress/dist
 
+cd .vuepress/dist
+
+echo "status before"
+git status
+
+cd -
+
 # 生成静态文件
-# yarn install
-# yarn global add vuepress
-# export NODE_OPTIONS=--openssl-legacy-provider
-# yarn run docs:build
+yarn install
+yarn global add vuepress
+export NODE_OPTIONS=--openssl-legacy-provider
+yarn run docs:build
 
 # 进入生成的文件夹
 cd .vuepress/dist
 
+echo "status after"
 git status
 
 # git config user.name "class-system"
