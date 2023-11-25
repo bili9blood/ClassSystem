@@ -3,6 +3,8 @@
 # 确保脚本抛出遇到的错误
 set -e
 
+rm .git
+
 cd docs
 
 GITEE_REPO=https://class-system:$1@gitee.com/class-system/docs.git
