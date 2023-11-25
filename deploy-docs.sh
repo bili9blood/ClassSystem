@@ -13,22 +13,24 @@ mkdir .vuepress/dist
 git clone $GITEE_REPO .vuepress/dist
 
 # 生成静态文件
-yarn install
-yarn global add vuepress
-export NODE_OPTIONS=--openssl-legacy-provider
-yarn run docs:build
+# yarn install
+# yarn global add vuepress
+# export NODE_OPTIONS=--openssl-legacy-provider
+# yarn run docs:build
 
 # 进入生成的文件夹
 cd .vuepress/dist
 
-git config user.name "class-system"
-git config user.email "3501202786@qq.com"
+git status
 
-unset http_proxy
-unset https_proxy
+# git config user.name "class-system"
+# git config user.email "3501202786@qq.com"
 
-git add .
-git commit -m 'deploy'
+# unset http_proxy
+# unset https_proxy
 
-git push $GITEE_REPO master
-echo "Done."
+# git add .
+# git commit -m 'deploy'
+
+# git push $GITEE_REPO master
+# echo "Done."
