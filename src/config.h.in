@@ -1,7 +1,0 @@
-// clang-format off
-#pragma once
-
-namespace cs::config{
-inline constexpr const char projectVersion[] = "@PROJECT_VERSION@";
-inline constexpr const char defaultHost[] = "@DEFAULE_HOST@";
-} //namespace cs::config

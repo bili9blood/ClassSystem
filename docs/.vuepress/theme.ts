@@ -7,8 +7,8 @@ export default hopeTheme({
   plugins: {
     mdEnhance: {
       // @ts-ignore
-      card: true,
-    },
+      card: true
+    }
   },
 
   //导航栏：GitHub仓库和编辑链接
@@ -22,5 +22,5 @@ export default hopeTheme({
 
   fullscreen: true,
 
-  pageInfo: ["Word", "ReadingTime", "Date"],
+  pageInfo: ["Word", "ReadingTime", "Date"]
 });

@@ -9,7 +9,7 @@ export default defineUserConfig({
 
   head: [
     ["link", { rel: "icon", href: "/docs/img/logo.ico" }],
-    ["link", { rel: "icon", href: "/docs/img/logo.png" }],
+    ["link", { rel: "icon", href: "/docs/img/logo.png" }]
   ],
 
   base: "/docs/",
@@ -22,9 +22,8 @@ export default defineUserConfig({
     searchProPlugin({
       indexContent: true,
       indexOptions: {
-        tokenize: (text, fieldName) =>
-          fieldName === "id" ? [text] : cut(text, true),
-      },
-    }),
-  ],
+        tokenize: (text, fieldName) => (fieldName === "id" ? [text] : cut(text, true))
+      }
+    })
+  ]
 });
