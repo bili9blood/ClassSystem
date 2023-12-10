@@ -28,6 +28,7 @@
     "electron-vite": "^1.0.27",
     "eslint": "^8.47.0",
     "eslint-plugin-solid": "^0.12.1",
+    "moment": "^2.29.4",
     "node-addon-api": "^7.0.0",
     "nodejs-jieba": "^0.0.2",
     "postcss": "^8.4.32",

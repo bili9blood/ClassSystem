@@ -3,4 +3,7 @@ dist
 out
 *.log*
 .vscode
-/build/
+
+# 程序运行中产生的文件
+backup
+settings.json

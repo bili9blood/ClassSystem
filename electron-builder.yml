@@ -13,6 +13,5 @@ asarUnpack:
   - resources/**
 win:
   executableName: ClassSystem
-nsis:
-
+  target: dir
 npmRebuild: true

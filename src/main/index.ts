@@ -1,7 +1,7 @@
 import { app, ipcMain } from "electron";
 import { electronApp, optimizer } from "@electron-toolkit/utils";
 import { createMainWindow } from "./mainWindow";
-import { createTray } from "./tray";
+import { fetchInfo, getBackupInfo } from "./info";
 
 // App 单例化
 if (!app.requestSingleInstanceLock()) app.quit();
@@ -17,6 +17,11 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  createMainWindow();
-  createTray();
+  const mainWindow = createMainWindow();
+  mainWindow.on("show", async () => {
+    mainWindow.webContents.send("backup-info", await getBackupInfo());
+    const fetchedInfo = await fetchInfo();
+
+    mainWindow.webContents.send("fetched-info", fetchedInfo);
+  });
 });

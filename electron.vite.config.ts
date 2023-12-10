@@ -17,7 +17,12 @@ export default defineConfig({
     },
     plugins: [solid()],
     build: {
-      assetsInlineLimit: 0
+      assetsInlineLimit: 0,
+      rollupOptions: {
+        input: {
+          MainWindow: resolve(__dirname, "src/renderer/mainWindow.html")
+        }
+      }
     }
   }
 });

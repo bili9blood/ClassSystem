@@ -49,6 +49,9 @@ devDependencies:
   eslint-plugin-solid:
     specifier: ^0.12.1
     version: 0.12.1(eslint@8.47.0)(typescript@5.1.6)
+  moment:
+    specifier: ^2.29.4
+    version: 2.29.4
   node-addon-api:
     specifier: ^7.0.0
     version: 7.0.0

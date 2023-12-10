@@ -1,11 +1,15 @@
-import { onMount, type Component } from "solid-js";
+import { onMount } from "solid-js";
+import { Info } from "../types/info";
 
-const App: Component = () => {
+export default function () {
   onMount(() => {
     window.ipcRenderer.send("mounted");
-    (document.querySelector(".eeee") as HTMLElement).onmouseenter = () => {
-      console.log("enter");
-    };
+  });
+  window.ipcRenderer.on("backup-info", (_, info: Info | null) => {
+    console.log("backup", info);
+  });
+  window.ipcRenderer.on("fetched-info", (_, info: Info | null) => {
+    console.log("fetched", info);
   });
   return (
     <div class="h-full w-full text-primary-text eeee">
@@ -15,6 +19,4 @@ const App: Component = () => {
       Deleniti cupiditate dolore quod corrupti ab unde similique iusto at nihil quas asperiores
     </div>
   );
-};
-
-export default App;
+}
