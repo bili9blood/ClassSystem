@@ -1,6 +1,7 @@
-import { createEffect, createSignal, onMount } from "solid-js";
+import { onMount, createSignal, createEffect } from "solid-js";
 import moment from "moment";
-import { info } from "../stores/info";
+import { sentences } from "../stores/sentences";
+import { Sentence } from "@renderer/types/sentences";
 
 function Clock() {
   onMount(() => {
@@ -17,7 +18,7 @@ function Clock() {
   });
 
   return (
-    <div class="flex-1 countdown countdown-invert text-5xl">
+    <div class="flex-[2] min-w-[5em] countdown countdown-invert text-5xl font-bold">
       <span class="hours"></span>
       {":"}
       <span class="minutes"></span>
@@ -26,22 +27,39 @@ function Clock() {
     </div>
   );
 }
-export default function () {
-  const [sentence, setSentence] = createSignal("");
-  createEffect(() => {
-    const i = info();
-    if (i) {
-      console.log(i);
 
-      setSentence(i.notices[0].text);
-      console.log(sentence());
+function SentenceComponent() {
+  const [sentence, setSentence] = createSignal<Sentence>({ id: 0, text: "", author: "" });
+
+  let idx = 0,
+    timer = 0;
+
+  createEffect(() => {
+    if (timer) clearInterval(timer);
+    if (sentences().length > 0) {
+      setSentence(sentences()[0]);
+      setInterval(() => {
+        const length = sentences().length;
+        idx = (idx + 1) % length;
+        setSentence(sentences()[idx]);
+      }, 60_000);
     }
   });
 
   return (
-    <div class="flex text-primary-text">
+    <div class="flex flex-col max-w-[60%]">
+      <p class="indent-[2em] text-xl break-words">{sentence().text}</p>
+      <p class="text-end">——{sentence().author}</p>
+    </div>
+  );
+}
+
+export default function () {
+  return (
+    <div class="flex items-center text-primary-text">
       <Clock />
-      {sentence()}
+      <SentenceComponent />
+      <div class="flex-[3]"></div>
     </div>
   );
 }

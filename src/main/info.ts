@@ -8,6 +8,8 @@ export type DailyArrangement = { title: string; list: number[] };
 
 export type DailyLessons = string[];
 
+export type LessonsTime = string[];
+
 export type Notice = { title: string; text: string; date: "FOREVER" | string };
 
 export type Event = { title: string; date: string; important: boolean };
@@ -16,6 +18,7 @@ export type Info = {
   students: Student[];
   arrangements: DailyArrangement[];
   lessons: DailyLessons;
+  lessonsTm: LessonsTime;
   notices: Notice[];
   events: Event[];
 };
@@ -65,8 +68,8 @@ async function fetchBackupInfo() {
 
 export async function fetchInfo() {
   let info: Info | null = null;
-  const settings = await useSettings();
-  const res = await fetch(`${settings.serverBaseUrl}/api/info/daily?classId=${settings.classId}`);
+  const { serverBaseUrl, classId } = await useSettings();
+  const res = await fetch(`${serverBaseUrl}/api/info/daily?classId=${classId}`);
   const resBody = await res.json();
 
   if (res.status === 200 && resBody.status === 200) {

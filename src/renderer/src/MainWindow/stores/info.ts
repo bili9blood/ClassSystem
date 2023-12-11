@@ -1,7 +1,16 @@
 import { Info } from "@renderer/types/info";
 import { createSignal } from "solid-js";
 
-const [info, setInfo] = createSignal<Info | null>(null);
+const nullInfo: Info = {
+  students: [],
+  arrangements: [],
+  lessons: [],
+  lessonsTm: [],
+  notices: [],
+  events: []
+};
+
+const [info, setInfo] = createSignal<Info>(nullInfo);
 
 const [isBackup, setIsBackup] = createSignal(true);
 
