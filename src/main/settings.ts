@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 
 export type Settings = {
   position: [number, number];
+  size: [number, number];
   classId: string;
   serverBaseUrl: string;
 };

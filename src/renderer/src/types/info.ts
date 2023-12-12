@@ -1,6 +1,6 @@
 export type Student = { id: number; name: string };
 
-export type DailyArrangement = { title: string; list: number[] };
+export type DailyArrangement = { name: string; list: number[] };
 
 export type DailyLessons = string[];
 

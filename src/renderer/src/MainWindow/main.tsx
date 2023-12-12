@@ -6,8 +6,6 @@ import { Info } from "@renderer/types/info";
 import { Sentence } from "@renderer/types/sentences";
 import { setSentences } from "./stores/sentences";
 
-render(() => <App />, document.getElementById("root") as HTMLElement);
-
 window.ipcRenderer.on("backup-info", (_, info: Info | null) => {
   if (info) setInfo(info);
   setIsBackup(true);
@@ -21,3 +19,5 @@ window.ipcRenderer.on("fetched-info", (_, info: Info | null) => {
 window.ipcRenderer.on("sentences", (_, sentences: Sentence[]) => {
   setSentences(sentences);
 });
+
+render(() => <App />, document.getElementById("root") as HTMLElement);

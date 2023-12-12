@@ -2,6 +2,19 @@ import { onMount, createSignal, createEffect } from "solid-js";
 import moment from "moment";
 import { sentences } from "../stores/sentences";
 import { Sentence } from "@renderer/types/sentences";
+import LogoPng from "../assets/logo.png";
+
+function DateComponent() {
+  const weekdayMap = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+
+  return (
+    <div class="flex w-[80%] mx-auto text-2xl font-semibold">
+      <p class="text-start">{moment().format("MM-DD")}</p>
+      <div class="min-w-[10%]"></div>
+      <p class="text-end">{weekdayMap[moment().weekday()]}</p>
+    </div>
+  );
+}
 
 function Clock() {
   onMount(() => {
@@ -18,7 +31,7 @@ function Clock() {
   });
 
   return (
-    <div class="flex-[2] min-w-[5em] countdown countdown-invert text-5xl font-bold">
+    <div class="flex-[2] mx-auto countdown countdown-invert text-5xl font-bold">
       <span class="hours"></span>
       {":"}
       <span class="minutes"></span>
@@ -35,8 +48,8 @@ function SentenceComponent() {
     timer = 0;
 
   createEffect(() => {
-    if (timer) clearInterval(timer);
     if (sentences().length > 0) {
+      if (timer) clearInterval(timer);
       setSentence(sentences()[0]);
       setInterval(() => {
         const length = sentences().length;
@@ -47,9 +60,20 @@ function SentenceComponent() {
   });
 
   return (
-    <div class="flex flex-col max-w-[60%]">
+    <div class="flex flex-col max-w-[60%] mr-2 overflow-hidden">
       <p class="indent-[2em] text-xl break-words">{sentence().text}</p>
       <p class="text-end">——{sentence().author}</p>
+    </div>
+  );
+}
+
+function Title() {
+  return (
+    <div class="flex flex-col">
+      <div class="flex items-center">
+        <img src={LogoPng} alt="ClassSystem" class="h-8 w-8 mx-2" />
+        <p class="font-[youshe-title] text-2xl whitespace-nowrap">ClassSystem 班级系统</p>
+      </div>
     </div>
   );
 }
@@ -57,9 +81,13 @@ function SentenceComponent() {
 export default function () {
   return (
     <div class="flex items-center text-primary-text">
-      <Clock />
+      <div class="flex flex-col min-w-[4.5rem]">
+        <DateComponent />
+        <Clock />
+      </div>
       <SentenceComponent />
       <div class="flex-[3]"></div>
+      <Title />
     </div>
   );
 }

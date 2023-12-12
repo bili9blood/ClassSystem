@@ -52,8 +52,9 @@ export function createMainWindow() {
 
   mainWindow.on("show", async () => {
     embed_desktop.embedDesktop(mainWindow.getNativeWindowHandle());
-    const [x, y] = (await useSettings()).position;
-    mainWindow.setPosition(x, y);
+    const settings = await useSettings();
+    mainWindow.setSize(settings.size[0], settings.size[1]);
+    mainWindow.setPosition(settings.position[0], settings.position[1]);
   });
 
   mainWindow.on("closed", () => ipcMain.emit("quit"));
