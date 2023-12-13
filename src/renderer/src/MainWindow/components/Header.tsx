@@ -60,9 +60,11 @@ function SentenceComponent() {
   });
 
   return (
-    <div class="flex flex-col max-w-[60%] mr-2 overflow-hidden">
-      <p class="indent-[2em] text-xl break-words">{sentence().text}</p>
-      <p class="text-end">——{sentence().author}</p>
+    <div class="max-w-[40%] max-h-24">
+      <div class="flex flex-col mr-2 overflow-hidden">
+        <p class="indent-[2em] text-xl break-words">{sentence().text}</p>
+        <p class="text-end">——{sentence().author}</p>
+      </div>
     </div>
   );
 }
