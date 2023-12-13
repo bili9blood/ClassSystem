@@ -1,6 +1,4 @@
 import { For } from "solid-js";
-import moment from "moment";
-import { DailyArrangement } from "@renderer/types/info";
 import { info } from "../stores/info";
 
 function stuIdsToStr(students: number[]) {
@@ -11,12 +9,11 @@ function stuIdsToStr(students: number[]) {
 }
 
 export default function () {
-  setTimeout(() => console.log(info().arrangements), 4000);
   return (
     <div class="text-primary-text grid grid-cols-2">
       <For each={info().arrangements}>
         {({ name, list }) => (
-          <div>
+          <div class="my-2">
             <span class="text-3xl font-bold">{name}：</span>
             <span class="text-2xl whitespace-pre">{stuIdsToStr(list)}</span>
           </div>
