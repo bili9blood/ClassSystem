@@ -4,6 +4,8 @@ import { createMainWindow } from "./mainWindow";
 import { fetchInfo, getBackupInfo } from "./info";
 import { fetchSentences } from "./sentences";
 
+process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
+
 // App 单例化
 if (!app.requestSingleInstanceLock()) app.quit();
 
