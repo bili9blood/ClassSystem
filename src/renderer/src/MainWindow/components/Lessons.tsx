@@ -1,6 +1,6 @@
-import { createSignal, For } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import moment from "moment";
-import { info } from "../stores/info";
+import { info, setInfo } from "../stores/info";
 
 function Lesson({
   isCurrent,
@@ -40,37 +40,38 @@ function Lesson({
 
 export default function () {
   const [current, setCurrent] = createSignal(-1);
+  const [lessons, setLessons] = createSignal(info().lessons);
 
-  // @ts-ignore
-  window.knn = "0800";
+  createEffect(() => setLessons(info().lessons), [info]);
 
   setInterval(() => {
-    const lessons = info().lessons;
     const lessonsTm = info().lessonsTm;
-    // @ts-ignore
-    console.log(window.knn);
 
-    for (let i = current(); i < lessons.length; ++i) {
+    for (let i = current(); i < lessons().length; ++i) {
       const tm = moment(lessonsTm[i], "HHmm");
-      // @ts-ignore
-      const duringClass = moment(window.knn, "HHmm").isBetween(
+      const duringClass = moment().isBetween(
         tm.clone().subtract(10, "m"),
         tm.clone().add(40, "m"),
-        undefined,
+        void 0,
         "[]"
       );
 
       if (duringClass) {
-        setCurrent(i);
+        if (current() !== i) {
+          setCurrent(i);
+          const backup = lessons();
+          setLessons([]);
+          setLessons(backup);
+        }
         break;
       }
     }
-  }, 1000);
+  }, 2000);
 
   return (
     <div class="w-[30%] text-primary-text">
       <p class="text-3xl mb-6">课程</p>
-      <For each={info().lessons}>
+      <For each={lessons()}>
         {(lesson, i) => (
           <Lesson
             isCurrent={i() === current()}
