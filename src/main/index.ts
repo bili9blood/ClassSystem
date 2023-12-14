@@ -3,6 +3,7 @@ import { electronApp, optimizer } from "@electron-toolkit/utils";
 import { createMainWindow } from "./mainWindow";
 import { fetchInfo, getBackupInfo } from "./info";
 import { fetchSentences } from "./sentences";
+import { clearInterval } from "timers";
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
@@ -21,9 +22,18 @@ app.whenReady().then(() => {
   });
 
   const mainWindow = createMainWindow();
-  mainWindow.on("show", async () => {
-    mainWindow.webContents.send("backup-info", await getBackupInfo());
+  const fetchInfoAndSend = async () => {
     mainWindow.webContents.send("fetched-info", await fetchInfo());
+  };
+
+  let fetchTimer: NodeJS.Timer;
+  mainWindow.on("show", async () => {
+    clearInterval(fetchTimer);
+    mainWindow.webContents.send("backup-info", await getBackupInfo());
     mainWindow.webContents.send("sentences", await fetchSentences());
+    mainWindow.webContents.send("version", app.getVersion());
+
+    await fetchInfoAndSend();
+    fetchTimer = setInterval(fetchInfoAndSend, 10_000);
   });
 });

@@ -58,6 +58,5 @@ export function createMainWindow() {
   });
 
   mainWindow.on("closed", () => ipcMain.emit("quit"));
-  mainWindow.webContents.emit("page", "MainWindow");
   return mainWindow;
 }

@@ -10,10 +10,10 @@ function stuIdsToStr(students: number[]) {
 
 export default function () {
   return (
-    <div class="text-primary-text grid grid-cols-2">
+    <div class="grid grid-cols-2 text-white">
       <For each={info().arrangements}>
         {({ name, list }) => (
-          <div class="my-2">
+          <div class="my-3 mr-2">
             <span class="text-3xl font-bold">{name}：</span>
             <span class="text-2xl whitespace-pre">{stuIdsToStr(list)}</span>
           </div>

@@ -1,6 +1,6 @@
 import { createEffect, createSignal, For } from "solid-js";
 import moment from "moment";
-import { info, setInfo } from "../stores/info";
+import { info } from "../stores/info";
 
 function Lesson({
   isCurrent,
@@ -13,16 +13,16 @@ function Lesson({
   lesson: string;
   tm: string;
 }) {
+  const tmText = `${moment(tm, "HHmm").format("HH:mm")} - ${moment(tm, "HHmm")
+    .add(40, "m")
+    .format("HH:mm")}`;
+
   if (ltCurrent) {
     return (
       <div class="my-3 font-[华文中宋]">
-        <span class="text-2xl text-gray-400" style={{ color: isCurrent ? "#ee8545" : "" }}>
-          {lesson}
-        </span>
+        <span class="text-2xl text-gray-400">{lesson}</span>
         &nbsp;
-        <span class="text-xl text-gray-400">
-          {moment(tm, "HHmm").format("HH:mm")}-{moment(tm, "HHmm").add(40, "m").format("HH:mm")}
-        </span>
+        <span class="text-2xl text-gray-400">{tmText}</span>
       </div>
     );
   }
@@ -31,9 +31,7 @@ function Lesson({
     <div class="my-3 font-[华文中宋]">
       <span class={isCurrent ? "text-4xl text-[#ee8545] font-bold" : "text-3xl"}>{lesson}</span>
       &nbsp;
-      <span class={isCurrent ? "text-3xl text-[#ee8545]" : "text-2xl text-gray-200"}>
-        {moment(tm, "HHmm").format("HH:mm")}-{moment(tm, "HHmm").add(40, "m").format("HH:mm")}
-      </span>
+      <span class={isCurrent ? "text-3xl text-[#ee8545]" : "text-2xl text-gray-200"}>{tmText}</span>
     </div>
   );
 }
@@ -47,7 +45,7 @@ export default function () {
   setInterval(() => {
     const lessonsTm = info().lessonsTm;
 
-    for (let i = current(); i < lessons().length; ++i) {
+    for (let i = 0; i < lessons().length; ++i) {
       const tm = moment(lessonsTm[i], "HHmm");
       const duringClass = moment().isBetween(
         tm.clone().subtract(10, "m"),
@@ -69,8 +67,8 @@ export default function () {
   }, 2000);
 
   return (
-    <div class="w-[30%] text-primary-text">
-      <p class="text-3xl mb-6">课程</p>
+    <aside class="w-[30%] text-white">
+      <p class="text-3xl mb-6 font-bold">课程</p>
       <For each={lessons()}>
         {(lesson, i) => (
           <Lesson
@@ -81,6 +79,6 @@ export default function () {
           />
         )}
       </For>
-    </div>
+    </aside>
   );
 }

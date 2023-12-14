@@ -28,13 +28,13 @@ export default function () {
 
   return (
     <div class="overflow-hidden">
-      <p class="text-3xl text-primary-text">事件</p>
+      <p class="text-3xl text-white font-bold">事件</p>
       <ul class="timeline">
         <For each={eventsToBeShowed()}>
           {({ title, date, important }, idx) => (
             <li>
               {idx() > 0 && <hr />}
-              <div class="timeline-start mx-2 text-primary-text">
+              <div class="timeline-start mx-2 text-white">
                 <span class="text-2xl">{moment(date, "YYMMDD").format("MM-DD")}</span>
                 &nbsp;
                 <span class="text-xl font-normal">{moment(date, "YYMMDD").diff(void 0, "d")}</span>

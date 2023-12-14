@@ -70,11 +70,17 @@ function SentenceComponent() {
 }
 
 function Title() {
+  const [version, setVersion] = createSignal("3.0.0");
+  window.class_system.on("version", (_, ver: string) => setVersion(ver));
+
   return (
     <div class="flex flex-col">
       <div class="flex items-center">
         <img src={LogoPng} alt="ClassSystem" class="h-8 w-8 mx-2" />
         <p class="font-[youshe-title] text-2xl whitespace-nowrap">ClassSystem 班级系统</p>
+      </div>
+      <div class="flex items-center justify-center text-2xl text-white">
+        <p>{version()}</p>
       </div>
     </div>
   );
@@ -82,7 +88,7 @@ function Title() {
 
 export default function () {
   return (
-    <div class="flex items-center text-primary-text">
+    <header class="flex items-center text-white">
       <div class="flex flex-col min-w-[4.5rem]">
         <DateComponent />
         <Clock />
@@ -90,6 +96,6 @@ export default function () {
       <SentenceComponent />
       <div class="flex-[3]"></div>
       <Title />
-    </div>
+    </header>
   );
 }

@@ -37,7 +37,7 @@ body {
 
 .divider,
 .divider {
-  --fallback-bc: #737e7e44;
+  --fallback-bc: #95b1c26c;
 }
 
 @tailwind base;

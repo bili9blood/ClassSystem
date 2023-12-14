@@ -1,6 +1,6 @@
 import { type IpcRenderer } from "electron";
 declare global {
   interface Window {
-    ipcRenderer: IpcRenderer;
+    class_system: IpcRenderer;
   }
 }
