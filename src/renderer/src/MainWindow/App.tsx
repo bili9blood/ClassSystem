@@ -5,9 +5,9 @@ import Lessons from "./components/Lessons";
 import Arrangements from "./components/Arrangements";
 import Notices from "./components/Notices";
 
-function LeftSide() {
+function Middle() {
   return (
-    <article class="w-[70%]">
+    <article class="w-[48%]">
       <Events />
       <div class="divider"></div>
       <Arrangements />
@@ -25,12 +25,12 @@ export default function () {
       <Header />
       <div class="divider"></div>
       <div class="flex w-full">
-        <LeftSide />
+        <Notices />
+        <div class="divider divider-horizontal"></div>
+        <Middle />
         <div class="divider divider-horizontal"></div>
         <Lessons />
       </div>
-      <div class="divider"></div>
-      <Notices />
     </div>
   );
 }

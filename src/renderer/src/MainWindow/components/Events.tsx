@@ -23,7 +23,7 @@ export default function () {
   const [eventsToBeShowed, setEventsToBeShowed] = createSignal<Event[]>([]);
 
   createEffect(() => {
-    if (info().events.length > 0) setEventsToBeShowed(info().events.slice(0, 4));
+    if (info().events.length > 0) setEventsToBeShowed(info().events.slice(0, 3));
   });
 
   return (

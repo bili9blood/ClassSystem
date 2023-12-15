@@ -67,7 +67,7 @@ export default function () {
   }, 2000);
 
   return (
-    <aside class="w-[30%] text-white">
+    <aside class="w-[25%] text-white">
       <p class="text-3xl mb-6 font-bold">课程</p>
       <For each={lessons()}>
         {(lesson, i) => (

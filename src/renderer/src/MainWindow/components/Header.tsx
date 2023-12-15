@@ -93,8 +93,9 @@ export default function () {
         <DateComponent />
         <Clock />
       </div>
+      <div class="flex-[2]"></div>
       <SentenceComponent />
-      <div class="flex-[3]"></div>
+      <div class="flex-[2]"></div>
       <Title />
     </header>
   );

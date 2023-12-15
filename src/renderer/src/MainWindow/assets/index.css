@@ -35,9 +35,9 @@ body {
   font-weight: normal;
 }
 
-.divider,
 .divider {
   --fallback-bc: #95b1c26c;
+  margin: 0 !important;
 }
 
 @tailwind base;

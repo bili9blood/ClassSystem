@@ -1,7 +1,21 @@
 import { Notice } from "@renderer/types/info";
 import moment from "moment";
-import { createEffect, createSignal } from "solid-js";
+import { createEffect, createSignal, For } from "solid-js";
 import { info } from "../stores/info";
+
+function BaseParagraph(props: { class?: string; text: string }) {
+  return <p class={`${props.class} text-xl text-white font-[华文中宋] mb-4`}>{props.text}</p>;
+}
+
+function Paragraph({ text }: { text: string }) {
+  if (text.startsWith(">>")) {
+    return <BaseParagraph class="text-right" text={text.slice(2)} />;
+  }
+  if (text.startsWith("^^")) {
+    return <BaseParagraph class="text-center" text={text.slice(2)} />;
+  }
+  return <BaseParagraph text={text} />;
+}
 
 export default function () {
   const [notice, setNotice] = createSignal<Notice>({ title: "", text: "", date: "FOREVER" });
@@ -20,11 +34,11 @@ export default function () {
   }, [info]);
 
   return (
-    <footer>
+    <aside class="w-[27%]">
       <div class="flex mb-2">
         <p class="text-3xl text-white font-bold">公告</p>
         <div class="flex-[3]"></div>
-        <div class="flex flex-col items-end absolute right-4">
+        <div class="flex flex-col items-end">
           <p class="text-2xl text-white">{notice().title}</p>
           <p class="text-lg text-gray-200">
             {notice().date === "FOREVER"
@@ -33,7 +47,7 @@ export default function () {
           </p>
         </div>
       </div>
-      <pre class="text-[1.35rem] leading-6 text-white font-[华文中宋]">{notice().text}</pre>
-    </footer>
+      <For each={notice().text.split("\n")}>{(par) => <Paragraph text={par} />}</For>
+    </aside>
   );
 }

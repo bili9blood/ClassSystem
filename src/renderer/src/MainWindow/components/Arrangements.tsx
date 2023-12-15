@@ -13,9 +13,9 @@ export default function () {
     <div class="grid grid-cols-2 text-white">
       <For each={info().arrangements}>
         {({ name, list }) => (
-          <div class="my-3 mr-2">
+          <div class="my-3">
             <span class="text-3xl font-bold">{name}：</span>
-            <span class="text-2xl whitespace-pre">{stuIdsToStr(list)}</span>
+            <span class="text-2xl whitespace-pre font-[华文中宋]">{stuIdsToStr(list)}</span>
           </div>
         )}
       </For>
