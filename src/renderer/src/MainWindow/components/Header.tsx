@@ -3,6 +3,7 @@ import moment from "moment";
 import { sentences } from "../stores/sentences";
 import { Sentence } from "@renderer/types/sentences";
 import LogoPng from "../assets/logo.png";
+import { isBackup } from "../stores/info";
 
 function DateComponent() {
   const weekdayMap = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
@@ -79,8 +80,9 @@ function Title() {
         <img src={LogoPng} alt="ClassSystem" class="h-8 w-8 mx-2" />
         <p class="font-[youshe-title] text-2xl whitespace-nowrap">ClassSystem 班级系统</p>
       </div>
-      <div class="flex items-center justify-center text-2xl text-white">
-        <p>{version()}</p>
+      <div class="flex items-center justify-center text-xl text-gray-300">
+        <p class="mx-auto">V{version()}</p>
+        <p class="mx-auto">{isBackup() ? "备份数据" : "已连接"}</p>
       </div>
     </div>
   );
