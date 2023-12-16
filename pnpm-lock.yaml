@@ -67,9 +67,6 @@ devDependencies:
   qweather-icons:
     specifier: ^1.6.0
     version: 1.6.0
-  semver:
-    specifier: ^7.5.4
-    version: 7.5.4
   solid-js:
     specifier: ^1.8.5
     version: 1.8.5

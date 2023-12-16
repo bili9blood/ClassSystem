@@ -5,6 +5,7 @@ import { fetchInfo, getBackupInfo } from "./info";
 import { fetchSentences } from "./sentences";
 import { clearInterval } from "timers";
 import { fetchWeather } from "./weather";
+import { checkUpdate } from "./checkUpdate";
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
@@ -45,5 +46,7 @@ app.whenReady().then(() => {
     await fetchWeatherAndSend();
     // 每 30 分钟请求一次天气
     timerFetchWeather = setInterval(fetchWeatherAndSend, 1000 * 60 * 30);
+
+    await checkUpdate(app.getVersion());
   });
 });
