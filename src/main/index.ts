@@ -4,6 +4,7 @@ import { createMainWindow } from "./mainWindow";
 import { fetchInfo, getBackupInfo } from "./info";
 import { fetchSentences } from "./sentences";
 import { clearInterval } from "timers";
+import { fetchWeather } from "./weather";
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
@@ -25,15 +26,24 @@ app.whenReady().then(() => {
   const fetchInfoAndSend = async () => {
     mainWindow.webContents.send("fetched-info", await fetchInfo());
   };
+  const fetchWeatherAndSend = async () => {
+    mainWindow.webContents.send("weather", await fetchWeather());
+  };
 
-  let fetchTimer: NodeJS.Timer;
+  let timerFetchInfo: NodeJS.Timer;
+  let timerFetchWeather: NodeJS.Timer;
   mainWindow.on("show", async () => {
-    clearInterval(fetchTimer);
+    clearInterval(timerFetchInfo);
+    clearInterval(timerFetchWeather);
     mainWindow.webContents.send("backup-info", await getBackupInfo());
     mainWindow.webContents.send("sentences", await fetchSentences());
     mainWindow.webContents.send("version", app.getVersion());
 
     await fetchInfoAndSend();
-    fetchTimer = setInterval(fetchInfoAndSend, 10_000);
+    timerFetchInfo = setInterval(fetchInfoAndSend, 10_000);
+
+    await fetchWeatherAndSend();
+    // 每 30 分钟请求一次天气
+    timerFetchWeather = setInterval(fetchWeatherAndSend, 1000 * 60 * 30);
   });
 });

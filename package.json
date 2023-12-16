@@ -33,6 +33,7 @@
     "nodejs-jieba": "^0.0.2",
     "postcss": "^8.4.32",
     "prettier": "^3.0.2",
+    "qweather-icons": "^1.6.0",
     "semver": "^7.5.4",
     "solid-js": "^1.8.5",
     "solid-slider": "^1.3.17",
