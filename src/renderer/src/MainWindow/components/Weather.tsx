@@ -2,7 +2,7 @@ import { DailyWeather } from "@renderer/types/weather";
 import moment from "moment";
 import { createSignal, For } from "solid-js";
 
-function Temperature({
+function DailyWeatherComponent({
   icon,
   max,
   min,
@@ -38,7 +38,9 @@ export default function () {
   return (
     <footer class="w-full h-12 flex items-center justify-items-center text-white">
       <For each={weather()}>
-        {(w, idx) => <Temperature icon={w.iconDay} min={w.tempMin} max={w.tempMax} idx={idx()} />}
+        {(w, idx) => (
+          <DailyWeatherComponent icon={w.iconDay} min={w.tempMin} max={w.tempMax} idx={idx()} />
+        )}
       </For>
     </footer>
   );
