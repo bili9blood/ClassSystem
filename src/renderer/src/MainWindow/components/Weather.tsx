@@ -13,7 +13,8 @@ function Temperature({
   min: string;
   idx: number;
 }) {
-  console.log(icon);
+  const date = moment().add(idx, "d");
+  const weekdayMap = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 
   return (
     <div class="m-auto flex flex-col items-center">
@@ -21,7 +22,11 @@ function Temperature({
         <i class={`qi-${icon} mr-1`}></i>
         <span>{`${min}℃ ~ ${max}℃`}</span>
       </p>
-      <p class="text-gray-100">{moment().add(idx, "d").format("MM-DD")}</p>
+      <p class="text-gray-100">
+        <span>{date.format("MM-DD")}</span>
+        &nbsp;
+        <span>{weekdayMap[date.weekday()]}</span>
+      </p>
     </div>
   );
 }
