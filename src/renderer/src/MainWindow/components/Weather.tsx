@@ -1,4 +1,3 @@
-import { Notice } from "@renderer/types/info";
 import { DailyWeather } from "@renderer/types/weather";
 import moment from "moment";
 import { createSignal, For } from "solid-js";
