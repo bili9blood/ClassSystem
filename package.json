@@ -1,6 +1,11 @@
 {
   "name": "class-system",
   "version": "2.9.9",
+  "author": {
+    "name": "NineBlood",
+    "email": "3501202786@qq.com"
+  },
+  "description": "一个旨在方便显示班级信息的小软件",
   "main": "./out/main/index.js",
   "scripts": {
     "format": "prettier --write .",
