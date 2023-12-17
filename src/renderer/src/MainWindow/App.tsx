@@ -18,7 +18,7 @@ function Middle() {
 
 export default function () {
   onMount(() => {
-    window.class_system.send("mounted");
+    window.class_system.send("mainwindow-mounted");
   });
 
   return (

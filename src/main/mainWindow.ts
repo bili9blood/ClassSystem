@@ -5,9 +5,6 @@ import embed_desktop from "../native/build/Release/embed-desktop.node";
 import { saveSettings, useSettings } from "./settings";
 export function createMainWindow() {
   const mainWindow = new BrowserWindow({
-    width: 960,
-    height: 720,
-    icon: join(__dirname, "../../resources/logo.png"),
     show: false,
     frame: false,
     transparent: true,
@@ -28,7 +25,7 @@ export function createMainWindow() {
   });
 
   // 防止启动白屏，页面挂载完成再显示窗口
-  ipcMain.on("mounted", () => {
+  ipcMain.on("mainwindow-mounted", () => {
     mainWindow.show();
   });
 

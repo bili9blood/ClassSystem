@@ -1,4 +1,5 @@
 import { app, ipcMain } from "electron";
+import remote from "@electron/remote/main";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { createMainWindow } from "./mainWindow";
 import { fetchInfo, getBackupInfo } from "./info";
@@ -6,6 +7,7 @@ import { fetchSentences } from "./sentences";
 import { clearInterval } from "timers";
 import { fetchWeather } from "./weather";
 import { checkUpdate } from "./checkUpdate";
+import { createMenuWindow } from "./menuWindow";
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
@@ -18,6 +20,8 @@ app.disableHardwareAcceleration();
 ipcMain.addListener("quit", () => app.quit());
 
 app.whenReady().then(() => {
+  remote.initialize();
+
   electronApp.setAppUserModelId("com.class-system");
   app.on("browser-window-created", (_, window) => {
     optimizer.watchWindowShortcuts(window);
@@ -49,4 +53,6 @@ app.whenReady().then(() => {
 
     if (!is.dev) await checkUpdate(app.getVersion());
   });
+
+  // const menuWindow = createMenuWindow();
 });

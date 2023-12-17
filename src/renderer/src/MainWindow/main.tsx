@@ -1,5 +1,5 @@
 import { render } from "solid-js/web";
-import "./assets/index.css";
+import "./index.css";
 import "qweather-icons/font/qweather-icons.css";
 import App from "./App";
 import { info, setInfo, setIsBackup } from "./stores/info";

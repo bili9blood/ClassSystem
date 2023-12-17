@@ -1,0 +1,18 @@
+* {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+html {
+  background-color: transparent !important;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

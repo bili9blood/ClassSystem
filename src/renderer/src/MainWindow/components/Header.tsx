@@ -2,7 +2,7 @@ import { onMount, createSignal, createEffect } from "solid-js";
 import moment from "moment";
 import { sentences } from "../stores/sentences";
 import { Sentence } from "@renderer/types/sentences";
-import LogoPng from "../assets/logo.png";
+import LogoPng from "../../assets/logo.png";
 import { isBackup } from "../stores/info";
 
 function DateComponent() {

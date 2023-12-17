@@ -25,6 +25,9 @@ devDependencies:
   '@electron/rebuild':
     specifier: ^3.4.1
     version: 3.4.1
+  '@electron/remote':
+    specifier: ^2.1.1
+    version: 2.1.1(electron@25.6.0)
   '@types/node':
     specifier: ^18.17.5
     version: 18.17.5
@@ -1493,6 +1496,14 @@ packages:
     transitivePeerDependencies:
       - bluebird
       - supports-color
+    dev: true
+
+  /@electron/remote@2.1.1(electron@25.6.0):
+    resolution: {integrity: sha512-Lfxul2yBxL+FBVaKszNAkuUqSIDbUQ1I7BC394iRXyqA2XGz7im2bAxroNIM51jhySSPKUaOLHaFLxfV6pC9VQ==}
+    peerDependencies:
+      electron: '>= 13.0.0'
+    dependencies:
+      electron: 25.6.0
     dev: true
 
   /@electron/universal@1.3.4:

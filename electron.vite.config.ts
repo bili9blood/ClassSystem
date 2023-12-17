@@ -20,7 +20,8 @@ export default defineConfig({
       assetsInlineLimit: 0,
       rollupOptions: {
         input: {
-          MainWindow: resolve(__dirname, "src/renderer/mainWindow.html")
+          MainWindow: resolve(__dirname, "src/renderer/mainWindow.html"),
+          MenuWindow: resolve(__dirname, "src/renderer/menuWindow.html")
         }
       }
     }
