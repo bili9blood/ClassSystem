@@ -11,3 +11,6 @@ win:
   target: dir
   icon: build/icon.ico
 npmRebuild: true
+extraFiles:
+  - update.bat
+  - settings.json

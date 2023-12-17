@@ -1,5 +1,5 @@
 import { app, ipcMain } from "electron";
-import { electronApp, optimizer } from "@electron-toolkit/utils";
+import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { createMainWindow } from "./mainWindow";
 import { fetchInfo, getBackupInfo } from "./info";
 import { fetchSentences } from "./sentences";
@@ -47,6 +47,6 @@ app.whenReady().then(() => {
     // 每 30 分钟请求一次天气
     timerFetchWeather = setInterval(fetchWeatherAndSend, 1000 * 60 * 30);
 
-    await checkUpdate(app.getVersion());
+    if (!is.dev) await checkUpdate(app.getVersion());
   });
 });
