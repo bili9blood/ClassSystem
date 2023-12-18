@@ -45,13 +45,20 @@ export default function () {
   setInterval(() => {
     const lessonsTm = info().lessonsTm;
 
+    setCurrent(-1);
+    const backup = lessons();
+    setLessons([]);
+    setLessons(backup);
+
     for (let i = 0; i < lessons().length; ++i) {
       const tm = moment(lessonsTm[i], "HHmm");
+      console.log(i === 0 ? "0000" : lessonsTm[i - 1], "HHmm", lessonsTm[i]);
+
       const duringClass = moment().isBetween(
-        tm.clone().subtract(10, "m"),
+        moment(i === 0 ? "0000" : lessonsTm[i - 1], "HHmm"),
         tm.clone().add(40, "m"),
         void 0,
-        "[]"
+        "(]"
       );
 
       if (duringClass) {
