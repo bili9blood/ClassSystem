@@ -22,7 +22,7 @@ function DailyWeatherComponent({
         <i class={`qi-${icon} mr-1`}></i>
         <span>{`${min}℃ ~ ${max}℃`}</span>
       </p>
-      <p class="text-gray-100">
+      <p class={idx === 0 ? "text-highlight font-bold" : "text-gray-100"}>
         <span>{date.format("MM-DD")}</span>
         &nbsp;
         <span>{weekdayMap[date.weekday()]}</span>
