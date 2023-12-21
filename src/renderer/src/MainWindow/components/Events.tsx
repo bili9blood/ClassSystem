@@ -13,8 +13,8 @@ function CommonEventIcon() {
 
 function ImportantEventIcon() {
   return (
-    <svg viewBox="0 0 100 100" xmlns="http://w3.org/2000/svg" class="w-5 h-5">
-      <circle cx="50" cy="50" r="50" fill="#ee8545"></circle>
+    <svg viewBox="0 0 100 100" xmlns="http://w3.org/2000/svg" class="w-5 h-5 text-highlight">
+      <circle cx="50" cy="50" r="50" fill="currentColor"></circle>
     </svg>
   );
 }

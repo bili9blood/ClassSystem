@@ -29,9 +29,9 @@ function Lesson({
 
   return (
     <div class="my-3 font-[华文中宋]">
-      <span class={isCurrent ? "text-4xl text-[#ee8545] font-bold" : "text-3xl"}>{lesson}</span>
+      <span class={isCurrent ? "text-4xl text-highlight font-bold" : "text-3xl"}>{lesson}</span>
       &nbsp;
-      <span class={isCurrent ? "text-2xl text-[#ee8545]" : "text-2xl text-gray-200"}>{tmText}</span>
+      <span class={isCurrent ? "text-2xl text-highlight" : "text-2xl text-gray-200"}>{tmText}</span>
     </div>
   );
 }
