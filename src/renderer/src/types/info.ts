@@ -4,6 +4,8 @@ export type DailyArrangement = { name: string; list: number[] };
 
 export type DailyLessons = string[];
 
+export type Lessons = [Lessons, Lessons, Lessons, Lessons, Lessons, LessonsTime];
+
 export type LessonsTime = string[];
 
 export type Notice = { title: string; text: string; date: "FOREVER" | string };
@@ -18,3 +20,5 @@ export type Info = {
   notices: Notice[];
   events: Event[];
 };
+
+export type FullInfo = Omit<Info, "arrangements" | "lessons" | "lessonsTm"> & { lessons: Lessons };

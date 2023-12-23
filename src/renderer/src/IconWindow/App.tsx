@@ -1,16 +1,12 @@
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal } from "solid-js";
 
 import LogoPng from "../assets/logo.png";
 
 let prevPosition: [number, number] = [0, 0];
 
-let extraWindow: Window | null = null;
+let extraWindow: Window = window.open("./extraWindow.html")!;
 
 const [showIcon, setShowIcon] = createSignal(true);
-
-onCleanup(() => {
-  if (extraWindow) extraWindow.close();
-});
 
 function beginMoving() {
   window.class_system.send("begin-move-menu");
@@ -34,7 +30,6 @@ function endMoving() {
   const [x, y] = [window.screenX, window.screenY];
   const [dx, dy] = [Math.abs(x - prevPosition[0]), Math.abs(y - prevPosition[1])];
   if (dx <= 10 && dy <= 10) {
-    if (!extraWindow) extraWindow = window.open("./extraWindow.html")!;
     const extraShowed = extraWindow.document.getElementById("root")!.style.opacity === "1";
     extraWindow.class_system.emit("toggle-extra-window", !extraShowed);
     if (!extraShowed) {
