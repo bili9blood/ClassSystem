@@ -1,0 +1,26 @@
+* {
+  user-select: none;
+}
+
+html {
+  background-color: transparent !important;
+}
+
+body {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
+  -webkit-app-region: drag;
+  border-radius: 8px;
+  padding: 2px;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -21,7 +21,7 @@ export default defineConfig({
       rollupOptions: {
         input: {
           MainWindow: resolve(__dirname, "src/renderer/mainWindow.html"),
-          MenuWindow: resolve(__dirname, "src/renderer/menuWindow.html")
+          IconWindow: resolve(__dirname, "src/renderer/iconWindow.html")
         }
       }
     }

@@ -6,7 +6,7 @@ import { fetchSentences } from "./sentences";
 import { clearInterval } from "timers";
 import { fetchWeather } from "./weather";
 import { checkUpdate } from "./checkUpdate";
-import { createMenuWindow } from "./menuWindow";
+import { createIconWindow } from "./iconWindow";
 
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
 
@@ -51,5 +51,5 @@ app.whenReady().then(() => {
     if (!is.dev) await checkUpdate(app.getVersion());
   });
 
-  const menuWindow = createMenuWindow();
+  createIconWindow();
 });

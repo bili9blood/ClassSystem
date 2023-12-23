@@ -7,6 +7,7 @@ export function createMainWindow() {
   const win = new BrowserWindow({
     show: false,
     frame: false,
+    fullscreenable: false,
     transparent: true,
     resizable: false,
     backgroundColor: "#00000000",
