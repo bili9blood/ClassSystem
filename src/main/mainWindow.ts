@@ -4,7 +4,7 @@ import { is } from "@electron-toolkit/utils";
 import embed_desktop from "../native/build/Release/embed-desktop.node";
 import { saveSettings, useSettings } from "./settings";
 export function createMainWindow() {
-  const mainWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     show: false,
     frame: false,
     transparent: true,
@@ -19,41 +19,41 @@ export function createMainWindow() {
   });
 
   // 禁用窗口菜单
-  mainWindow.hookWindowMessage(0x0116, () => {
-    mainWindow.setEnabled(false);
-    mainWindow.setEnabled(true);
+  win.hookWindowMessage(0x0116, () => {
+    win.setEnabled(false);
+    win.setEnabled(true);
   });
 
   // 防止启动白屏，页面挂载完成再显示窗口
   ipcMain.on("mainwindow-mounted", () => {
-    mainWindow.show();
+    win.show();
   });
 
   // 窗口不能移出屏幕
-  mainWindow.on("moved", () => {
+  win.on("moved", () => {
     const { width: sw, height: sh } = screen.getPrimaryDisplay().workAreaSize;
-    const [ww, wh] = mainWindow.getSize();
-    const [x, y] = mainWindow.getPosition();
+    const [ww, wh] = win.getSize();
+    const [x, y] = win.getPosition();
     const bound = (min: number, val: number, max: number) => Math.max(min, Math.min(val, max));
-    mainWindow.setPosition(bound(0, x, sw - ww), bound(0, y, sh - wh));
+    win.setPosition(bound(0, x, sw - ww), bound(0, y, sh - wh));
 
     (async () =>
-      saveSettings(Object.assign(await useSettings(), { position: mainWindow.getPosition() })))();
+      saveSettings(Object.assign(await useSettings(), { position: win.getPosition() })))();
   });
 
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-    mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"] + "/mainWindow.html");
+    win.loadURL(process.env["ELECTRON_RENDERER_URL"] + "/mainWindow.html");
   } else {
-    mainWindow.loadFile(join(__dirname, "../renderer/mainWindow.html"));
+    win.loadFile(join(__dirname, "../renderer/mainWindow.html"));
   }
 
-  mainWindow.on("show", async () => {
-    embed_desktop.embedDesktop(mainWindow.getNativeWindowHandle());
+  win.on("show", async () => {
+    embed_desktop.embedDesktop(win.getNativeWindowHandle());
     const settings = await useSettings();
-    mainWindow.setSize(settings.size[0], settings.size[1]);
-    mainWindow.setPosition(settings.position[0], settings.position[1]);
+    win.setSize(settings.size[0], settings.size[1]);
+    win.setPosition(settings.position[0], settings.position[1]);
   });
 
-  mainWindow.on("closed", () => ipcMain.emit("quit"));
-  return mainWindow;
+  win.on("closed", () => ipcMain.emit("quit"));
+  return win;
 }
