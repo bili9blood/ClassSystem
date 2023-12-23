@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, onCleanup } from "solid-js";
 
 import LogoPng from "../assets/logo.png";
 
@@ -7,6 +7,10 @@ let prevPosition: [number, number] = [0, 0];
 let extraWindow: Window | null = null;
 
 const [showIcon, setShowIcon] = createSignal(true);
+
+onCleanup(() => {
+  if (extraWindow) extraWindow.close();
+});
 
 function beginMoving() {
   window.class_system.send("begin-move-menu");
